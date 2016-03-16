@@ -5,3 +5,5 @@ An experimental LOL replay software.
 
 Retrieving servers status :
 `http://status.leagueoflegends.com/shards`
+Retrieving featured games :
+`http://spectator.euw1.lol.riotgames.com/observer-mode/rest/featured`
