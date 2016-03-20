@@ -35,7 +35,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
-
+    QProcess::startDetached("cmd", QStringList() << "/c start G://GAMES/LoL/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe \"8394\" \"LoLLauncher.exe\" \"\" \"spectator spectator.na.lol.riotgames.com:80\" " + ui->tableWidget->selectedItems()[0]->text() + " " + ui->tableWidget->selectedItems()[0]->text() + " NA1");
 }
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply){
@@ -58,12 +58,18 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
 
     if(jsonObject.value(tr("slug")).toString() == tr("euw")){
         if(services[0].toObject().value(tr("status")).toString() == tr("online")){
-            ui->progressBar->setValue(100);
+            ui->progressBar->setValue(50);
+            if(services[1].toObject().value(tr("status")).toString() == tr("online")){
+                ui->progressBar->setValue(100);
+            }
         }
     }
     if(jsonObject.value(tr("slug")).toString() == tr("na")){
         if(services[0].toObject().value(tr("status")).toString() == tr("online")){
-            ui->progressBar_2->setValue(100);
+            ui->progressBar_2->setValue(50);
+            if(services[1].toObject().value(tr("status")).toString() == tr("online")){
+                ui->progressBar_2->setValue(100);
+            }
         }
     }
 }
@@ -98,6 +104,12 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
         item2->setText(QString::number(gamelist[i].toObject().value("gameId").toVariant().toULongLong()));
 
         ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 1, item2);
+
+        QTableWidgetItem* item3 = new QTableWidgetItem();
+
+        item3->setText(gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
+
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 2, item3);
     }
 
 }
