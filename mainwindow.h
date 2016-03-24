@@ -18,11 +18,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QNetworkAccessManager *networkManager_status;
+    QNetworkAccessManager *networkManager_featured;
 
 private slots:
     void slot_networkResult_status(QNetworkReply* reply);
     void slot_networkResult_featured(QNetworkReply *reply);
     void slot_doubleclick_featured(int row,int column);
+    void slot_featuredRefresh();
 };
 
 #endif // MAINWINDOW_H
