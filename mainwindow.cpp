@@ -7,10 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 2.0"));
+    setWindowTitle(tr("OpenReplay Alpha 2.1"));
+
+    log(QString("OpenReplay Alpha 2.1 Started"));
 
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
-
+    connect(ui->tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
     connect(ui->tableWidget, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
 
     networkManager_status = new QNetworkAccessManager(this);
@@ -25,15 +27,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
 
-    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.euw1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET EUW FEATURED GAMES
-
-    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.na.lol.riotgames.com/observer-mode/rest/featured"))));  // GET NA FEATURED GAMES
+    slot_featuredRefresh();
 
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::log(QString s){
+
+    ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + s);
+    ui->textEdit->append(QTime::currentTime().toString() + " | " + s);
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
@@ -55,17 +61,24 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
     }
 
     QJsonObject jsonObject = jsonResponse.object();
+
+    json_status.append(jsonObject);
+
     QJsonArray services = jsonObject.value(tr("services")).toArray();
 
-    ui->statusBar->showMessage(jsonObject.value(tr("name")).toString() + tr(" : Status server infos"));
+    log(jsonObject.value(tr("name")).toString() + tr(" : Status server infos"));
 
     if(jsonObject.value(tr("slug")).toString() == tr("euw")){
         ui->tableWidget_status->setItem(0,0,new QTableWidgetItem(services[0].toObject().value(tr("status")).toString()));
         ui->tableWidget_status->setItem(0,1,new QTableWidgetItem(services[1].toObject().value(tr("status")).toString()));
+        ui->tableWidget_status->setItem(0,2,new QTableWidgetItem(services[2].toObject().value(tr("status")).toString()));
+        ui->tableWidget_status->setItem(0,3,new QTableWidgetItem(services[3].toObject().value(tr("status")).toString()));
     }
     if(jsonObject.value(tr("slug")).toString() == tr("na")){
         ui->tableWidget_status->setItem(1,0,new QTableWidgetItem(services[0].toObject().value(tr("status")).toString()));
         ui->tableWidget_status->setItem(1,1,new QTableWidgetItem(services[1].toObject().value(tr("status")).toString()));
+        ui->tableWidget_status->setItem(1,2,new QTableWidgetItem(services[2].toObject().value(tr("status")).toString()));
+        ui->tableWidget_status->setItem(1,3,new QTableWidgetItem(services[3].toObject().value(tr("status")).toString()));
     }
 }
 
@@ -85,7 +98,15 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
 
     QJsonObject jsonObject = jsonResponse.object();
 
+    json_featured.append(jsonObject);
+
     QJsonArray gamelist = jsonObject.value(tr("gameList")).toArray();
+
+    if(gamelist.size() == 0){
+        return;
+    }
+
+    log(gamelist[0].toObject().value(tr("platformId")).toString() + " : Featured games infos");
 
     for(int i = 0; i < gamelist.size(); i++){
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
@@ -114,8 +135,15 @@ void MainWindow::slot_featuredRefresh(){
     while(ui->tableWidget->rowCount() > 0){
         ui->tableWidget->removeRow(0);
     }
+    json_featured.clear();
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.euw1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET EUW FEATURED GAMES
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.na.lol.riotgames.com/observer-mode/rest/featured"))));  // GET NA FEATURED GAMES
+}
+
+void MainWindow::slot_click_featured(int row, int column){
+    ui->lineEdit_2->setText(ui->tableWidget->item(row, 0)->text());
+    ui->lineEdit->setText(ui->tableWidget->item(row,1)->text());
+    ui->lineEdit_3->setText(ui->tableWidget->item(row,2)->text());
 }
