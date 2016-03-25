@@ -7,9 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 2.1"));
+    setWindowTitle(tr("OpenReplay Alpha 2.2"));
 
-    log(QString("OpenReplay Alpha 2.1 Started"));
+    log(QString("OpenReplay Alpha 2.2 Started"));
 
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
     connect(ui->tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
@@ -43,7 +43,7 @@ void MainWindow::log(QString s){
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
-    QProcess::startDetached("cmd", QStringList() << "\"G://GAMES/LoL/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator spectator.na.lol.riotgames.com:80\" " + ui->tableWidget->selectedItems()[0]->text() + " " + ui->tableWidget->selectedItems()[0]->text() + " NA1");
+    QProcess::startDetached("cmd", QStringList() << "\"G://GAMES/LoL/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator spectator.na.lol.riotgames.com:80\" " + ui->tableWidget->item(row,2)->text() + " " + ui->tableWidget->item(row,1)->text() + " " + ui->tableWidget->item(row,0)->text() + "\"");
 }
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply){
