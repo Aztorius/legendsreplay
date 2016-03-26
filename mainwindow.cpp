@@ -7,9 +7,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 2.2"));
+    setWindowTitle(tr("OpenReplay Alpha 2.3"));
 
-    log(QString("OpenReplay Alpha 2.2 Started"));
+    log(QString("OpenReplay Alpha 2.3 Started"));
+
+    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw.lol.riotgames.com:80");
+    servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80");
 
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
     connect(ui->tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
@@ -43,7 +46,31 @@ void MainWindow::log(QString s){
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
-    QProcess::startDetached("cmd", QStringList() << "\"G://GAMES/LoL/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator spectator.na.lol.riotgames.com:80\" " + ui->tableWidget->item(row,2)->text() + " " + ui->tableWidget->item(row,1)->text() + " " + ui->tableWidget->item(row,0)->text() + "\"");
+    QString serverid = ui->tableWidget->item(row,0)->text();
+    QString key = ui->tableWidget->item(row,1)->text();
+    QString matchid = ui->tableWidget->item(row,1)->text();
+
+    lol_launch(serverid,key,matchid);
+}
+
+void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
+    QString path;
+
+    path = ui->lineEdit_4->text() + "/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe";
+
+    QString address;
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(1) == serverid){
+            address = servers.at(i).at(2);
+            break;
+        }
+    }
+    if(address.isEmpty()){
+        //Server address not found
+        return;
+    }
+
+    QProcess::startDetached("cmd \"" + path + "\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + "\" " + key + " " + matchid + " " + serverid + "\"");
 }
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply){
@@ -68,17 +95,13 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
 
     log(jsonObject.value(tr("name")).toString() + tr(" : Status server infos"));
 
-    if(jsonObject.value(tr("slug")).toString() == tr("euw")){
-        ui->tableWidget_status->setItem(0,0,new QTableWidgetItem(services[0].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(0,1,new QTableWidgetItem(services[1].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(0,2,new QTableWidgetItem(services[2].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(0,3,new QTableWidgetItem(services[3].toObject().value(tr("status")).toString()));
-    }
-    if(jsonObject.value(tr("slug")).toString() == tr("na")){
-        ui->tableWidget_status->setItem(1,0,new QTableWidgetItem(services[0].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(1,1,new QTableWidgetItem(services[1].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(1,2,new QTableWidgetItem(services[2].toObject().value(tr("status")).toString()));
-        ui->tableWidget_status->setItem(1,3,new QTableWidgetItem(services[3].toObject().value(tr("status")).toString()));
+    for(int i = 0; i < servers.size(); i++){
+        if(jsonObject.value(tr("name")).toString() == servers.at(i).at(0)){
+            for(int j = 0; j < 4; j++){
+                ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(services[j].toObject().value(tr("status")).toString()));
+            }
+            break;
+        }
     }
 }
 

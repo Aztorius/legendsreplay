@@ -16,6 +16,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void log(QString);
+    void lol_launch(QString serverid, QString key, QString matchid);
 
 private:
     Ui::MainWindow *ui;
@@ -23,6 +24,8 @@ private:
     QNetworkAccessManager *networkManager_featured;
     QList <QJsonObject> json_status;
     QList <QJsonObject> json_featured;
+    //QStringList<QString name, QString slug, QString address>
+    QList <QStringList> servers;
 
 private slots:
     void slot_networkResult_status(QNetworkReply* reply);
