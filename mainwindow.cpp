@@ -7,16 +7,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 2.3"));
+    setWindowTitle(tr("OpenReplay Alpha 3.0"));
 
-    log(QString("OpenReplay Alpha 2.3 Started"));
+    log(QString("OpenReplay Alpha 3.0 Started"));
 
-    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw.lol.riotgames.com:80");
+    loldirectory = "C:\\Program Files\\Riot\\League of Legends";
+
+    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
     servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80");
 
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
-    connect(ui->tableWidget, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
-    connect(ui->tableWidget, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
+    connect(ui->tableWidget_featured, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
+    connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
+    connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
+    connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
 
     networkManager_status = new QNetworkAccessManager(this);
 
@@ -46,17 +50,21 @@ void MainWindow::log(QString s){
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
-    QString serverid = ui->tableWidget->item(row,0)->text();
-    QString key = ui->tableWidget->item(row,1)->text();
-    QString matchid = ui->tableWidget->item(row,1)->text();
+    QString serverid = ui->tableWidget_featured->item(row,0)->text();
+    QString key = ui->tableWidget_featured->item(row,2)->text();
+    QString matchid = ui->tableWidget_featured->item(row,1)->text();
 
     lol_launch(serverid,key,matchid);
 }
 
 void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
     QString path;
+    path = loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\0.0.1.125\\deploy\\";
 
-    path = ui->lineEdit_4->text() + "/RADS/solutions/lol_game_client_sln/releases/0.0.1.123/deploy/League of Legends.exe";
+    if(!check_path(path)){
+        QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        return;
+    }
 
     QString address;
     for(int i = 0; i < servers.size(); i++){
@@ -69,8 +77,10 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
         //Server address not found
         return;
     }
-
-    QProcess::startDetached("cmd \"" + path + "\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + "\" " + key + " " + matchid + " " + serverid + "\"");
+    QProcess *process = new QProcess;
+    process->setWorkingDirectory(path);
+    process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
+    log("\"" + path + "\\League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
 }
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply){
@@ -132,31 +142,31 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
     log(gamelist[0].toObject().value(tr("platformId")).toString() + " : Featured games infos");
 
     for(int i = 0; i < gamelist.size(); i++){
-        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+        ui->tableWidget_featured->insertRow(ui->tableWidget_featured->rowCount());
 
         QTableWidgetItem* item = new QTableWidgetItem();
         item->setText(gamelist[i].toObject().value(tr("platformId")).toString());
 
-        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 0, item);
+        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 0, item);
 
         QTableWidgetItem* item2 = new QTableWidgetItem();
 
         item2->setText(QString::number(gamelist[i].toObject().value("gameId").toVariant().toULongLong()));
 
-        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 1, item2);
+        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 1, item2);
 
         QTableWidgetItem* item3 = new QTableWidgetItem();
 
         item3->setText(gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
 
-        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1, 2, item3);
+        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 2, item3);
     }
 
 }
 
 void MainWindow::slot_featuredRefresh(){
-    while(ui->tableWidget->rowCount() > 0){
-        ui->tableWidget->removeRow(0);
+    while(ui->tableWidget_featured->rowCount() > 0){
+        ui->tableWidget_featured->removeRow(0);
     }
     json_featured.clear();
 
@@ -166,7 +176,26 @@ void MainWindow::slot_featuredRefresh(){
 }
 
 void MainWindow::slot_click_featured(int row, int column){
-    ui->lineEdit_2->setText(ui->tableWidget->item(row, 0)->text());
-    ui->lineEdit->setText(ui->tableWidget->item(row,1)->text());
-    ui->lineEdit_3->setText(ui->tableWidget->item(row,2)->text());
+    ui->lineEdit_2->setText(ui->tableWidget_featured->item(row, 0)->text());
+    ui->lineEdit->setText(ui->tableWidget_featured->item(row,1)->text());
+    ui->lineEdit_3->setText(ui->tableWidget_featured->item(row,2)->text());
+}
+
+void MainWindow::slot_setdirectory(){
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),"/home",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    loldirectory = dir;
+    ui->lineEdit_4->setText(dir);
+}
+
+void MainWindow::slot_featuredLaunch(){
+    if(ui->tableWidget_featured->selectedItems().size() == 0){
+        return;
+    }
+    int row = ui->tableWidget_featured->currentRow();
+    lol_launch(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,2)->text(),ui->tableWidget_featured->item(row,1)->text());
+}
+
+bool MainWindow::check_path(QString path){
+    QFileInfo checkFile(path);
+    return(checkFile.exists());
 }

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QtNetwork>
+#include <QFileDialog>
+#include <QMessageBox>
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +19,7 @@ public:
     ~MainWindow();
     void log(QString);
     void lol_launch(QString serverid, QString key, QString matchid);
+    bool check_path(QString path);
 
 private:
     Ui::MainWindow *ui;
@@ -26,6 +29,7 @@ private:
     QList <QJsonObject> json_featured;
     //QStringList<QString name, QString slug, QString address>
     QList <QStringList> servers;
+    QString loldirectory;
 
 private slots:
     void slot_networkResult_status(QNetworkReply* reply);
@@ -33,6 +37,8 @@ private slots:
     void slot_doubleclick_featured(int row,int column);
     void slot_click_featured(int row,int column);
     void slot_featuredRefresh();
+    void slot_setdirectory();
+    void slot_featuredLaunch();
 };
 
 #endif // MAINWINDOW_H
