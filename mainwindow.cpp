@@ -7,11 +7,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 3.1"));
+    setWindowTitle(tr("OpenReplay Alpha 3.2"));
 
-    log(QString("OpenReplay Alpha 3.1 Started"));
+    log(QString("OpenReplay Alpha 3.2 Started"));
 
-    loldirectory = "C:\\Program Files\\Riot\\League of Legends";
+    QSettings settings("Riot Games", "RADS");
+
+    QString rootfolder = settings.value("LocalRootFolder").toString();
+
+    if(rootfolder.size()==0){
+        loldirectory = "C:\\Program Files\\Riot\\League of Legends\\RADS";
+    }
+    else{
+        loldirectory = rootfolder;
+    }
+    ui->lineEdit_4->setText(loldirectory);
 
     servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
     servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
@@ -64,7 +74,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
     QString path;
 
     QDir qd;
-    qd.setPath(loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\");
+    qd.setPath(loldirectory + "\\solutions\\lol_game_client_sln\\releases\\");
     qd.setFilter(QDir::Dirs);
     qd.setSorting(QDir::Name | QDir::Reversed);
     QFileInfoList list = qd.entryInfoList();
@@ -74,7 +84,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
         return;
     }
 
-    path = loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+    path = loldirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
 
     if(!check_path(path)){
         QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
@@ -193,9 +203,42 @@ void MainWindow::slot_featuredRefresh(){
 }
 
 void MainWindow::slot_click_featured(int row, int column){
-    ui->lineEdit_2->setText(ui->tableWidget_featured->item(row, 0)->text());
-    ui->lineEdit->setText(ui->tableWidget_featured->item(row,1)->text());
-    ui->lineEdit_3->setText(ui->tableWidget_featured->item(row,2)->text());
+    QString gameid = ui->tableWidget_featured->item(row,1)->text();
+
+    ui->lineEdit_featured_serverid->setText(ui->tableWidget_featured->item(row, 0)->text());
+    ui->lineEdit_featured_gameid->setText(ui->tableWidget_featured->item(row,1)->text());
+    ui->lineEdit_featured_key->setText(ui->tableWidget_featured->item(row,2)->text());
+
+    QJsonObject game;
+    for(int i = 0; i < json_featured.size(); i++){
+        QJsonArray gamelist = json_featured.at(i).value(tr("gameList")).toArray();
+        for(int j = 0; j < gamelist.size(); j++){
+            if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toULongLong()) == gameid){
+                game = gamelist.at(j).toObject();
+            }
+        }
+    }
+
+    if(game.isEmpty()){
+        return;
+    }
+
+    QJsonArray participants = game.value("participants").toArray();
+
+    if(participants.size()!=10){
+        return;
+    }
+
+    ui->lineEdit_featured_player1->setText(participants.at(0).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player2->setText(participants.at(1).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player3->setText(participants.at(2).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player4->setText(participants.at(3).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player5->setText(participants.at(4).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player6->setText(participants.at(5).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player7->setText(participants.at(6).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player8->setText(participants.at(7).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player9->setText(participants.at(8).toObject().value("summonerName").toString());
+    ui->lineEdit_featured_player10->setText(participants.at(9).toObject().value("summonerName").toString());
 }
 
 void MainWindow::slot_setdirectory(){
