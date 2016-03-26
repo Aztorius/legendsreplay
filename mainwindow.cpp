@@ -7,13 +7,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 3.0"));
+    setWindowTitle(tr("OpenReplay Alpha 3.1"));
 
-    log(QString("OpenReplay Alpha 3.0 Started"));
+    log(QString("OpenReplay Alpha 3.1 Started"));
 
     loldirectory = "C:\\Program Files\\Riot\\League of Legends";
 
     servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
+    servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
     servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80");
 
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -27,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
 
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/euw"))));  // GET EUW SERVERS STATUS
+
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/eune"))));  // GET EUNE SERVERS STATUS
 
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/na"))));  // GET NA SERVERS STATUS
 
@@ -59,7 +62,19 @@ void MainWindow::slot_doubleclick_featured(int row,int column){
 
 void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
     QString path;
-    path = loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\0.0.1.125\\deploy\\";
+
+    QDir qd;
+    qd.setPath(loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\");
+    qd.setFilter(QDir::Dirs);
+    qd.setSorting(QDir::Name | QDir::Reversed);
+    QFileInfoList list = qd.entryInfoList();
+
+    if(list.size()==0){
+        QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        return;
+    }
+
+    path = loldirectory + "\\RADS\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
 
     if(!check_path(path)){
         QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
@@ -171,6 +186,8 @@ void MainWindow::slot_featuredRefresh(){
     json_featured.clear();
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.euw1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET EUW FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.eu.lol.riotgames.com:8088/observer-mode/rest/featured"))));  // GET EUNE FEATURED GAMES
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.na.lol.riotgames.com/observer-mode/rest/featured"))));  // GET NA FEATURED GAMES
 }
