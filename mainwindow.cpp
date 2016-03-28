@@ -7,9 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 3.2"));
+    setWindowTitle(tr("OpenReplay Alpha 3.3"));
 
-    log(QString("OpenReplay Alpha 3.2 Started"));
+    log(QString("OpenReplay Alpha 3.3 Started"));
 
     QSettings settings("Riot Games", "RADS");
 
@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
     servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80");
 
+    connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
     connect(ui->tableWidget_featured, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
     connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
@@ -34,18 +35,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
 
     networkManager_status = new QNetworkAccessManager(this);
-
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
 
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/euw"))));  // GET EUW SERVERS STATUS
-
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/eune"))));  // GET EUNE SERVERS STATUS
-
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/na"))));  // GET NA SERVERS STATUS
 
     networkManager_featured = new QNetworkAccessManager(this);
-
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
+
+    recording = false;
+    networkManager_record = new QNetworkAccessManager(this);
+    connect(networkManager_record, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_record(QNetworkReply*)));
 
     slot_featuredRefresh();
 
@@ -65,9 +66,13 @@ void MainWindow::log(QString s){
 void MainWindow::slot_doubleclick_featured(int row,int column){
     QString serverid = ui->tableWidget_featured->item(row,0)->text();
     QString key = ui->tableWidget_featured->item(row,2)->text();
-    QString matchid = ui->tableWidget_featured->item(row,1)->text();
+    QString gameid = ui->tableWidget_featured->item(row,1)->text();
 
-    lol_launch(serverid,key,matchid);
+    if(game_ended(serverid, gameid)){
+        return;
+    }
+
+    lol_launch(serverid, key, gameid);
 }
 
 void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
@@ -102,9 +107,11 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid){
         //Server address not found
         return;
     }
+
     QProcess *process = new QProcess;
     process->setWorkingDirectory(path);
     process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
+
     log("\"" + path + "\\League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
 }
 
@@ -258,4 +265,84 @@ void MainWindow::slot_featuredLaunch(){
 bool MainWindow::check_path(QString path){
     QFileInfo checkFile(path);
     return(checkFile.exists());
+}
+
+void MainWindow::slot_changedTab(int index){
+    if(index == 2){
+        slot_featuredRefresh();
+    }
+}
+
+
+/*    Not complete zone start here    */
+
+bool MainWindow::game_ended(QString serverid, QString gameid){
+    //Get serverID
+    QString serveraddress;
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(1) == serverid){
+            serveraddress = servers.at(i).at(2);
+        }
+    }
+    if(serveraddress.size() == 0){
+        return false;
+    }
+
+    QNetworkAccessManager manager;
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"))));
+
+    QEventLoop loop;
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if(reply->error() != QNetworkReply::NoError){
+        return false;
+    }
+
+    QString data = (QString) reply->readAll();
+
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
+
+    if(jsonResponse.isEmpty()){
+        return false;
+    }
+
+    QJsonObject jsonObject = jsonResponse.object();
+
+    if(jsonObject.value("gameEnded").toBool()){
+        log("GAME : " + serverid + "/" + gameid + " has already finished. Aborting spectator mode.");
+        return true;
+    }
+    else{
+        log("GAME : " + serverid + "/" + gameid + " is in progress. Launching spectator mode.");
+        return false;
+    }
+}
+
+void MainWindow::record_game(QString serverid, QString gameid){
+    //Get serverID
+    QString serveraddress;
+    for(int i = 0; i < json_featured.size(); i++){
+
+    }
+    if(serveraddress.size() == 0){
+        return;
+    }
+
+    recording = true;
+    networkManager_record->get(QNetworkRequest(QUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"))));
+
+}
+
+void MainWindow::slot_networkResult_record(QNetworkReply *reply){
+    if (reply->error() != QNetworkReply::NoError)
+            return;
+
+    if(!recording){
+        recording = true;
+
+    }
+    else{
+
+    }
 }

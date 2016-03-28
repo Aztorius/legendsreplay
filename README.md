@@ -1,9 +1,11 @@
 # OpenReplay
 An experimental LOL replay software.
 
-## Current Version : Alpha 3.2
+## Current Version : Alpha 3.3
 
-## Technical informations
+## Features
 
-Retrieving game metadata :
-`http://spectator.euw1.lol.riotgames.com/observer-mode/rest/consumer/getGameMetaData/<PlatformID>/<GameID>/1/token`
+- EUW, EUNE and NA servers supported
+- Show servers status
+- List all featured games
+- Launch spectator mode for featured games
