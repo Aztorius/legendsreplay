@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
+    connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -273,9 +274,6 @@ void MainWindow::slot_changedTab(int index){
     }
 }
 
-
-/*    Not complete zone start here    */
-
 bool MainWindow::game_ended(QString serverid, QString gameid){
     //Get serverID
     QString serveraddress;
@@ -319,18 +317,123 @@ bool MainWindow::game_ended(QString serverid, QString gameid){
     }
 }
 
-void MainWindow::record_game(QString serverid, QString gameid){
+QJsonDocument MainWindow::getJsonFromUrl(QString url){
+    QNetworkAccessManager local_networkResult;
+    QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
+
+    QEventLoop loop;
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if(reply->error() != QNetworkReply::NoError){
+        QJsonDocument jsonEmpty;
+        return jsonEmpty;
+    }
+
+    QString data = (QString) reply->readAll();
+    QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
+
+    return jsonResponse;
+}
+
+void MainWindow::slot_featuredRecord(){
+    if(ui->tableWidget_featured->selectedItems().size() == 0){
+        return;
+    }
+    int row = ui->tableWidget_featured->currentRow();
+    record_featured_game(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,1)->text(),ui->tableWidget_featured->item(row,2)->text());
+}
+
+QByteArray MainWindow::getFileFromUrl(QString url){
+    QNetworkAccessManager local_networkResult;
+    QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
+
+    QEventLoop loop;
+    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+
+    if(reply->error() != QNetworkReply::NoError){
+        QByteArray emptyArray;
+        return emptyArray;
+    }
+
+    QByteArray data = reply->readAll();
+    return data;
+}
+
+/*    Not complete zone start here    */
+
+void MainWindow::record_featured_game(QString serverid, QString gameid, QString encryptionkey){
     //Get serverID
     QString serveraddress;
-    for(int i = 0; i < json_featured.size(); i++){
-
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(1) == serverid){
+            serveraddress = servers.at(i).at(2);
+        }
     }
     if(serveraddress.size() == 0){
         return;
     }
 
-    recording = true;
-    networkManager_record->get(QNetworkRequest(QUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"))));
+    if(!recording){
+        recording = true;
+    }
+    else{
+        return;
+    }
+
+    log("Start recording : " + serverid + "/" + gameid);
+
+    QJsonDocument json_gameMetaData = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
+    QJsonDocument json_save_gameMetaData = json_gameMetaData;
+
+    QList<QByteArray> list_bytearray_keyframes;
+    QList<QByteArray> list_bytearray_gamedatachunks;
+
+    int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().at(0).toObject().value("id").toInt();
+    int lastsavedkeyframeid = -1;
+    int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(0).toObject().value("id").toInt();
+    int lastsavedchunkid = -1;
+
+    QByteArray bytearray_keyframe, bytearray_chunk;
+
+    while(lastsavedchunkid != json_gameMetaData.object().value("endGameChunkId").toInt() || json_gameMetaData.object().value("endGameChunkId").toInt() == -1){
+        if(json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().at(3).toObject().value("id").toInt() > lastsavedkeyframeid){
+            //Get a keyframe
+            if(lastsavedkeyframeid == keyframeid){
+                keyframeid += 1;
+            }
+            bytearray_keyframe = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getKeyFrame/" + serverid + "/" + gameid + "/" + QString::number(keyframeid) + "/0"));
+            if(!bytearray_keyframe.isEmpty()){
+                list_bytearray_keyframes.append(bytearray_keyframe);
+                lastsavedkeyframeid = keyframeid;
+                log("Keyframe : " + QString::number(keyframeid));
+            }
+        }
+
+        if(json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(7).toObject().value("id").toInt() > lastsavedchunkid){
+            //Get a chunk
+            if(lastsavedchunkid == chunkid || lastsavedchunkid + 4 < json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(7).toObject().value("id").toInt()){
+                chunkid += 1;
+            }
+            bytearray_chunk = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + serverid + "/" + gameid + "/" + QString::number(chunkid) + "/0"));
+            if(!bytearray_chunk.isEmpty()){
+                list_bytearray_gamedatachunks.append(bytearray_chunk);
+                lastsavedchunkid = chunkid;
+                log("Chunkid : " + QString::number(chunkid));
+            }
+        }
+
+        json_gameMetaData = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
+        if(json_gameMetaData.isEmpty()){
+            break;
+        }
+    }
+
+    recording = false;
+    log("End of recording : " + serverid + "/" + gameid);
+
+    //Save all chunks, infos and keyframes in a file
 
 }
 

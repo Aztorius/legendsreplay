@@ -20,8 +20,10 @@ public:
     void log(QString);
     void lol_launch(QString serverid, QString key, QString matchid);
     bool check_path(QString path);
-    void record_game(QString serverid, QString gameid);
+    void record_featured_game(QString serverid, QString gameid, QString encryptionkey);
     bool game_ended(QString serverid, QString gameid);
+    QJsonDocument getJsonFromUrl(QString url);
+    QByteArray getFileFromUrl(QString url);
 
 private:
     Ui::MainWindow *ui;
@@ -44,6 +46,7 @@ private slots:
     void slot_featuredRefresh();
     void slot_setdirectory();
     void slot_featuredLaunch();
+    void slot_featuredRecord();
     void slot_changedTab(int index);
 };
 
