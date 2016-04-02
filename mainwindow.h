@@ -5,6 +5,7 @@
 #include <QtNetwork>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QFile>
 
 namespace Ui {
 class MainWindow;
@@ -36,6 +37,7 @@ private:
     //QStringList<QString name, QString slug, QString address>
     QList <QStringList> servers;
     QString loldirectory;
+    QString replaydirectory;
 
 private slots:
     void slot_networkResult_status(QNetworkReply* reply);
@@ -45,6 +47,7 @@ private slots:
     void slot_click_featured(int row,int column);
     void slot_featuredRefresh();
     void slot_setdirectory();
+    void slot_setreplaydirectory();
     void slot_featuredLaunch();
     void slot_featuredRecord();
     void slot_changedTab(int index);

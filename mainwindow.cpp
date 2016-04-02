@@ -7,21 +7,34 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 3.3"));
+    setWindowTitle(tr("OpenReplay Alpha 4.0"));
 
-    log(QString("OpenReplay Alpha 3.3 Started"));
+    log(QString("OpenReplay Alpha 4.0 Started"));
 
     QSettings settings("Riot Games", "RADS");
 
     QString rootfolder = settings.value("LocalRootFolder").toString();
 
-    if(rootfolder.size()==0){
+    if(rootfolder.isEmpty()){
         loldirectory = "C:\\Program Files\\Riot\\League of Legends\\RADS";
     }
     else{
         loldirectory = rootfolder;
     }
     ui->lineEdit_4->setText(loldirectory);
+
+    QSettings settings2(QSettings::UserScope, "Microsoft", "Windows");
+    settings2.beginGroup("CurrentVersion/Explorer/Shell Folders");
+    QString docfolder = settings.value("Personal").toString();
+
+    if(docfolder.isEmpty()){
+        replaydirectory = "C:\\";
+    }
+    else{
+        replaydirectory = docfolder;
+    }
+
+    ui->lineEdit_replaysFolder->setText(replaydirectory);
 
     servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
     servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
@@ -32,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_featured, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
     connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
+    connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
     connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
 
@@ -250,9 +264,21 @@ void MainWindow::slot_click_featured(int row, int column){
 }
 
 void MainWindow::slot_setdirectory(){
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),"/home",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if(dir.isEmpty()){
+        return;
+    }
     loldirectory = dir;
     ui->lineEdit_4->setText(dir);
+}
+
+void MainWindow::slot_setreplaydirectory(){
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),replaydirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if(dir.isEmpty()){
+        return;
+    }
+    replaydirectory = dir;
+    ui->lineEdit_replaysFolder->setText(dir);
 }
 
 void MainWindow::slot_featuredLaunch(){
@@ -384,23 +410,43 @@ void MainWindow::record_featured_game(QString serverid, QString gameid, QString 
 
     log("Start recording : " + serverid + "/" + gameid);
 
+    QString version;
+    version = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/version"));
+
+    QByteArray gameinfo;
+    for(int i = 0; i < json_featured.size(); i++){
+        if(json_featured.at(i).value("gameList").toArray().first().toObject().value("platformId").toString() == serverid){
+            QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
+            for(int j = 0; j < gamelist.size(); j++){
+                if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toLongLong()) == gameid){
+                    gameinfo = gamelist.at(j).toVariant().toByteArray();
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
     QJsonDocument json_gameMetaData = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
-    QJsonDocument json_save_gameMetaData = json_gameMetaData;
 
     QList<QByteArray> list_bytearray_keyframes;
     QList<QByteArray> list_bytearray_gamedatachunks;
 
-    int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().at(0).toObject().value("id").toInt();
+    int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt();
     int lastsavedkeyframeid = -1;
-    int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(0).toObject().value("id").toInt();
+    int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt();
     int lastsavedchunkid = -1;
 
     QByteArray bytearray_keyframe, bytearray_chunk;
 
-    while(lastsavedchunkid != json_gameMetaData.object().value("endGameChunkId").toInt() || json_gameMetaData.object().value("endGameChunkId").toInt() == -1){
-        if(json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().at(3).toObject().value("id").toInt() > lastsavedkeyframeid){
+    QTimer *timer = new QTimer(this);
+    QEventLoop loop;
+    connect(timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+    while(lastsavedchunkid != json_gameMetaData.object().value("endGameChunkId").toInt() || lastsavedkeyframeid != json_gameMetaData.object().value("endGameKeyFrameId").toInt() || json_gameMetaData.object().value("endGameChunkId").toInt() == -1){
+        if(json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().last().toObject().value("id").toInt() > lastsavedkeyframeid){
             //Get a keyframe
-            if(lastsavedkeyframeid == keyframeid){
+            if(lastsavedkeyframeid == keyframeid || keyframeid < json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt()){
                 keyframeid += 1;
             }
             bytearray_keyframe = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getKeyFrame/" + serverid + "/" + gameid + "/" + QString::number(keyframeid) + "/0"));
@@ -411,16 +457,16 @@ void MainWindow::record_featured_game(QString serverid, QString gameid, QString 
             }
         }
 
-        if(json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(7).toObject().value("id").toInt() > lastsavedchunkid){
+        if(json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().last().toObject().value("id").toInt() > lastsavedchunkid){
             //Get a chunk
-            if(lastsavedchunkid == chunkid || lastsavedchunkid + 4 < json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().at(7).toObject().value("id").toInt()){
+            if(lastsavedchunkid == chunkid || chunkid < json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt()){
                 chunkid += 1;
             }
             bytearray_chunk = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + serverid + "/" + gameid + "/" + QString::number(chunkid) + "/0"));
             if(!bytearray_chunk.isEmpty()){
                 list_bytearray_gamedatachunks.append(bytearray_chunk);
                 lastsavedchunkid = chunkid;
-                log("Chunkid : " + QString::number(chunkid));
+                log("Chunk : " + QString::number(chunkid));
             }
         }
 
@@ -428,12 +474,47 @@ void MainWindow::record_featured_game(QString serverid, QString gameid, QString 
         if(json_gameMetaData.isEmpty()){
             break;
         }
+
+        //Retry every 5 seconds
+        timer->start(5000);
+        loop.exec();
     }
 
     recording = false;
     log("End of recording : " + serverid + "/" + gameid);
 
     //Save all chunks, infos and keyframes in a file
+
+    QFile file("H:\\OpenReplays\\" + serverid + "-" + gameid + ".lor");
+
+    if(file.open(QIODevice::WriteOnly)){
+        QTextStream stream(&file);
+
+        stream << "::OpenReplayInfos:" << serverid << ":" << gameid << ":" << encryptionkey << ":" << version << "::" << endl;
+
+        if(!gameinfo.isEmpty()){
+            stream << "::OpenReplayGameInfos::" << gameinfo.toBase64() << endl;
+        }
+
+        int first_keyframeid = json_gameMetaData.object().value("endGameKeyFrameId").toInt() - list_bytearray_keyframes.size() + 1;
+        int first_chunkid = json_gameMetaData.object().value("endGameChunkId").toInt() - list_bytearray_gamedatachunks.size() + 1;
+
+        for(int i = 0; i < list_bytearray_keyframes.size(); i++){
+            stream << "::OpenReplayKeyFrame:" << QString::number(first_keyframeid + i) << "::";
+            stream << list_bytearray_keyframes.at(i).toBase64() << endl;
+        }
+        for(int i = 0; i < list_bytearray_gamedatachunks.size(); i++){
+            stream << "::OpenReplayChunk:" << QString::number(first_chunkid + i) << "::";
+            stream << list_bytearray_gamedatachunks.at(i).toBase64() << endl;
+        }
+        stream << "::OpenReplayEnd::";
+        file.close();
+
+        log("Replay file created");
+    }
+    else{
+        log("Error saving replay.");
+    }
 
 }
 
