@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "recorder.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,9 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 4.0"));
+    setWindowTitle(tr("OpenReplay Alpha 5.0"));
 
-    log(QString("OpenReplay Alpha 4.0 Started"));
+    log(QString("OpenReplay Alpha 5.0 Started"));
+
+    ui->lineEdit_status->setText("Starting");
 
     QSettings settings("Riot Games", "RADS");
 
@@ -23,18 +26,37 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     ui->lineEdit_4->setText(loldirectory);
 
-    QSettings settings2(QSettings::UserScope, "Microsoft", "Windows");
-    settings2.beginGroup("CurrentVersion/Explorer/Shell Folders");
-    QString docfolder = settings.value("Personal").toString();
+    QStringList folders = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    if(folders.isEmpty()){
+        //Error : no documents location found on the system
+        return;
+    }
 
-    if(docfolder.isEmpty()){
-        replaydirectory = "C:\\";
+    if(!QDir(folders.first() + "/OpenReplays").exists()){
+        QDir().mkpath(folders.first() + "/OpenReplays");
     }
-    else{
-        replaydirectory = docfolder;
-    }
+
+    replaydirectory = folders.first() + "/OpenReplays";
 
     ui->lineEdit_replaysFolder->setText(replaydirectory);
+
+    //Find saved replays
+
+    QDir dirreplays(replaydirectory);
+    dirreplays.setFilter(QDir::Files);
+    dirreplays.setSorting(QDir::Time | QDir::Reversed);
+
+    QFileInfoList replayslist = dirreplays.entryInfoList();
+
+    for(int i = 0; i < replayslist.size(); i++){
+        QFileInfo fileinfo = replayslist.at(i);
+        ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
+        QTableWidgetItem *item = new QTableWidgetItem;
+        item->setText(fileinfo.fileName());
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, item);
+    }
+
+    //Add servers
 
     servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
     servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
@@ -59,12 +81,9 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
 
-    recording = false;
-    networkManager_record = new QNetworkAccessManager(this);
-    connect(networkManager_record, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_record(QNetworkReply*)));
-
     slot_featuredRefresh();
 
+    ui->lineEdit_status->setText("Idle");
 }
 
 MainWindow::~MainWindow()
@@ -264,7 +283,7 @@ void MainWindow::slot_click_featured(int row, int column){
 }
 
 void MainWindow::slot_setdirectory(){
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
     }
@@ -358,6 +377,7 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url){
 
     QString data = (QString) reply->readAll();
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
+    reply->deleteLater();
 
     return jsonResponse;
 }
@@ -367,7 +387,66 @@ void MainWindow::slot_featuredRecord(){
         return;
     }
     int row = ui->tableWidget_featured->currentRow();
-    record_featured_game(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,1)->text(),ui->tableWidget_featured->item(row,2)->text());
+
+    QString serverid = ui->tableWidget_featured->item(row,0)->text();
+    QString gameid = ui->tableWidget_featured->item(row,1)->text();
+
+    //Get server address
+    QString serveraddress;
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(1) == serverid){
+            serveraddress = servers.at(i).at(2);
+            break;
+        }
+    }
+    if(serveraddress.size() == 0){
+        return;
+    }
+
+    for(int i = 0; i < recording.size(); i++){
+        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+            //Game is already recording
+            return;
+        }
+    }
+
+    recording.append(QStringList() << serverid << gameid);
+
+    ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+
+    QByteArray gameinfo;
+    for(int i = 0; i < json_featured.size(); i++){
+        if(json_featured.at(i).value("gameList").toArray().first().toObject().value("platformId").toString() == serverid){
+            QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
+            for(int j = 0; j < gamelist.size(); j++){
+                if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toLongLong()) == gameid){
+                    gameinfo = gamelist.at(j).toVariant().toByteArray();
+                    break;
+                }
+            }
+            break;
+        }
+    }
+
+    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, ui->tableWidget_featured->item(row,2)->text(), gameinfo, replaydirectory);
+    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+    recorder->start();
+}
+
+void MainWindow::slot_endRecording(QString serverid, QString gameid){
+    for(int i = 0; i < recording.size(); i++){
+        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+            recording.removeAt(i);
+        }
+    }
+
+    if(recording.isEmpty()){
+        ui->lineEdit_status->setText("Idle");
+    }
+    else{
+        ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+    }
 }
 
 QByteArray MainWindow::getFileFromUrl(QString url){
@@ -384,149 +463,6 @@ QByteArray MainWindow::getFileFromUrl(QString url){
     }
 
     QByteArray data = reply->readAll();
+    reply->deleteLater();
     return data;
-}
-
-/*    Not complete zone start here    */
-
-void MainWindow::record_featured_game(QString serverid, QString gameid, QString encryptionkey){
-    //Get serverID
-    QString serveraddress;
-    for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).at(1) == serverid){
-            serveraddress = servers.at(i).at(2);
-        }
-    }
-    if(serveraddress.size() == 0){
-        return;
-    }
-
-    if(!recording){
-        recording = true;
-    }
-    else{
-        return;
-    }
-
-    log("Start recording : " + serverid + "/" + gameid);
-
-    QString version;
-    version = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/version"));
-
-    QByteArray gameinfo;
-    for(int i = 0; i < json_featured.size(); i++){
-        if(json_featured.at(i).value("gameList").toArray().first().toObject().value("platformId").toString() == serverid){
-            QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
-            for(int j = 0; j < gamelist.size(); j++){
-                if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toLongLong()) == gameid){
-                    gameinfo = gamelist.at(j).toVariant().toByteArray();
-                    break;
-                }
-            }
-            break;
-        }
-    }
-
-    QJsonDocument json_gameMetaData = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
-
-    QList<QByteArray> list_bytearray_keyframes;
-    QList<QByteArray> list_bytearray_gamedatachunks;
-
-    int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt();
-    int lastsavedkeyframeid = -1;
-    int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt();
-    int lastsavedchunkid = -1;
-
-    QByteArray bytearray_keyframe, bytearray_chunk;
-
-    QTimer *timer = new QTimer(this);
-    QEventLoop loop;
-    connect(timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-
-    while(lastsavedchunkid != json_gameMetaData.object().value("endGameChunkId").toInt() || lastsavedkeyframeid != json_gameMetaData.object().value("endGameKeyFrameId").toInt() || json_gameMetaData.object().value("endGameChunkId").toInt() == -1){
-        if(json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().last().toObject().value("id").toInt() > lastsavedkeyframeid){
-            //Get a keyframe
-            if(lastsavedkeyframeid == keyframeid || keyframeid < json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt()){
-                keyframeid += 1;
-            }
-            bytearray_keyframe = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getKeyFrame/" + serverid + "/" + gameid + "/" + QString::number(keyframeid) + "/0"));
-            if(!bytearray_keyframe.isEmpty()){
-                list_bytearray_keyframes.append(bytearray_keyframe);
-                lastsavedkeyframeid = keyframeid;
-                log("Keyframe : " + QString::number(keyframeid));
-            }
-        }
-
-        if(json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().last().toObject().value("id").toInt() > lastsavedchunkid){
-            //Get a chunk
-            if(lastsavedchunkid == chunkid || chunkid < json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt()){
-                chunkid += 1;
-            }
-            bytearray_chunk = getFileFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + serverid + "/" + gameid + "/" + QString::number(chunkid) + "/0"));
-            if(!bytearray_chunk.isEmpty()){
-                list_bytearray_gamedatachunks.append(bytearray_chunk);
-                lastsavedchunkid = chunkid;
-                log("Chunk : " + QString::number(chunkid));
-            }
-        }
-
-        json_gameMetaData = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
-        if(json_gameMetaData.isEmpty()){
-            break;
-        }
-
-        //Retry every 5 seconds
-        timer->start(5000);
-        loop.exec();
-    }
-
-    recording = false;
-    log("End of recording : " + serverid + "/" + gameid);
-
-    //Save all chunks, infos and keyframes in a file
-
-    QFile file("H:\\OpenReplays\\" + serverid + "-" + gameid + ".lor");
-
-    if(file.open(QIODevice::WriteOnly)){
-        QTextStream stream(&file);
-
-        stream << "::OpenReplayInfos:" << serverid << ":" << gameid << ":" << encryptionkey << ":" << version << "::" << endl;
-
-        if(!gameinfo.isEmpty()){
-            stream << "::OpenReplayGameInfos::" << gameinfo.toBase64() << endl;
-        }
-
-        int first_keyframeid = json_gameMetaData.object().value("endGameKeyFrameId").toInt() - list_bytearray_keyframes.size() + 1;
-        int first_chunkid = json_gameMetaData.object().value("endGameChunkId").toInt() - list_bytearray_gamedatachunks.size() + 1;
-
-        for(int i = 0; i < list_bytearray_keyframes.size(); i++){
-            stream << "::OpenReplayKeyFrame:" << QString::number(first_keyframeid + i) << "::";
-            stream << list_bytearray_keyframes.at(i).toBase64() << endl;
-        }
-        for(int i = 0; i < list_bytearray_gamedatachunks.size(); i++){
-            stream << "::OpenReplayChunk:" << QString::number(first_chunkid + i) << "::";
-            stream << list_bytearray_gamedatachunks.at(i).toBase64() << endl;
-        }
-        stream << "::OpenReplayEnd::";
-        file.close();
-
-        log("Replay file created");
-    }
-    else{
-        log("Error saving replay.");
-    }
-
-}
-
-void MainWindow::slot_networkResult_record(QNetworkReply *reply){
-    if (reply->error() != QNetworkReply::NoError)
-            return;
-
-    if(!recording){
-        recording = true;
-
-    }
-    else{
-
-    }
 }

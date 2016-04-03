@@ -14,8 +14,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    recorder.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    recorder.h
 
 FORMS    += mainwindow.ui
