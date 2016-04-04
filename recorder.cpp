@@ -1,6 +1,6 @@
 #include "recorder.h"
 
-Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QByteArray gameinfo, QString replaydirectory)
+Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory)
 {
     m_serverid = serverid;
     m_serveraddress = serveraddress;
@@ -116,7 +116,7 @@ void Recorder::run(){
 
     //Save all chunks, infos and keyframes in a file
 
-    QFile file(m_replaydirectory + "\\" + m_serverid + "-" + m_gameid + ".lor");
+    QFile file(m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
 
     if(file.open(QIODevice::WriteOnly)){
         QTextStream stream(&file);
@@ -124,7 +124,7 @@ void Recorder::run(){
         stream << "::OpenReplayInfos:" << m_serverid << ":" << m_gameid << ":" << m_encryptionkey << ":" << version << "::" << endl;
 
         if(!m_gameinfo.isEmpty()){
-            stream << "::OpenReplayGameInfos::" << m_gameinfo.toBase64() << endl;
+            stream << "::OpenReplayGameInfos::" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << endl;
         }
 
         int first_keyframeid = json_gameMetaData.object().value("endGameKeyFrameId").toInt() - list_bytearray_keyframes.size() + 1;
@@ -141,7 +141,7 @@ void Recorder::run(){
         stream << "::OpenReplayEnd::";
         file.close();
 
-        emit toLog("Replay file created : " + m_replaydirectory + "\\" + m_serverid + "-" + m_gameid + ".lor");
+        emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
     }
     else{
         emit toLog("Error saving replay.");

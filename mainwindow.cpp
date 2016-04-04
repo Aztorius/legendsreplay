@@ -8,9 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 5.0"));
+    setWindowTitle(tr("OpenReplay Alpha 5.1"));
 
-    log(QString("OpenReplay Alpha 5.0 Started"));
+    log(QString("OpenReplay Alpha 5.1 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -414,13 +414,13 @@ void MainWindow::slot_featuredRecord(){
 
     ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
 
-    QByteArray gameinfo;
+    QJsonDocument gameinfo;
     for(int i = 0; i < json_featured.size(); i++){
         if(json_featured.at(i).value("gameList").toArray().first().toObject().value("platformId").toString() == serverid){
             QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
             for(int j = 0; j < gamelist.size(); j++){
-                if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toLongLong()) == gameid){
-                    gameinfo = gamelist.at(j).toVariant().toByteArray();
+                if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toULongLong()) == gameid){
+                    gameinfo = QJsonDocument(gamelist.at(j).toObject());
                     break;
                 }
             }

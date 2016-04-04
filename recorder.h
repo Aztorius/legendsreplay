@@ -14,11 +14,11 @@ class Recorder : public QThread
         QString m_serveraddress;
         QString m_gameid;
         QString m_encryptionkey;
-        QByteArray m_gameinfo;
+        QJsonDocument m_gameinfo;
         QString m_replaydirectory;
 
     public:
-        Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QByteArray gameinfo, QString replaydirectory);
+        Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory);
         QByteArray getFileFromUrl(QString url);
         QJsonDocument getJsonFromUrl(QString url);
 
