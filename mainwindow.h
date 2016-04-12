@@ -24,6 +24,7 @@ public:
     bool game_ended(QString serverid, QString gameid);
     QJsonDocument getJsonFromUrl(QString url);
     QByteArray getFileFromUrl(QString url);
+    void refresh_recordedGames();
 
 private:
     Ui::MainWindow *ui;

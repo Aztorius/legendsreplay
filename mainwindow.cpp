@@ -8,9 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 5.1"));
+    setWindowTitle(tr("OpenReplay Alpha 5.2"));
 
-    log(QString("OpenReplay Alpha 5.1 Started"));
+    log(QString("OpenReplay Alpha 5.2 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -40,21 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lineEdit_replaysFolder->setText(replaydirectory);
 
-    //Find saved replays
-
-    QDir dirreplays(replaydirectory);
-    dirreplays.setFilter(QDir::Files);
-    dirreplays.setSorting(QDir::Time | QDir::Reversed);
-
-    QFileInfoList replayslist = dirreplays.entryInfoList();
-
-    for(int i = 0; i < replayslist.size(); i++){
-        QFileInfo fileinfo = replayslist.at(i);
-        ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
-        QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(fileinfo.fileName());
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, item);
-    }
+    refresh_recordedGames();
 
     //Add servers
 
@@ -98,6 +84,8 @@ void MainWindow::log(QString s){
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
+    Q_UNUSED(column);
+
     QString serverid = ui->tableWidget_featured->item(row,0)->text();
     QString key = ui->tableWidget_featured->item(row,2)->text();
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
@@ -244,6 +232,8 @@ void MainWindow::slot_featuredRefresh(){
 }
 
 void MainWindow::slot_click_featured(int row, int column){
+    Q_UNUSED(column);
+
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
 
     ui->lineEdit_featured_serverid->setText(ui->tableWidget_featured->item(row, 0)->text());
@@ -331,20 +321,7 @@ bool MainWindow::game_ended(QString serverid, QString gameid){
         return false;
     }
 
-    QNetworkAccessManager manager;
-    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"))));
-
-    QEventLoop loop;
-    connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-
-    if(reply->error() != QNetworkReply::NoError){
-        return false;
-    }
-
-    QString data = (QString) reply->readAll();
-
-    QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
+    QJsonDocument jsonResponse = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
 
     if(jsonResponse.isEmpty()){
         return false;
@@ -372,6 +349,7 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url){
 
     if(reply->error() != QNetworkReply::NoError){
         QJsonDocument jsonEmpty;
+        log("Error : " + reply->errorString());
         return jsonEmpty;
     }
 
@@ -447,6 +425,8 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid){
     else{
         ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
     }
+
+    refresh_recordedGames();
 }
 
 QByteArray MainWindow::getFileFromUrl(QString url){
@@ -459,10 +439,33 @@ QByteArray MainWindow::getFileFromUrl(QString url){
 
     if(reply->error() != QNetworkReply::NoError){
         QByteArray emptyArray;
+        log("Error : " + reply->errorString());
         return emptyArray;
     }
 
     QByteArray data = reply->readAll();
     reply->deleteLater();
     return data;
+}
+
+void MainWindow::refresh_recordedGames(){
+    //Find saved replays
+
+    QDir dirreplays(replaydirectory);
+    dirreplays.setFilter(QDir::Files);
+    dirreplays.setSorting(QDir::Time | QDir::Reversed);
+
+    QFileInfoList replayslist = dirreplays.entryInfoList();
+
+    while(ui->tableWidget_recordedgames->rowCount() > 0){
+        ui->tableWidget_recordedgames->removeRow(0);
+    }
+
+    for(int i = 0; i < replayslist.size(); i++){
+        QFileInfo fileinfo = replayslist.at(i);
+        ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
+        QTableWidgetItem *item = new QTableWidgetItem;
+        item->setText(fileinfo.fileName());
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, item);
+    }
 }
