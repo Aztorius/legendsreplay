@@ -8,9 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 5.2"));
+    setWindowTitle(tr("OpenReplay Alpha 6.0.0"));
 
-    log(QString("OpenReplay Alpha 5.2 Started"));
+    log(QString("OpenReplay Alpha 6.0.0 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -42,11 +42,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     refresh_recordedGames();
 
+    replaying = false;
+    playing = false;
+
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(slot_refreshPlayingStatus()));
+    m_timer->start(60000);
+
     //Add servers
 
-    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80");
-    servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088");
-    servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80");
+    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80" << "EUW");
+    servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088" << "EUNE");
+    servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80" << "NA");
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -56,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
     connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
+    connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
+    connect(ui->pushButton_summonersave, SIGNAL(released()), this, SLOT(slot_summonerinfos_save()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -260,16 +269,7 @@ void MainWindow::slot_click_featured(int row, int column){
         return;
     }
 
-    ui->lineEdit_featured_player1->setText(participants.at(0).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player2->setText(participants.at(1).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player3->setText(participants.at(2).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player4->setText(participants.at(3).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player5->setText(participants.at(4).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player6->setText(participants.at(5).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player7->setText(participants.at(6).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player8->setText(participants.at(7).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player9->setText(participants.at(8).toObject().value("summonerName").toString());
-    ui->lineEdit_featured_player10->setText(participants.at(9).toObject().value("summonerName").toString());
+    //Show game infos
 }
 
 void MainWindow::slot_setdirectory(){
@@ -295,7 +295,17 @@ void MainWindow::slot_featuredLaunch(){
         return;
     }
     int row = ui->tableWidget_featured->currentRow();
+
+    slot_refreshPlayingStatus();
+
+    if(playing){
+        log("Replay aborted. LoL is currently running.");
+        return;
+    }
+
     lol_launch(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,2)->text(),ui->tableWidget_featured->item(row,1)->text());
+
+    replaying = true;
 }
 
 bool MainWindow::check_path(QString path){
@@ -468,4 +478,123 @@ void MainWindow::refresh_recordedGames(){
         item->setText(fileinfo.fileName());
         ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, item);
     }
+}
+
+void MainWindow::slot_replayserversAdd(){
+    if(ui->lineEdit_replayserver_address->text().isEmpty()){
+        return;
+    }
+
+    orservers.append(ui->lineEdit_replayserver_address->text());
+
+    ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+    ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(ui->lineEdit_replayserver_address->text()));
+}
+
+void MainWindow::slot_summonerinfos_save(){
+    if(ui->lineEdit_summonername->text().isEmpty() || orservers.isEmpty()){
+        return;
+    }
+
+    m_summonername = ui->lineEdit_summonername->text();
+    m_summonerserver = ui->comboBox_summonerserver->currentText();
+
+    //Retrieving summoner ID
+
+    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
+
+    log("Retrieving summoner ID");
+
+    if(suminfos.isEmpty()){
+       return;
+    }
+    else{
+        m_summonerid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
+        ui->lineEdit_summonerid->setText(m_summonerid);
+        log("Your summoner ID is " + m_summonerid);
+    }
+}
+
+bool MainWindow::islolRunning() {
+  QProcess tasklist;
+
+  tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq League of Legends.exe"));
+  tasklist.waitForFinished();
+
+  QString output = tasklist.readAllStandardOutput();
+  return output.startsWith(QString("\"League of Legends.exe\""));
+}
+
+bool MainWindow::islolclientRunning() {
+  QProcess tasklist;
+
+  tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq LolClient.exe"));
+  tasklist.waitForFinished();
+
+  QString output = tasklist.readAllStandardOutput();
+  return output.startsWith(QString("\"LolClient.exe\""));
+}
+
+void MainWindow::slot_refreshPlayingStatus(){
+    if(!islolRunning()){
+        replaying = false;
+        playing = false;
+    }
+
+    if(!replaying && islolclientRunning() && islolRunning()){
+        if(!playing){
+            //Start recording the game
+            playing = true;
+
+            log("Game detected : start recording");
+
+            QJsonDocument gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
+
+            QString serverid, serveraddress;
+            QString gameid = QString::number(gameinfos.object().value("gameId").toVariant().toLongLong());
+
+            for(int i = 0; i < servers.size(); i++){
+                if(servers.at(i).at(3) == m_summonerserver){
+                    serverid = servers.at(i).at(1);
+                    serveraddress = servers.at(i).at(2);
+                    break;
+                }
+            }
+
+            if(serverid.isEmpty()){
+                return;
+            }
+
+            recording.append(QStringList() << serverid << gameid);
+
+            ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+
+            Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, gameinfos.object().value("observers").toObject().value("encryptionKey").toString(), gameinfos, replaydirectory);
+            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+            connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+            recorder->start();
+        }
+    }
+
+    m_timer->start(60000);
+}
+
+QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString summonerid){
+    QString servertag;
+
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(3) == server){
+            servertag = servers.at(i).at(1);
+            break;
+        }
+    }
+
+    if(servertag.isEmpty() || orservers.isEmpty()){
+        QJsonDocument docempty;
+        return docempty;
+    }
+
+    QJsonDocument gameinfos = getJsonFromUrl("http://" + orservers.first() + "?platformid=" + servertag + "&summonerid=" + summonerid);
+
+    return gameinfos;
 }

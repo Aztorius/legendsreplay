@@ -205,36 +205,8 @@
            <string>Game Infos</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="7" column="1">
-            <widget class="QLineEdit" name="lineEdit_featured_player10">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>GameID :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Server :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1" colspan="2">
-            <widget class="QLineEdit" name="lineEdit_featured_serverid">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" colspan="2">
-            <widget class="QLineEdit" name="lineEdit_featured_gameid">
+           <item row="2" column="1" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_featured_key">
              <property name="readOnly">
               <bool>true</bool>
              </property>
@@ -247,77 +219,38 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1" colspan="2">
-            <widget class="QLineEdit" name="lineEdit_featured_key">
+           <item row="1" column="1" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_featured_gameid">
              <property name="readOnly">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_featured_player6">
+           <item row="0" column="1" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_featured_serverid">
              <property name="readOnly">
               <bool>true</bool>
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEdit_featured_player7">
-             <property name="readOnly">
-              <bool>true</bool>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>Server :</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
-            <widget class="QLineEdit" name="lineEdit_featured_player2">
-             <property name="readOnly">
-              <bool>true</bool>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>GameID :</string>
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
-            <widget class="QLineEdit" name="lineEdit_featured_player4">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
+           <item row="3" column="0" colspan="3">
+            <widget class="QTreeView" name="treeView"/>
            </item>
-           <item row="5" column="0">
-            <widget class="QLineEdit" name="lineEdit_featured_player3">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="lineEdit_featured_player1">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="lineEdit_featured_player8">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QLineEdit" name="lineEdit_featured_player9">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLineEdit" name="lineEdit_featured_player5">
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="1">
+           <item row="5" column="2">
             <widget class="QPushButton" name="pushButton_featured_record">
              <property name="minimumSize">
               <size>
@@ -330,7 +263,7 @@
              </property>
             </widget>
            </item>
-           <item row="9" column="0">
+           <item row="5" column="0">
             <widget class="QPushButton" name="pushButton_featured_spectate">
              <property name="minimumSize">
               <size>
@@ -421,47 +354,164 @@
         </property>
        </widget>
       </widget>
+      <widget class="QWidget" name="tab_7">
+       <attribute name="title">
+        <string>Replay Servers</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_8">
+        <item row="0" column="1">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>250</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Add a replay server</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_replayserver_address"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Address :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="QPushButton" name="pushButton_add_replayserver">
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QTableWidget" name="tableWidget_replayservers">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>250</number>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Address</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tab_4">
        <attribute name="title">
         <string>Options</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
+        <item row="0" column="3">
+         <widget class="QPushButton" name="pushButton_summonersave">
           <property name="text">
-           <string>LoL Folder :</string>
+           <string>Save</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEdit_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_8">
           <property name="text">
-           <string/>
+           <string>Your summoner name :</string>
           </property>
          </widget>
         </item>
         <item row="0" column="2">
-         <widget class="QToolButton" name="toolButton">
+         <widget class="QLineEdit" name="lineEdit_summonername"/>
+        </item>
+        <item row="1" column="1" colspan="3">
+         <widget class="QLineEdit" name="lineEdit_summonerid">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Your summoner ID :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QToolButton" name="toolButton_2">
           <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Replays Folder :</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEdit_replaysFolder"/>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>LoL Folder :</string>
+          </property>
+         </widget>
         </item>
-        <item row="1" column="2">
-         <widget class="QToolButton" name="toolButton_2">
+        <item row="2" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QToolButton" name="toolButton">
           <property name="text">
            <string>...</string>
           </property>
+         </widget>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_replaysFolder">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="comboBox_summonerserver">
+          <item>
+           <property name="text">
+            <string>EUW</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>EUNE</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>NA</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
@@ -476,7 +526,7 @@
      <x>0</x>
      <y>0</y>
      <width>619</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

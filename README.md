@@ -1,7 +1,7 @@
 # OpenReplay
 An experimental LOL replay software.
 
-### Current Version : Alpha 5.2
+### Current Version : Alpha 6.0.0
 
 ## Features
 
@@ -11,9 +11,9 @@ An experimental LOL replay software.
 - Launch spectator mode for featured games
 - Record featured games
 - Record multiple games at the same time (multithreading)
+- Autorecord current playing game
 
 ## TODO
 
 - Record any game
 - Play recorded games
-- Record current playing game
