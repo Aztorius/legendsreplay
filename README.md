@@ -16,4 +16,4 @@ An experimental LOL replay software.
 ## TODO
 
 - Record any game
-- Play recorded games
+- Replay recorded games
