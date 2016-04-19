@@ -66,6 +66,9 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <attribute name="horizontalHeaderHighlightSections">
+           <bool>false</bool>
+          </attribute>
           <attribute name="verticalHeaderDefaultSectionSize">
            <number>20</number>
           </attribute>
@@ -332,27 +335,6 @@
          </widget>
         </item>
        </layout>
-      </widget>
-      <widget class="QWidget" name="tab_5">
-       <attribute name="title">
-        <string>Statistics</string>
-       </attribute>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>220</x>
-          <y>10</y>
-          <width>131</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Soon</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
       </widget>
       <widget class="QWidget" name="tab_7">
        <attribute name="title">

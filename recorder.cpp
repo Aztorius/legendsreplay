@@ -112,8 +112,6 @@ void Recorder::run(){
 
     emit toLog("End of recording : " + m_serverid + "/" + m_gameid);
 
-    //TODO : Emit signal end of recording
-
     //Save all chunks, infos and keyframes in a file
 
     QFile file(m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
@@ -121,24 +119,29 @@ void Recorder::run(){
     if(file.open(QIODevice::WriteOnly)){
         QTextStream stream(&file);
 
-        stream << "::OpenReplayInfos:" << m_serverid << ":" << m_gameid << ":" << m_encryptionkey << ":" << version << "::" << endl;
+        stream << "::ORHeader:" << m_serverid << ":" << m_gameid << ":" << m_encryptionkey << ":" << version << "::" << endl;
 
         if(!m_gameinfo.isEmpty()){
-            stream << "::OpenReplayGameInfos::" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << endl;
+            stream << "::ORGameInfos:" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
         }
 
         int first_keyframeid = json_gameMetaData.object().value("endGameKeyFrameId").toInt() - list_bytearray_keyframes.size() + 1;
         int first_chunkid = json_gameMetaData.object().value("endGameChunkId").toInt() - list_bytearray_gamedatachunks.size() + 1;
 
+        if(first_keyframeid < 0 || first_chunkid < 0){
+            first_chunkid = 0;
+            first_keyframeid = 0;
+        }
+
         for(int i = 0; i < list_bytearray_keyframes.size(); i++){
-            stream << "::OpenReplayKeyFrame:" << QString::number(first_keyframeid + i) << "::";
-            stream << list_bytearray_keyframes.at(i).toBase64() << endl;
+            stream << "::ORKeyFrame:" << QString::number(first_keyframeid + i) << ":";
+            stream << list_bytearray_keyframes.at(i).toBase64() << "::" << endl;
         }
         for(int i = 0; i < list_bytearray_gamedatachunks.size(); i++){
-            stream << "::OpenReplayChunk:" << QString::number(first_chunkid + i) << "::";
-            stream << list_bytearray_gamedatachunks.at(i).toBase64() << endl;
+            stream << "::ORChunk:" << QString::number(first_chunkid + i) << ":";
+            stream << list_bytearray_gamedatachunks.at(i).toBase64() << "::" << endl;
         }
-        stream << "::OpenReplayEnd::";
+        stream << "::OREnd::";
         file.close();
 
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");

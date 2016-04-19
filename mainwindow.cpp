@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "recorder.h"
+#include "replay.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -8,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 6.0.0"));
+    setWindowTitle(tr("OpenReplay Alpha 6.1.0"));
 
-    log(QString("OpenReplay Alpha 6.0.0 Started"));
+    log(QString("OpenReplay Alpha 6.1.0 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -75,8 +76,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
-
-    slot_featuredRefresh();
 
     ui->lineEdit_status->setText("Idle");
 }
@@ -474,9 +473,13 @@ void MainWindow::refresh_recordedGames(){
     for(int i = 0; i < replayslist.size(); i++){
         QFileInfo fileinfo = replayslist.at(i);
         ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
-        QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(fileinfo.fileName());
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, item);
+
+        Replay *game = new Replay(fileinfo.filePath());
+
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game->getServerid()));
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game->getGameid()));
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(game->getEncryptionkey()));
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
     }
 }
 

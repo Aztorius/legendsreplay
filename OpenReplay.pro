@@ -16,10 +16,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     recorder.cpp \
-    replay.cpp
+    replay.cpp \
+    server.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
-    replay.h
+    replay.h \
+    server.h
 
 FORMS    += mainwindow.ui
