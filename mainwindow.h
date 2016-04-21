@@ -8,6 +8,12 @@
 #include <QFile>
 #include <QtConcurrent/QtConcurrent>
 
+#include "qhttpserver.hpp"
+#include "qhttpserverresponse.hpp"
+#include "qhttpserverrequest.hpp"
+
+using namespace qhttp::server;
+
 namespace Ui {
 class MainWindow;
 }
@@ -20,7 +26,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void lol_launch(QString serverid, QString key, QString matchid);
+    void lol_launch(QString serverid, QString key, QString matchid, bool local = false);
     bool check_path(QString path);
     bool game_ended(QString serverid, QString gameid);
 
@@ -39,6 +45,7 @@ private:
     QNetworkAccessManager *networkManager_featured;
 
     QList <QStringList> recording;
+    QList <QString> recordedgames_filename;
 
     QList <QJsonObject> json_status;
     QList <QJsonObject> json_featured;
@@ -58,12 +65,18 @@ private:
 
     QTimer *m_timer;
 
+    QHttpServer *httpserver;
+
+    int serverChunkCount;
+    int serverKeyframeCount;
+
 private slots:
     void slot_networkResult_status(QNetworkReply* reply);
     void slot_networkResult_featured(QNetworkReply *reply);
 
     void slot_refreshPlayingStatus();
 
+    void slot_doubleclick_savedgames(int row,int column);
     void slot_doubleclick_featured(int row,int column);
     void slot_click_featured(int row,int column);
 

@@ -10,6 +10,12 @@ public:
     QString getGameid();
     QString getServerid();
     QString getEncryptionkey();
+    QList<QByteArray> getKeyFrames();
+    QList<QByteArray> getChunks();
+    QList<int> getKeyFramesid();
+    QList<int> getChunksid();
+    QJsonDocument getGameinfos();
+    QString getServerversion();
 
 private:
     QString m_gameid;

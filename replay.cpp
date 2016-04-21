@@ -7,6 +7,7 @@ Replay::Replay(QString filepath)
 
     if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
         QTextStream in(&file);
+        in.setCodec("UTF-8");
         while (!in.atEnd()) {
             QString line = in.readLine();
 
@@ -37,11 +38,10 @@ Replay::Replay(QString filepath)
             else if(line.left(14) == "::ORGameInfos:"){
                 line.remove(0,14);
 
-                QString gameinfos = line.left(line.indexOf(":"));
-                QByteArray ba_gameinfos = gameinfos.toUtf8();
-                ba_gameinfos.fromBase64(ba_gameinfos);
-                QJsonDocument jd_gameinfos;
-                jd_gameinfos.fromBinaryData(ba_gameinfos);
+                QString gameinfos64 = line.left(line.indexOf(":"));
+                QByteArray gameinfosba = QByteArray::fromBase64(gameinfos64.toLocal8Bit());
+
+                QJsonDocument jd_gameinfos = QJsonDocument::fromJson(gameinfosba);
                 m_gameinfos = jd_gameinfos;
             }
             else if(line.left(13) == "::ORKeyFrame:"){
@@ -51,8 +51,7 @@ Replay::Replay(QString filepath)
                 line.remove(0,line.indexOf(":")+1);
 
                 QString keyframe = line.left(line.indexOf(":"));
-                QByteArray ba_keyframe = keyframe.toUtf8();
-                ba_keyframe.fromBase64(ba_keyframe);
+                QByteArray ba_keyframe = QByteArray::fromBase64(keyframe.toLocal8Bit());
                 m_keyframes.append(ba_keyframe);
             }
             else if(line.left(10) == "::ORChunk:"){
@@ -62,8 +61,7 @@ Replay::Replay(QString filepath)
                 line.remove(0,line.indexOf(":")+1);
 
                 QString chunk = line.left(line.indexOf(":"));
-                QByteArray ba_chunk = chunk.toUtf8();
-                ba_chunk.fromBase64(ba_chunk);
+                QByteArray ba_chunk = QByteArray::fromBase64(chunk.toLocal8Bit());
                 m_chunks.append(ba_chunk);
             }
         }
@@ -80,4 +78,28 @@ QString Replay::getServerid(){
 
 QString Replay::getEncryptionkey(){
     return m_encryptionkey;
+}
+
+QList<QByteArray> Replay::getKeyFrames(){
+    return m_keyframes;
+}
+
+QList<QByteArray> Replay::getChunks(){
+    return m_chunks;
+}
+
+QList<int> Replay::getKeyFramesid(){
+    return m_keyframesid;
+}
+
+QList<int> Replay::getChunksid(){
+    return m_chunksid;
+}
+
+QJsonDocument Replay::getGameinfos(){
+    return m_gameinfos;
+}
+
+QString Replay::getServerversion(){
+    return m_serverversion;
 }
