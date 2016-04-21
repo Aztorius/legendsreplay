@@ -61,6 +61,7 @@ void Recorder::run(){
 
     QList<QByteArray> list_bytearray_keyframes;
     QList<QByteArray> list_bytearray_gamedatachunks;
+    QList<int> list_int_chunksduration;
 
     int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt();
     int lastsavedkeyframeid = -1;
@@ -94,6 +95,9 @@ void Recorder::run(){
             }
             bytearray_chunk = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + m_serverid + "/" + m_gameid + "/" + QString::number(chunkid) + "/0"));
             if(!bytearray_chunk.isEmpty()){
+                //QJsonDocument lastchunkinfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/0/token"));
+                //list_int_chunksduration.append(lastchunkinfo);
+
                 list_bytearray_gamedatachunks.append(bytearray_chunk);
                 lastsavedchunkid = chunkid;
                 emit toLog("Chunk-" + m_serverid + "/" + m_gameid + " : " + QString::number(chunkid));
@@ -105,10 +109,14 @@ void Recorder::run(){
             break;
         }
 
-        //Retry every 5 seconds
-        timer.start(5000);
+        //Retry every 10 seconds
+        timer.start(10000);
         loop.exec();
     }
+
+    QJsonDocument lastchunkinfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/0/token"));
+    m_startgamechunkid = QString::number(lastchunkinfo.object().value("startGameChunkId").toInt());
+    m_endstartupchunkid = QString::number(lastchunkinfo.object().value("endStartupChunkId").toInt());
 
     emit toLog("End of recording : " + m_serverid + "/" + m_gameid);
 
@@ -119,7 +127,7 @@ void Recorder::run(){
     if(file.open(QIODevice::WriteOnly)){
         QTextStream stream(&file);
 
-        stream << "::ORHeader:" << m_serverid << ":" << m_gameid << ":" << m_encryptionkey << ":" << version << "::" << endl;
+        stream << "::ORHeader:" << m_serverid << ":" << m_gameid << ":" << m_encryptionkey << ":" << version << ":" << m_endstartupchunkid << ":" << m_startgamechunkid << "::" << endl;
 
         if(!m_gameinfo.isEmpty()){
             stream << "::ORGameInfos:" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;

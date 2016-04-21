@@ -16,6 +16,8 @@ public:
     QList<int> getChunksid();
     QJsonDocument getGameinfos();
     QString getServerversion();
+    QString getEndstartupchunkid();
+    QString getStartgamechunkid();
 
 private:
     QString m_gameid;
@@ -23,10 +25,14 @@ private:
     QString m_encryptionkey;
     QString m_filepath;
     QString m_serverversion;
+    QString m_endstartupchunkid;
+    QString m_startgamechunkid;
 
     QList<QByteArray> m_keyframes;
     QList<int> m_keyframesid;
     QList<QByteArray> m_chunks;
+    QList<int> m_chunksduration;
+    QList<int> m_chunkskeyframesid;
     QList<int> m_chunksid;
 
     QJsonDocument m_gameinfos;

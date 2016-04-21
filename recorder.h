@@ -16,6 +16,8 @@ class Recorder : public QThread
         QString m_encryptionkey;
         QJsonDocument m_gameinfo;
         QString m_replaydirectory;
+        QString m_endstartupchunkid;
+        QString m_startgamechunkid;
 
     public:
         Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory);

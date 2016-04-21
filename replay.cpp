@@ -34,6 +34,16 @@ Replay::Replay(QString filepath)
 
                 QString serverversion = line.left(line.indexOf(":"));
                 m_serverversion = serverversion;
+
+                line.remove(0,line.indexOf(":")+1);
+
+                QString endstartupchunkid = line.left(line.indexOf(":"));
+                m_endstartupchunkid = endstartupchunkid;
+
+                line.remove(0,line.indexOf(":")+1);
+
+                QString startgamechunkid = line.left(line.indexOf(":"));
+                m_startgamechunkid = startgamechunkid;
             }
             else if(line.left(14) == "::ORGameInfos:"){
                 line.remove(0,14);
@@ -102,4 +112,12 @@ QJsonDocument Replay::getGameinfos(){
 
 QString Replay::getServerversion(){
     return m_serverversion;
+}
+
+QString Replay::getEndstartupchunkid(){
+    return m_endstartupchunkid;
+}
+
+QString Replay::getStartgamechunkid(){
+    return m_startgamechunkid;
 }
