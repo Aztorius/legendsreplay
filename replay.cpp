@@ -70,6 +70,10 @@ Replay::Replay(QString filepath)
                 m_chunksid.append(line.left(line.indexOf(":")).toInt());
                 line.remove(0,line.indexOf(":")+1);
 
+                QString chunkduration = line.left(line.indexOf(":"));
+                m_chunksduration.append(chunkduration.toInt());
+                line.remove(0,line.indexOf(":")+1);
+
                 QString chunk = line.left(line.indexOf(":"));
                 QByteArray ba_chunk = QByteArray::fromBase64(chunk.toLocal8Bit());
                 m_chunks.append(ba_chunk);
@@ -120,4 +124,8 @@ QString Replay::getEndstartupchunkid(){
 
 QString Replay::getStartgamechunkid(){
     return m_startgamechunkid;
+}
+
+QList<int> Replay::getChunksDuration(){
+    return m_chunksduration;
 }

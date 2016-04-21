@@ -95,8 +95,7 @@ void Recorder::run(){
             }
             bytearray_chunk = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + m_serverid + "/" + m_gameid + "/" + QString::number(chunkid) + "/0"));
             if(!bytearray_chunk.isEmpty()){
-                //QJsonDocument lastchunkinfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/0/token"));
-                //list_int_chunksduration.append(lastchunkinfo);
+                list_int_chunksduration.append(json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().last().toObject().value("duration").toInt());
 
                 list_bytearray_gamedatachunks.append(bytearray_chunk);
                 lastsavedchunkid = chunkid;
@@ -114,7 +113,7 @@ void Recorder::run(){
         loop.exec();
     }
 
-    QJsonDocument lastchunkinfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/0/token"));
+    QJsonDocument lastchunkinfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
     m_startgamechunkid = QString::number(lastchunkinfo.object().value("startGameChunkId").toInt());
     m_endstartupchunkid = QString::number(lastchunkinfo.object().value("endStartupChunkId").toInt());
 
@@ -146,7 +145,7 @@ void Recorder::run(){
             stream << list_bytearray_keyframes.at(i).toBase64() << "::" << endl;
         }
         for(int i = 0; i < list_bytearray_gamedatachunks.size(); i++){
-            stream << "::ORChunk:" << QString::number(first_chunkid + i) << ":";
+            stream << "::ORChunk:" << QString::number(first_chunkid + i) << ":" << QString::number(list_int_chunksduration.at(i)) << ":";
             stream << list_bytearray_gamedatachunks.at(i).toBase64() << "::" << endl;
         }
         stream << "::OREnd::";

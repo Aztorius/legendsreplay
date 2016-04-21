@@ -7,14 +7,20 @@ class Replay
 {
 public:
     Replay(QString filepath);
+
     QString getGameid();
     QString getServerid();
     QString getEncryptionkey();
+
     QList<QByteArray> getKeyFrames();
     QList<QByteArray> getChunks();
+
     QList<int> getKeyFramesid();
     QList<int> getChunksid();
+    QList<int> getChunksDuration();
+
     QJsonDocument getGameinfos();
+
     QString getServerversion();
     QString getEndstartupchunkid();
     QString getStartgamechunkid();

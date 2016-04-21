@@ -1,7 +1,7 @@
 # OpenReplay
 An experimental LOL replay software.
 
-### Current Version : Alpha 8.0
+### Current Version : Alpha 8.1
 
 ## Features
 

@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 8.0"));
+    setWindowTitle(tr("OpenReplay Alpha 8.1"));
 
-    log(QString("OpenReplay Alpha 8.0 Started"));
+    log(QString("OpenReplay Alpha 8.1 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -139,9 +139,9 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
+        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"", QStringList(), path);
 
-        log("\"" + path + "\\League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"");
     }
     else{
         for(int i = 0; i < servers.size(); i++){
@@ -158,9 +158,9 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
+        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"", QStringList(), path);
 
-        log("\"" + path + "\\League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"");
     }
 }
 
@@ -646,6 +646,8 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
     log("Opening : " + replaydirectory + "/" + recordedgames_filename.at(row));
 
+    log("Server: started");
+
     httpserver->stopListening();
 
     httpserver->listen(QHostAddress::Any, 8080, [replay,this](QHttpRequest* req, QHttpResponse* res) {
@@ -663,15 +665,15 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             metadata += ",\"platformId\":\"" + replay->getServerid() + "\"}";
             metadata += ",\"gameServerAddress\":\"\"";
             metadata += ",\"port\":0";
-            metadata += ",\"encryptionKey\":\"\"";
+            metadata += ",\"encryptionKey\":\"" + replay->getEncryptionkey() + "\"";
             metadata += ",\"chunkTimeInterval\":30000";
             metadata += ",\"startTime\":\"Apr 21, 2016 1:38:10 PM\"";
-            metadata += ",\"gameEnded\":false";
-            metadata += ",\"lastChunkId\":" + QString::number(replay->getChunksid().first());
-            metadata += ",\"lastKeyFrameId\":" + QString::number(replay->getKeyFramesid().first());
+            metadata += ",\"gameEnded\":true";
+            metadata += ",\"lastChunkId\":" + QString::number(replay->getChunksid().last());
+            metadata += ",\"lastKeyFrameId\":" + QString::number(replay->getKeyFramesid().last());
             metadata += ",\"endStartupChunkId\":" + replay->getEndstartupchunkid();
             metadata += ",\"delayTime\":150000";
-            metadata += ",\"pendingAvailableChunkInfo\":[{\"id\":" + QString::number(replay->getChunksid().first()) + ",\"duration\":30000,\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}]";
+            metadata += ",\"pendingAvailableChunkInfo\":[{\"id\":" + QString::number(replay->getChunksid().first()) + ",\"duration\":" + QString::number(replay->getChunksDuration().first()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}]";
             metadata += ",\"pendingAvailableKeyFrameInfo\":[{\"id\":" + QString::number(replay->getKeyFramesid().first()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + replay->getStartgamechunkid() + "}]";
             metadata += ",\"keyFrameTimeInterval\":60000";
             metadata += ",\"decodedEncryptionKey\":\"\"";
@@ -680,13 +682,11 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             metadata += ",\"clientAddedLag\":30000";
             metadata += ",\"clientBackFetchingEnabled\":false";
             metadata += ",\"clientBackFetchingFreq\":1000";
-            metadata += ",\"interestScore\":1";
+            metadata += ",\"interestScore\":2000";
             metadata += ",\"featuredGame\":false";
             metadata += ",\"createTime\":\"Apr 21, 2016 1:37:43 PM\"";
-            //metadata += ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last());
-            metadata += ",\"endGameChunkId\":0";
-            //metadata += ",\"endGameKeyFrameId\":" + QString::number(replay->getKeyFramesid().last());
-            metadata += ",\"endGameKeyFrameId\":0";
+            metadata += ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last());
+            metadata += ",\"endGameKeyFrameId\":" + QString::number(replay->getKeyFramesid().last());
             metadata += "}";
 
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -695,8 +695,8 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
             log("Server: send game metadata");
         }
-        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid())){
-            //TODO
+        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid()))
+        {
             int endstartupchunkid = replay->getEndstartupchunkid().toInt();
             int endstartupkeyframeid = replay->getKeyFramesid().first();
             int startgamechunkid = replay->getStartgamechunkid().toInt();
@@ -717,7 +717,7 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
                 serverKeyframeCount = endstartupkeyframeid;
             }
 
-            int nextChunkid = startgamechunkid + serverKeyframeCount*2 - 2;
+            int nextChunkid = startgamechunkid + serverKeyframeCount*2 - 1;
 
             if(nextChunkid >= replay->getChunksid().last() || nextChunkid < 0){
                 nextChunkid = 0;
@@ -731,10 +731,24 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
                 nextavailablechunk = 0;
             }
 
+            QString data = "{";
+            data += "\"chunkId\":" + QString::number(currentChunkid);
+            data += ",\"availableSince\":1";
+            data += ",\"nextAvailableChunk\":" + QString::number(nextavailablechunk);
+            data += ",\"keyframeId\":" + QString::number(currentKeyframeid);
+            data += ",\"nextChunkId\":" + QString::number(nextChunkid);
+            data += ",\"endStartupChunkId\":" + QString::number(endstartupchunkid);
+            data += ",\"startGameChunkId\":" + QString::number(startgamechunkid);
+            data += ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last());
+            data += ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(currentChunkid)));
+            data += "}";
+
             res->setStatusCode(qhttp::ESTATUS_OK);
             res->addHeader("Content-Type", "application/json;charset=utf-8");
-            res->end(QString("{\"chunkId\":" + QString::number(currentChunkid) + ",\"availableSince\":1,\"nextAvailableChunk\": " + QString::number(nextavailablechunk) + ",\"keyframeId\":" + QString::number(currentKeyframeid) + ",\"nextChunkId\":" + QString::number(nextChunkid) + ",\"endStartupChunkId\":" + QString::number(endstartupchunkid) + ",\"startGameChunkId\":" + QString::number(startgamechunkid) + ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last()) + ",\"duration\":" + QString::number(30000) + "}").toUtf8());
-            log(QString("Server: send lastChunkInfo : {\"chunkId\":" + QString::number(currentChunkid) + ",\"availableSince\":1,\"nextAvailableChunk\": " + QString::number(nextavailablechunk) + ",\"keyframeId\":" + QString::number(currentKeyframeid) + ",\"nextChunkId\":" + QString::number(nextChunkid) + ",\"endStartupChunkId\":" + QString::number(endstartupchunkid) + ",\"startGameChunkId\":" + QString::number(startgamechunkid) + ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last()) + ",\"duration\":" + QString::number(30000) + "}"));
+            res->end(data.toLocal8Bit());
+
+            log("Server: send lastChunkInfo");
+            log(data);
         }
         else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid())){
             int chunkid = -1;
@@ -742,7 +756,6 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             //Get and send the chunk
             url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid() + "/");
             chunkid = url.left(url.indexOf("/")).toInt();
-            //chunkid = serverChunkCount;
 
             int index = replay->getChunksid().indexOf(chunkid);
 
@@ -756,11 +769,16 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
                 serverChunkCount += 1;
 
+                if(serverChunkCount >= replay->getStartgamechunkid().toInt() + 2*serverKeyframeCount){
+                    serverKeyframeCount += 1;
+                }
+
                 log("Server: send chunk " + QString::number(chunkid));
             }
             else{
                 res->setStatusCode(qhttp::ESTATUS_NOT_FOUND);
                 res->end("");
+                log("Server: unknown requested chunk");
             }
         }
         else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid())){
@@ -779,9 +797,10 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
                 res->addHeader("Content-Type", "application/octet-stream");
                 res->end(keyframe);
 
-                serverKeyframeCount += 1;
-
                 log("Server: send keyframe " + QString::number(keyframeid));
+            }
+            else{
+                log("Server: unknown requested keyframe");
             }
         }
         else{
