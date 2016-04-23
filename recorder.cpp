@@ -61,12 +61,16 @@ void Recorder::run(){
 
     QList<QByteArray> list_bytearray_keyframes;
     QList<QByteArray> list_bytearray_gamedatachunks;
+    QList<QByteArray> list_bytearray_primarychunks;
     QList<int> list_int_chunksduration;
 
     int keyframeid = json_gameMetaData.object().value("pendingAvailableKeyFrameInfo").toArray().first().toObject().value("id").toInt();
+    //int keyframeid = 0;
     int lastsavedkeyframeid = -1;
     int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt();
+    int firstchunkid = chunkid;
     int lastsavedchunkid = -1;
+    int startupchunkid = 1;
 
     QByteArray bytearray_keyframe, bytearray_chunk;
 
@@ -84,7 +88,7 @@ void Recorder::run(){
             if(!bytearray_keyframe.isEmpty()){
                 list_bytearray_keyframes.append(bytearray_keyframe);
                 lastsavedkeyframeid = keyframeid;
-                emit toLog("Keyframe-" + m_serverid + "/" + m_gameid + " : " + QString::number(keyframeid));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(keyframeid));
             }
         }
 
@@ -99,7 +103,20 @@ void Recorder::run(){
 
                 list_bytearray_gamedatachunks.append(bytearray_chunk);
                 lastsavedchunkid = chunkid;
-                emit toLog("Chunk-" + m_serverid + "/" + m_gameid + " : " + QString::number(chunkid));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(chunkid));
+            }
+        }
+
+        if(startupchunkid <= json_gameMetaData.object().value("endStartupChunkId").toInt() && startupchunkid < firstchunkid){
+            //Get a primary chunk
+            bytearray_chunk = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + m_serverid + "/" + m_gameid + "/" + QString::number(startupchunkid) + "/0"));
+            if(!bytearray_chunk.isEmpty()){
+                list_bytearray_primarychunks.append(bytearray_chunk);
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(startupchunkid));
+                startupchunkid += 1;
+            }
+            else{
+                emit toLog("Recorder: PrimaryChunk lost " + m_serverid + "/" + m_gameid + " : " + QString::number(startupchunkid));
             }
         }
 
@@ -143,6 +160,10 @@ void Recorder::run(){
         for(int i = 0; i < list_bytearray_keyframes.size(); i++){
             stream << "::ORKeyFrame:" << QString::number(first_keyframeid + i) << ":";
             stream << list_bytearray_keyframes.at(i).toBase64() << "::" << endl;
+        }
+        for(int i = 0; i < list_bytearray_primarychunks.size(); i++){
+            stream << "::ORChunk:" << QString::number(i+1) << ":" << QString::number(30000) << ":";
+            stream << list_bytearray_primarychunks.at(i).toBase64() << "::" << endl;
         }
         for(int i = 0; i < list_bytearray_gamedatachunks.size(); i++){
             stream << "::ORChunk:" << QString::number(first_chunkid + i) << ":" << QString::number(list_int_chunksduration.at(i)) << ":";

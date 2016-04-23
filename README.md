@@ -1,7 +1,7 @@
 # OpenReplay
-An experimental LOL replay software.
+An experimental League of Legends replay software.
 
-### Current Version : Alpha 8.1
+### Current Version : Alpha 8.2
 
 ## Features
 
@@ -14,3 +14,6 @@ An experimental LOL replay software.
 - Autorecord current playing game (with openreplay servers)
 - Replay recorded games
 
+### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
+
+### Please report issues
