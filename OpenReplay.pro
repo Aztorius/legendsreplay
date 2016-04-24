@@ -31,3 +31,5 @@ else:unix: LIBS += -L$$PWD/qhttp/lib/ -lqhttp
 
 INCLUDEPATH += $$PWD/qhttp/include
 DEPENDPATH += $$PWD/qhttp/include
+
+RC_FILE = openreplay.rc

@@ -41,6 +41,8 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QSettings *orsettings;
+
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;
 

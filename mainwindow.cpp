@@ -9,17 +9,37 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 8.2"));
+    setWindowTitle(tr("OpenReplay Alpha 8.3"));
 
-    log(QString("OpenReplay Alpha 8.2 Started"));
+    log(QString("OpenReplay Alpha 8.3 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
-    QSettings settings("Riot Games", "RADS");
+    orsettings = new QSettings("OpenReplay", "Local");
 
-    QString rootfolder = settings.value("LocalRootFolder").toString();
+    if(!orsettings->value("SummonerName").toString().isEmpty()){
+        m_summonername = orsettings->value("SummonerName").toString();
+        ui->lineEdit_summonername->setText(m_summonername);
+    }
 
-    if(rootfolder.isEmpty()){
+    if(!orsettings->value("SummonerId").toString().isEmpty()){
+        m_summonerid = orsettings->value("SummonerId").toString();
+        ui->lineEdit_summonerid->setText(m_summonerid);
+    }
+
+    if(!orsettings->value("SummonerServer").toString().isEmpty()){
+        m_summonerserver = orsettings->value("SummonerServer").toString();
+        ui->comboBox_summonerserver->setCurrentText(m_summonerserver);
+    }
+
+    QSettings lolsettings("Riot Games", "RADS");
+
+    QString rootfolder = lolsettings.value("LocalRootFolder").toString();
+
+    if(!orsettings->value("LoLDirectory").toString().isEmpty()){
+        loldirectory = orsettings->value("LoLDirectory").toString();
+    }
+    else if(rootfolder.isEmpty()){
         loldirectory = "C:\\Program Files\\Riot\\League of Legends\\RADS";
     }
     else{
@@ -27,17 +47,25 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     ui->lineEdit_4->setText(loldirectory);
 
-    QStringList folders = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-    if(folders.isEmpty()){
-        //Error : no documents location found on the system
-        return;
+    QString docfolder;
+    if(orsettings->value("ReplayDirectory").toString().isEmpty()){
+        QStringList folders = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+        if(folders.isEmpty()){
+           //Error : no documents location found on the system
+            log("Critical: no documents location found on the system");
+            return;
+        }
+        docfolder = folders.first();
+    }
+    else{
+        docfolder = orsettings->value("ReplayDirectory").toString();
     }
 
-    if(!QDir(folders.first() + "/OpenReplays").exists()){
-        QDir().mkpath(folders.first() + "/OpenReplays");
+    if(!QDir(docfolder + "/OpenReplays").exists()){
+        QDir().mkpath(docfolder + "/OpenReplays");
     }
 
-    replaydirectory = folders.first() + "/OpenReplays";
+    replaydirectory = docfolder + "/OpenReplays";
 
     ui->lineEdit_replaysFolder->setText(replaydirectory);
 
@@ -135,7 +163,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     QString address;
 
     if(local){
-        address = "127.0.0.1:8080";
+        address = "127.0.0.1:12576";
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
@@ -152,15 +180,16 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
         }
 
         if(address.isEmpty()){
-                //Server address not found
-                return;
+            //Server address not found
+            log("Error: Server address not found");
+            return;
         }
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"", QStringList(), path);
+        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
 
-        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
     }
 }
 
@@ -296,6 +325,7 @@ void MainWindow::slot_setdirectory(){
         return;
     }
     loldirectory = dir;
+    orsettings->setValue("LoLDirectory", loldirectory);
     ui->lineEdit_4->setText(dir);
 }
 
@@ -305,6 +335,7 @@ void MainWindow::slot_setreplaydirectory(){
         return;
     }
     replaydirectory = dir;
+    orsettings->setValue("ReplayDirectory", replaydirectory);
     ui->lineEdit_replaysFolder->setText(dir);
 }
 
@@ -525,7 +556,7 @@ void MainWindow::slot_summonerinfos_save(){
         return;
     }
     if(orservers.isEmpty()){
-        QMessageBox::information(this,"OpenReplay","Please add an OpenReplay server.");
+        QMessageBox::information(this,"OpenReplay","Please add a OpenReplay server.");
         return;
     }
 
@@ -539,12 +570,18 @@ void MainWindow::slot_summonerinfos_save(){
     log("Retrieving summoner ID");
 
     if(suminfos.isEmpty()){
-       return;
+        QMessageBox::information(this,"OpenReplay","Unknown summoner on this server.");
+        log("Unknown summoner on this server.");
+        return;
     }
     else{
         m_summonerid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
         ui->lineEdit_summonerid->setText(m_summonerid);
         log("Your summoner ID is " + m_summonerid);
+
+        orsettings->setValue("SummonerName", m_summonername);
+        orsettings->setValue("SummonerId", m_summonerid);
+        orsettings->setValue("SummonerServer", m_summonerserver);
     }
 }
 
@@ -651,7 +688,7 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
     httpserver->stopListening();
 
-    httpserver->listen(QHostAddress::Any, 8080, [replay,this](QHttpRequest* req, QHttpResponse* res) {
+    httpserver->listen(QHostAddress::Any, 12576, [replay,this](QHttpRequest* req, QHttpResponse* res) {
         QString url = req->url().toString();
 
         if(url == "/observer-mode/rest/consumer/version"){
@@ -691,7 +728,7 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             metadata += ",\"decodedEncryptionKey\":\"\"";
             metadata += ",\"startGameChunkId\":" + replay->getStartgamechunkid();
             metadata += ",\"gameLength\":0";
-            metadata += ",\"clientAddedLag\":5000";
+            metadata += ",\"clientAddedLag\":30000";
             metadata += ",\"clientBackFetchingEnabled\":false";
             metadata += ",\"clientBackFetchingFreq\":1000";
             metadata += ",\"interestScore\":2000";
@@ -753,10 +790,14 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             data += "}";
 
             res->setStatusCode(qhttp::ESTATUS_OK);
+            res->addHeader("Server","Apache-Coyote/1.1");
+            res->addHeader("Pragma","No-cache");
             res->addHeader("Content-Type", "application/json");
             res->addHeader("Content-Length", QString::number(data.toUtf8().size()).toUtf8());
             res->addHeader("Cache-Control", "no-cache, max-age=0");
             res->addHeader("Accept-Ranges","bytes");
+            res->addHeader("Age","0");
+            res->addHeader("Connection","close");
             res->end(data.toUtf8());
 
             log("Server: send lastChunkInfo");
@@ -783,19 +824,10 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
                     serverChunkCount += 1;
                 }
 
-                //if(serverChunkCount >= replay->getStartgamechunkid().toInt() + 2*serverKeyframeCount){
-                //    serverKeyframeCount += 1;
-                //}
-
                 log("Server: send chunk " + QString::number(chunkid));
             }
             else{
-                if(chunkid <= replay->getStartgamechunkid().toInt() && chunkid > replay->getEndstartupchunkid().toInt()){
-                    //serverChunkCount += 1;
-                    //serverKeyframeCount += 1;
-                }
-
-                res->setStatusCode(qhttp::ESTATUS_NOT_FOUND);
+                res->setStatusCode(qhttp::ESTATUS_BAD_REQUEST);
                 res->end("");
                 log("Server: unknown requested chunk " + QString::number(chunkid));
             }
@@ -824,9 +856,18 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
                 log("Server: unknown requested keyframe " + QString::number(keyframeid));
             }
         }
+        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getServerid() + "/" + replay->getGameid())){
+            //End of replay requested : error while replaying
+            res->setStatusCode(qhttp::ESTATUS_OK);
+            res->addHeader("Content-Type", "text/plain");
+            res->end("");
+
+            log("Server: End of replay requested");
+            httpserver->stopListening();
+        }
         else{
             res->setStatusCode(qhttp::ESTATUS_OK);
-            res->addHeader("Content-Type", "application/json;charset=utf-8");
+            res->addHeader("Content-Type", "text/plain");
             res->end("");
 
             log("Server: Unknown requested link " + url);
