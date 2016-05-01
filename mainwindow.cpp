@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 8.3"));
+    setWindowTitle(tr("OpenReplay Alpha 0.8.3"));
 
-    log(QString("OpenReplay Alpha 8.3 Started"));
+    log(QString("OpenReplay Alpha 0.8.3 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -699,20 +699,20 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
         }
         else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getServerid() + "/" + replay->getGameid())){
             QString metadata = "{\"gameKey\":{";
-            metadata += "\"gameId\":" + replay->getGameid();
-            metadata += ",\"platformId\":\"" + replay->getServerid() + "\"}";
-            metadata += ",\"gameServerAddress\":\"\"";
-            metadata += ",\"port\":0";
-            metadata += ",\"encryptionKey\":\"\"";
-            metadata += ",\"chunkTimeInterval\":30000";
-            metadata += ",\"startTime\":\"Apr 21, 2016 1:38:10 PM\"";
-            metadata += ",\"gameEnded\":false";
-            metadata += ",\"lastChunkId\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1));
-            metadata += ",\"lastKeyFrameId\":" + QString::number(replay->getKeyFramesid().at(3));
-            metadata += ",\"endStartupChunkId\":" + replay->getEndstartupchunkid();
-            metadata += ",\"delayTime\":0";
-            metadata += ",\"pendingAvailableChunkInfo\":[";
-            metadata += "{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
+            metadata.append("\"gameId\":" + replay->getGameid());
+            metadata.append(",\"platformId\":\"" + replay->getServerid() + "\"}");
+            metadata.append(",\"gameServerAddress\":\"\"");
+            metadata.append(",\"port\":0");
+            metadata.append(",\"encryptionKey\":\"\"");
+            metadata.append(",\"chunkTimeInterval\":30000");
+            metadata.append(",\"startTime\":\"Apr 21, 2016 1:38:10 PM\"");
+            metadata.append(",\"gameEnded\":false");
+            metadata.append(",\"lastChunkId\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)));
+            metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->getKeyFramesid().at(3)));
+            metadata.append(",\"endStartupChunkId\":" + replay->getEndstartupchunkid());
+            metadata.append(",\"delayTime\":150000");
+            metadata.append(",\"pendingAvailableChunkInfo\":[");
+            metadata.append("{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
             metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+2)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+2)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
             metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+3)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+3)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
             metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+4)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+4)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
@@ -750,19 +750,22 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
         else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid()))
         {
             int endstartupchunkid = replay->getEndstartupchunkid().toInt();
-
+            int nextchunkid = replay->getEndstartupchunkid().toInt();
             int startgamechunkid = replay->getStartgamechunkid().toInt();
+            int endgamechunkid = 0;
 
-            if(serverChunkCount < replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)){
+            if(serverChunkCount > replay->getEndstartupchunkid().toInt() && serverChunkCount < replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)){
                 serverChunkCount = replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1);
-                serverKeyframeCount = -1;
+                serverKeyframeCount = replay->getKeyFramesid().first();
             }
-            else if(serverChunkCount > replay->getChunksid().last()){
+            else if(serverChunkCount >= replay->getChunksid().last()){
                 serverChunkCount = replay->getChunksid().last();
                 serverKeyframeCount = replay->getKeyFramesid().last();
+                endgamechunkid = replay->getChunksid().last();
             }
             else{
                 serverKeyframeCount = (serverChunkCount - replay->getEndstartupchunkid().toInt())/2;
+                nextchunkid = serverChunkCount + 1;
             }
 
             int currentChunkid = serverChunkCount;
@@ -771,32 +774,27 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
             int nextavailablechunk = 5000;
 
+            if(serverChunkCount )
+
             if(serverChunkCount == replay->getChunksid().last()){
-                nextavailablechunk = 0;
+                nextavailablechunk = 90000;
             }
 
             QString data = "{";
-            data += "\"chunkId\":" + QString::number(currentChunkid);
-            //data += "\"chunkId\":" + QString::number(replay->getChunksid().last());
-            data += ",\"availableSince\":25000";
-            data += ",\"nextAvailableChunk\":" + QString::number(nextavailablechunk);
-            data += ",\"keyframeId\":" + QString::number(currentKeyframeid);
-            //data += ",\"nextChunkId\":" + QString::number(nextChunkid);
-            data += ",\"nextChunkId\":" + QString::number(currentKeyframeid*2 + replay->getEndstartupchunkid().toInt());
-            data += ",\"endStartupChunkId\":" + QString::number(endstartupchunkid);
-            data += ",\"startGameChunkId\":" + QString::number(startgamechunkid);
-            data += ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last());
-            data += ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(currentChunkid)));
-            data += "}";
+            data.append("\"chunkId\":" + QString::number(currentChunkid));
+            data.append(",\"availableSince\":30000");
+            data.append(",\"nextAvailableChunk\":" + QString::number(nextavailablechunk));
+            data.append(",\"keyframeId\":" + QString::number(currentKeyframeid));
+            data.append(",\"nextChunkId\":" + QString::number(nextchunkid));
+            data.append(",\"endStartupChunkId\":" + QString::number(endstartupchunkid));
+            data.append(",\"startGameChunkId\":" + QString::number(startgamechunkid));
+            data.append(",\"endGameChunkId\":" + QString::number(endgamechunkid));
+            data.append(",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(currentChunkid))));
+            data.append("}");
 
             res->setStatusCode(qhttp::ESTATUS_OK);
-            res->addHeader("Server","Apache-Coyote/1.1");
-            res->addHeader("Pragma","No-cache");
             res->addHeader("Content-Type", "application/json");
             res->addHeader("Content-Length", QString::number(data.toUtf8().size()).toUtf8());
-            res->addHeader("Cache-Control", "no-cache, max-age=0");
-            res->addHeader("Accept-Ranges","bytes");
-            res->addHeader("Age","0");
             res->addHeader("Connection","close");
             res->end(data.toUtf8());
 

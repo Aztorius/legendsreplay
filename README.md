@@ -1,7 +1,7 @@
 # OpenReplay
 An experimental League of Legends replay software.
 
-### Current Version : Alpha 8.3
+### Current Version : Alpha 0.8.3
 
 ## Features
 
@@ -12,20 +12,18 @@ An experimental League of Legends replay software.
 - Record featured games
 - Record multiple games at the same time (multithreading)
 - Autorecord current playing game (with openreplay servers)
-- Replay recorded games (not working for incomplete replay like featured games)
-
-## In progress
-
-- Improve GUI interface
+- Replay recorded games (experimental)
 
 ## TODO
 
-- Show informations about a game
+- Improve GUI interface
+- Replay all recorded games without error
+- Go back in time when replaying
 
 ## 
 
 ### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
 
-### Please report issues and send pull requests to improve the software
+### Please report issues and send pull requests to improve this software
 
-OpenReplay is an open source project with no relation with Riot Games.
+OpenReplay is an open source project without relation with Riot Games.
