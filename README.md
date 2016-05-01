@@ -1,7 +1,7 @@
 # OpenReplay
 An experimental League of Legends replay software.
 
-### Current Version : Alpha 0.8.3
+### Current Version : Alpha 0.8.4
 
 ## Features
 

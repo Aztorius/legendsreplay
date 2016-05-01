@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 0.8.3"));
+    setWindowTitle(tr("OpenReplay Alpha 0.8.4"));
 
-    log(QString("OpenReplay Alpha 0.8.3 Started"));
+    log(QString("OpenReplay Alpha 0.8.4 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -609,7 +609,10 @@ void MainWindow::slot_refreshPlayingStatus(){
     if(!islolRunning()){
         replaying = false;
         playing = false;
-        httpserver->stopListening();
+        if(httpserver->isListening()){
+            httpserver->stopListening();
+            log("Server: stoped due to inactivity");
+        }
     }
 
     if(!replaying && islolclientRunning() && islolRunning()){
@@ -707,36 +710,36 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             metadata.append(",\"chunkTimeInterval\":30000");
             metadata.append(",\"startTime\":\"Apr 21, 2016 1:38:10 PM\"");
             metadata.append(",\"gameEnded\":false");
-            metadata.append(",\"lastChunkId\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)));
-            metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->getKeyFramesid().at(3)));
+            metadata.append(",\"lastChunkId\":" + QString::number(replay->getChunks().last().getId()));
+            metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->getKeyFrames().last().getId()));
             metadata.append(",\"endStartupChunkId\":" + replay->getEndstartupchunkid());
             metadata.append(",\"delayTime\":150000");
             metadata.append(",\"pendingAvailableChunkInfo\":[");
-            metadata.append("{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
-            metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+2)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+2)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
-            metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+3)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+3)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
-            metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+4)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+4)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
-            metadata += ",{\"id\":" + QString::number(replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+5)) + ",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+5)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}";
-            metadata += "]";
-            metadata += ",\"pendingAvailableKeyFrameInfo\":[";
-            metadata += "{\"id\":" + QString::number(replay->getKeyFramesid().first()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFramesid().first()*2 + replay->getEndstartupchunkid().toInt()) + "}";
-            metadata += ",{\"id\":" + QString::number(replay->getKeyFramesid().at(1)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFramesid().at(1)*2 + replay->getEndstartupchunkid().toInt()) + "}";
-            metadata += ",{\"id\":" + QString::number(replay->getKeyFramesid().at(2)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFramesid().at(2)*2 + replay->getEndstartupchunkid().toInt()) + "}";
-            metadata += ",{\"id\":" + QString::number(replay->getKeyFramesid().at(3)) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFramesid().at(3)*2 + replay->getEndstartupchunkid().toInt()) + "}";
-            metadata += "]";
-            metadata += ",\"keyFrameTimeInterval\":60000";
-            metadata += ",\"decodedEncryptionKey\":\"\"";
-            metadata += ",\"startGameChunkId\":" + replay->getStartgamechunkid();
-            metadata += ",\"gameLength\":0";
-            metadata += ",\"clientAddedLag\":30000";
-            metadata += ",\"clientBackFetchingEnabled\":false";
-            metadata += ",\"clientBackFetchingFreq\":1000";
-            metadata += ",\"interestScore\":2000";
-            metadata += ",\"featuredGame\":false";
-            metadata += ",\"createTime\":\"Apr 21, 2016 1:37:43 PM\"";
-            metadata += ",\"endGameChunkId\":" + QString::number(replay->getChunksid().last());
-            metadata += ",\"endGameKeyFrameId\":" + QString::number(replay->getKeyFramesid().last());
-            metadata += "}";
+            metadata.append("{\"id\":" + QString::number(replay->getChunks().first().getId()) + ",\"duration\":" + QString::number(replay->getChunks().first().getDuration()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
+            metadata.append(",{\"id\":" + QString::number(replay->getChunks().at(1).getId()) + ",\"duration\":" + QString::number(replay->getChunks().at(1).getDuration()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
+            metadata.append(",{\"id\":" + QString::number(replay->getChunks().at(2).getId()) + ",\"duration\":" + QString::number(replay->getChunks().at(2).getDuration()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
+            metadata.append(",{\"id\":" + QString::number(replay->getChunks().at(3).getId()) + ",\"duration\":" + QString::number(replay->getChunks().at(3).getDuration()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
+            metadata.append(",{\"id\":" + QString::number(replay->getChunks().at(4).getId()) + ",\"duration\":" + QString::number(replay->getChunks().at(4).getDuration()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\"}");
+            metadata.append("]");
+            metadata.append(",\"pendingAvailableKeyFrameInfo\":[");
+            metadata.append("{\"id\":" + QString::number(replay->getKeyFrames().first().getId()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFrames().first().getNextchunkid()) + "}");
+            metadata.append(",{\"id\":" + QString::number(replay->getKeyFrames().at(1).getId()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFrames().at(1).getNextchunkid()) + "}");
+            metadata.append(",{\"id\":" + QString::number(replay->getKeyFrames().at(2).getId()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFrames().at(2).getNextchunkid()) + "}");
+            metadata.append(",{\"id\":" + QString::number(replay->getKeyFrames().at(3).getId()) + ",\"receivedTime\":\"Apr 21, 2016 1:46:40 PM\",\"nextChunkId\":" + QString::number(replay->getKeyFrames().at(3).getNextchunkid()) + "}");
+            metadata.append("]");
+            metadata.append(",\"keyFrameTimeInterval\":60000");
+            metadata.append(",\"decodedEncryptionKey\":\"\"");
+            metadata.append(",\"startGameChunkId\":" + replay->getStartgamechunkid());
+            metadata.append(",\"gameLength\":0");
+            metadata.append(",\"clientAddedLag\":30000");
+            metadata.append(",\"clientBackFetchingEnabled\":false");
+            metadata.append(",\"clientBackFetchingFreq\":1000");
+            metadata.append(",\"interestScore\":2000");
+            metadata.append(",\"featuredGame\":false");
+            metadata.append(",\"createTime\":\"Apr 21, 2016 1:37:43 PM\"");
+            metadata.append(",\"endGameChunkId\":" + QString::number(replay->getChunks().last().getId()));
+            metadata.append(",\"endGameKeyFrameId\":" + QString::number(replay->getKeyFrames().last().getId()));
+            metadata.append("}");
 
             res->setStatusCode(qhttp::ESTATUS_OK);
             res->addHeader("Cache-Control", "no-cache");
@@ -754,18 +757,18 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             int startgamechunkid = replay->getStartgamechunkid().toInt();
             int endgamechunkid = 0;
 
-            if(serverChunkCount > replay->getEndstartupchunkid().toInt() && serverChunkCount < replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1)){
-                serverChunkCount = replay->getChunksid().at(replay->getChunksid().indexOf(replay->getEndstartupchunkid().toInt())+1);
-                serverKeyframeCount = replay->getKeyFramesid().first();
+            if(serverChunkCount > replay->getEndstartupchunkid().toInt() && serverChunkCount < replay->getChunks().first().getId()){
+                serverChunkCount = replay->getChunks().first().getId();
+                serverKeyframeCount = replay->getKeyFrames().first().getId();
             }
-            else if(serverChunkCount >= replay->getChunksid().last()){
-                serverChunkCount = replay->getChunksid().last();
-                serverKeyframeCount = replay->getKeyFramesid().last();
-                endgamechunkid = replay->getChunksid().last();
+            else if(serverChunkCount >= replay->getChunks().last().getId()){
+                serverChunkCount = replay->getChunks().last().getId();
+                serverKeyframeCount = replay->getKeyFrames().last().getId();
+                endgamechunkid = replay->getChunks().last().getId();
             }
             else{
-                serverKeyframeCount = (serverChunkCount - replay->getEndstartupchunkid().toInt())/2;
-                nextchunkid = serverChunkCount + 1;
+                serverKeyframeCount = replay->getChunk(serverChunkCount).getKeyframeId();
+                nextchunkid = replay->getKeyFrame(serverKeyframeCount).getNextchunkid();
             }
 
             int currentChunkid = serverChunkCount;
@@ -774,10 +777,9 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
 
             int nextavailablechunk = 5000;
 
-            if(serverChunkCount )
-
-            if(serverChunkCount == replay->getChunksid().last()){
+            if(serverChunkCount == replay->getChunks().last().getId()){
                 nextavailablechunk = 90000;
+                endgamechunkid = serverChunkCount;
             }
 
             QString data = "{";
@@ -789,7 +791,7 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             data.append(",\"endStartupChunkId\":" + QString::number(endstartupchunkid));
             data.append(",\"startGameChunkId\":" + QString::number(startgamechunkid));
             data.append(",\"endGameChunkId\":" + QString::number(endgamechunkid));
-            data.append(",\"duration\":" + QString::number(replay->getChunksDuration().at(replay->getChunksid().indexOf(currentChunkid))));
+            data.append(",\"duration\":" + QString::number(replay->getChunk(currentChunkid).getDuration()));
             data.append("}");
 
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -808,15 +810,15 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid() + "/");
             chunkid = url.left(url.indexOf("/")).toInt();
 
-            int index = replay->getChunksid().indexOf(chunkid);
+            Chunk chunk = replay->getChunk(chunkid);
 
-            if(index >= 0){
-                QByteArray chunk = replay->getChunks().at(index);
+            if(chunk.getId() > 0){
+                QByteArray chunk_ba = chunk.getData();
 
                 res->setStatusCode(qhttp::ESTATUS_OK);
                 res->addHeader("Content-Type", "application/octet-stream");
-                res->addHeader("Content-Length", QString::number(chunk.size()).toLocal8Bit());
-                res->end(chunk);
+                res->addHeader("Content-Length", QString::number(chunk_ba.size()).toLocal8Bit());
+                res->end(chunk_ba);
 
                 if(serverChunkCount >= replay->getEndstartupchunkid().toInt() && chunkid > replay->getEndstartupchunkid().toInt()){
                     serverChunkCount += 1;
@@ -837,14 +839,14 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             url.remove("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid() + "/");
             keyframeid = url.left(url.indexOf("/")).toInt();
 
-            int index = replay->getKeyFramesid().indexOf(keyframeid);
+            Keyframe keyframe = replay->getKeyFrame(keyframeid);
 
-            if(index >= 0){
-                QByteArray keyframe = replay->getKeyFrames().at(index);
+            if(keyframe.getId() > 0){
+                QByteArray keyframe_ba = keyframe.getData();
 
                 res->setStatusCode(qhttp::ESTATUS_OK);
                 res->addHeader("Content-Type", "application/octet-stream");
-                res->end(keyframe);
+                res->end(keyframe_ba);
 
                 serverKeyframeCount += 1;
 

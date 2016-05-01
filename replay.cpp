@@ -54,20 +54,37 @@ Replay::Replay(QString filepath)
                 QJsonDocument jd_gameinfos = QJsonDocument::fromJson(gameinfosba);
                 m_gameinfos = jd_gameinfos;
             }
+            else if(line.left(14) == "::ORGameStats:"){
+                line.remove(0,14);
+
+                QString gamestats64 = line.left(line.indexOf(":"));
+                QByteArray gamestatsba = QByteArray::fromBase64(gamestats64.toLocal8Bit());
+
+                QJsonDocument jd_gamestats = QJsonDocument::fromJson(gamestatsba);
+                m_endofgamestats = jd_gamestats;
+            }
             else if(line.left(13) == "::ORKeyFrame:"){
                 line.remove(0,13);
 
-                m_keyframesid.append(line.left(line.indexOf(":")).toInt());
+                int keyframeid = line.left(line.indexOf(":")).toInt();
+                m_keyframesid.append(keyframeid);
+                line.remove(0,line.indexOf(":")+1);
+
+                int nextchunkid = line.left(line.indexOf(":")).toInt();
                 line.remove(0,line.indexOf(":")+1);
 
                 QString keyframe = line.left(line.indexOf(":"));
                 QByteArray ba_keyframe = QByteArray::fromBase64(keyframe.toLocal8Bit());
-                m_keyframes.append(ba_keyframe);
+                m_keyframes.append(Keyframe(keyframeid, ba_keyframe, nextchunkid));
             }
             else if(line.left(10) == "::ORChunk:"){
                 line.remove(0,10);
 
-                m_chunksid.append(line.left(line.indexOf(":")).toInt());
+                int chunkid = line.left(line.indexOf(":")).toInt();
+                m_chunksid.append(chunkid);
+                line.remove(0,line.indexOf(":")+1);
+
+                int keyframeid = line.left(line.indexOf(":")).toInt();
                 line.remove(0,line.indexOf(":")+1);
 
                 QString chunkduration = line.left(line.indexOf(":"));
@@ -76,7 +93,13 @@ Replay::Replay(QString filepath)
 
                 QString chunk = line.left(line.indexOf(":"));
                 QByteArray ba_chunk = QByteArray::fromBase64(chunk.toLocal8Bit());
-                m_chunks.append(ba_chunk);
+
+                if(chunkid <= m_endstartupchunkid.toInt()){
+                    m_primarychunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration.toInt()));
+                }
+                else{
+                    m_chunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration.toInt()));
+                }
             }
         }
     }
@@ -94,12 +117,16 @@ QString Replay::getEncryptionkey(){
     return m_encryptionkey;
 }
 
-QList<QByteArray> Replay::getKeyFrames(){
+QList<Keyframe> Replay::getKeyFrames(){
     return m_keyframes;
 }
 
-QList<QByteArray> Replay::getChunks(){
+QList<Chunk> Replay::getChunks(){
     return m_chunks;
+}
+
+QList<Chunk> Replay::getPrimaryChunks(){
+    return m_primarychunks;
 }
 
 QList<int> Replay::getKeyFramesid(){
@@ -128,4 +155,63 @@ QString Replay::getStartgamechunkid(){
 
 QList<int> Replay::getChunksDuration(){
     return m_chunksduration;
+}
+
+Chunk Replay::getChunk(int id) const{
+    for(int i = 0; i < m_chunks.size(); i++){
+        if(m_chunks.at(i).getId() == id){
+            return m_chunks.at(i);
+        }
+    }
+    return Chunk(0,"",0);
+}
+
+Keyframe Replay::getKeyFrame(int id) const{
+    for(int i = 0; i < m_keyframes.size(); i++){
+        if(m_keyframes.at(i).getId() == id){
+            return m_keyframes.at(i);
+        }
+    }
+    return Keyframe(0,"",0);
+}
+
+Chunk::Chunk(int id, QByteArray data, int keyframeid, int duration){
+    m_id = id;
+    m_keyframeid = keyframeid;
+    m_data = data;
+    m_duration = duration;
+}
+
+int Chunk::getId() const{
+    return m_id;
+}
+
+int Chunk::getKeyframeId() const{
+    return m_keyframeid;
+}
+
+QByteArray Chunk::getData() const{
+    return m_data;
+}
+
+int Chunk::getDuration() const{
+    return m_duration;
+}
+
+Keyframe::Keyframe(int id, QByteArray data, int nextchunkid){
+    m_id = id;
+    m_nextchunkid = nextchunkid;
+    m_data = data;
+}
+
+int Keyframe::getId() const{
+    return m_id;
+}
+
+int Keyframe::getNextchunkid() const{
+    return m_nextchunkid;
+}
+
+QByteArray Keyframe::getData() const{
+    return m_data;
 }
