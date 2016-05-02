@@ -1,0 +1,6 @@
+{
+  "name": "OpenReplay",
+  "tagline": "A League of Legends replay software.",
+  "body": "# OpenReplay\r\nAn experimental League of Legends replay software.\r\n\r\n### Current Version : Alpha 0.8.4\r\n\r\n## Features\r\n\r\n- EUW, EUNE and NA servers supported\r\n- Show servers status\r\n- List all featured games\r\n- Launch spectator mode for featured games\r\n- Record featured games\r\n- Record multiple games at the same time (multithreading)\r\n- Autorecord current playing game (with openreplay servers)\r\n- Replay recorded games (experimental)\r\n\r\n## TODO\r\n\r\n- Improve GUI interface\r\n- Replay all recorded games without error\r\n- Go back in time when replaying\r\n\r\n### Please report issues to improve this software\r\n\r\nOpenReplay is an open source project without relation with Riot Games.",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
