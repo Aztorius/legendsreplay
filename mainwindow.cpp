@@ -757,9 +757,10 @@ void MainWindow::slot_doubleclick_savedgames(int row, int column){
             int startgamechunkid = replay->getStartgamechunkid().toInt();
             int endgamechunkid = 0;
 
-            if(serverChunkCount > replay->getEndstartupchunkid().toInt() && serverChunkCount < replay->getChunks().first().getId()){
+            if(serverChunkCount < replay->getChunks().first().getId()){
                 serverChunkCount = replay->getChunks().first().getId();
-                serverKeyframeCount = replay->getKeyFrames().first().getId();
+                serverKeyframeCount = replay->getChunks().first().getKeyframeId();
+                nextchunkid = replay->getKeyFrame(serverKeyframeCount).getNextchunkid();
             }
             else if(serverChunkCount >= replay->getChunks().last().getId()){
                 serverChunkCount = replay->getChunks().last().getId();

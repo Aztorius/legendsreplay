@@ -87,18 +87,18 @@ Replay::Replay(QString filepath)
                 int keyframeid = line.left(line.indexOf(":")).toInt();
                 line.remove(0,line.indexOf(":")+1);
 
-                QString chunkduration = line.left(line.indexOf(":"));
-                m_chunksduration.append(chunkduration.toInt());
+                int chunkduration = line.left(line.indexOf(":")).toInt();
+                m_chunksduration.append(chunkduration);
                 line.remove(0,line.indexOf(":")+1);
 
                 QString chunk = line.left(line.indexOf(":"));
                 QByteArray ba_chunk = QByteArray::fromBase64(chunk.toLocal8Bit());
 
                 if(chunkid <= m_endstartupchunkid.toInt()){
-                    m_primarychunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration.toInt()));
+                    m_primarychunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration));
                 }
                 else{
-                    m_chunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration.toInt()));
+                    m_chunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration));
                 }
             }
         }
@@ -158,21 +158,25 @@ QList<int> Replay::getChunksDuration(){
 }
 
 Chunk Replay::getChunk(int id) const{
+    Chunk chunk(0, "", 0);
     for(int i = 0; i < m_chunks.size(); i++){
         if(m_chunks.at(i).getId() == id){
-            return m_chunks.at(i);
+            chunk = m_chunks.at(i);
+            break;
         }
     }
-    return Chunk(0,"",0);
+    return chunk;
 }
 
 Keyframe Replay::getKeyFrame(int id) const{
+    Keyframe keyframe(0, "", 0);
     for(int i = 0; i < m_keyframes.size(); i++){
         if(m_keyframes.at(i).getId() == id){
-            return m_keyframes.at(i);
+            keyframe = m_keyframes.at(i);
+            break;
         }
     }
-    return Keyframe(0,"",0);
+    return keyframe;
 }
 
 Chunk::Chunk(int id, QByteArray data, int keyframeid, int duration){
