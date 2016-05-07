@@ -9,17 +9,25 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 0.8.4"));
+    setWindowTitle(tr("OpenReplay Alpha 0.8.5"));
 
-    log(QString("OpenReplay Alpha 0.8.4 Started"));
+    log(QString("OpenReplay Alpha 0.8.5 Started"));
 
     ui->lineEdit_status->setText("Starting");
+
+    orservers.append("informaticien77.serveminecraft.net/openreplay.php");
+
+    ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+    ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/openreplay.php"));
 
     orsettings = new QSettings("OpenReplay", "Local");
 
     if(!orsettings->value("SummonerName").toString().isEmpty()){
         m_summonername = orsettings->value("SummonerName").toString();
         ui->lineEdit_summonername->setText(m_summonername);
+    }
+    else{
+        QMessageBox::information(this, "OpenReplay", "Please set your summoner name to record your games.");
     }
 
     if(!orsettings->value("SummonerId").toString().isEmpty()){
@@ -107,6 +115,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
+
+    connect(ui->tableWidget_recordedgames, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_allgames(int,int)));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
@@ -270,6 +280,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
         item3->setText(gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
 
         ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 2, item3);
+
     }
 
 }
@@ -312,11 +323,47 @@ void MainWindow::slot_click_featured(int row, int column){
 
     QJsonArray participants = game.value("participants").toArray();
 
-    if(participants.size()!=10){
-        return;
-    }
+    if(participants.size()>=10){
+        ui->label_sumf1->setAlignment(Qt::AlignCenter);
+        ui->label_sumf1->setPixmap(QPixmap(":/img/" + QString::number(participants.at(0).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
 
-    //Show game infos
+        ui->label_sumf16->setText(participants.at(0).toObject().value("summonerName").toString() + " / " + participants.at(5).toObject().value("summonerName").toString());
+
+        ui->label_sumf2->setAlignment(Qt::AlignCenter);
+        ui->label_sumf2->setPixmap(QPixmap(":/img/" + QString::number(participants.at(1).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf27->setText(participants.at(1).toObject().value("summonerName").toString() + " / " + participants.at(6).toObject().value("summonerName").toString());
+
+        ui->label_sumf3->setAlignment(Qt::AlignCenter);
+        ui->label_sumf3->setPixmap(QPixmap(":/img/" + QString::number(participants.at(2).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf38->setText(participants.at(2).toObject().value("summonerName").toString() + " / " + participants.at(7).toObject().value("summonerName").toString());
+
+        ui->label_sumf4->setAlignment(Qt::AlignCenter);
+        ui->label_sumf4->setPixmap(QPixmap(":/img/" + QString::number(participants.at(3).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf49->setText(participants.at(3).toObject().value("summonerName").toString() + " / " + participants.at(8).toObject().value("summonerName").toString());
+
+        ui->label_sumf5->setAlignment(Qt::AlignCenter);
+        ui->label_sumf5->setPixmap(QPixmap(":/img/" + QString::number(participants.at(4).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf510->setText(participants.at(4).toObject().value("summonerName").toString() + " / " + participants.at(9).toObject().value("summonerName").toString());
+
+        ui->label_sumf6->setAlignment(Qt::AlignCenter);
+        ui->label_sumf6->setPixmap(QPixmap(":/img/" + QString::number(participants.at(5).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf7->setAlignment(Qt::AlignCenter);
+        ui->label_sumf7->setPixmap(QPixmap(":/img/" + QString::number(participants.at(6).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf8->setAlignment(Qt::AlignCenter);
+        ui->label_sumf8->setPixmap(QPixmap(":/img/" + QString::number(participants.at(7).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf9->setAlignment(Qt::AlignCenter);
+        ui->label_sumf9->setPixmap(QPixmap(":/img/" + QString::number(participants.at(8).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sumf10->setAlignment(Qt::AlignCenter);
+        ui->label_sumf10->setPixmap(QPixmap(":/img/" + QString::number(participants.at(9).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+    }
 }
 
 void MainWindow::slot_setdirectory(){
@@ -363,7 +410,7 @@ bool MainWindow::check_path(QString path){
 }
 
 void MainWindow::slot_changedTab(int index){
-    if(index == 2){
+    if(index == 1){
         slot_featuredRefresh();
     }
 }
@@ -510,10 +557,63 @@ QByteArray MainWindow::getFileFromUrl(QString url){
     return data;
 }
 
+void MainWindow::slot_click_allgames(int row, int column)
+{
+    Q_UNUSED(column);
+
+    Replay game(replaydirectory + "/" + recordedgames_filename.at(row));
+
+    if(game.getGameinfos().object().value("participants").toArray().size() >= 10){
+        QJsonArray array = game.getGameinfos().object().value("participants").toArray();
+
+        ui->label_sum1->setAlignment(Qt::AlignCenter);
+        ui->label_sum1->setPixmap(QPixmap(":/img/" + QString::number(array.at(0).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum16->setText(array.at(0).toObject().value("summonerName").toString() + " / " + array.at(5).toObject().value("summonerName").toString());
+
+        ui->label_sum2->setAlignment(Qt::AlignCenter);
+        ui->label_sum2->setPixmap(QPixmap(":/img/" + QString::number(array.at(1).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum27->setText(array.at(1).toObject().value("summonerName").toString() + " / " + array.at(6).toObject().value("summonerName").toString());
+
+        ui->label_sum3->setAlignment(Qt::AlignCenter);
+        ui->label_sum3->setPixmap(QPixmap(":/img/" + QString::number(array.at(2).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum38->setText(array.at(2).toObject().value("summonerName").toString() + " / " + array.at(7).toObject().value("summonerName").toString());
+
+        ui->label_sum4->setAlignment(Qt::AlignCenter);
+        ui->label_sum4->setPixmap(QPixmap(":/img/" + QString::number(array.at(3).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum49->setText(array.at(3).toObject().value("summonerName").toString() + " / " + array.at(8).toObject().value("summonerName").toString());
+
+        ui->label_sum5->setAlignment(Qt::AlignCenter);
+        ui->label_sum5->setPixmap(QPixmap(":/img/" + QString::number(array.at(4).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum510->setText(array.at(4).toObject().value("summonerName").toString() + " / " + array.at(9).toObject().value("summonerName").toString());
+
+        ui->label_sum6->setAlignment(Qt::AlignCenter);
+        ui->label_sum6->setPixmap(QPixmap(":/img/" + QString::number(array.at(5).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum7->setAlignment(Qt::AlignCenter);
+        ui->label_sum7->setPixmap(QPixmap(":/img/" + QString::number(array.at(6).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum8->setAlignment(Qt::AlignCenter);
+        ui->label_sum8->setPixmap(QPixmap(":/img/" + QString::number(array.at(7).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum9->setAlignment(Qt::AlignCenter);
+        ui->label_sum9->setPixmap(QPixmap(":/img/" + QString::number(array.at(8).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+        ui->label_sum10->setAlignment(Qt::AlignCenter);
+        ui->label_sum10->setPixmap(QPixmap(":/img/" + QString::number(array.at(9).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+    }
+}
+
 void MainWindow::refresh_recordedGames(){
     //Find saved replays
 
     recordedgames_filename.clear();
+    yourgames_filename.clear();
 
     QDir dirreplays(replaydirectory);
     dirreplays.setFilter(QDir::Files);
@@ -525,18 +625,48 @@ void MainWindow::refresh_recordedGames(){
         ui->tableWidget_recordedgames->removeRow(0);
     }
 
+    while(ui->tableWidget_yourgames->rowCount() > 0){
+        ui->tableWidget_yourgames->removeRow(0);
+    }
+
     for(int i = 0; i < replayslist.size(); i++){
         QFileInfo fileinfo = replayslist.at(i);
         ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
 
         Replay *game = new Replay(fileinfo.filePath());
 
+        QDateTime datetime;
+        datetime.setMSecsSinceEpoch(quint64(game->getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));
+
         ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game->getServerid()));
         ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game->getGameid()));
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(game->getEncryptionkey()));
+        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
         ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
 
         recordedgames_filename.append(fileinfo.fileName());
+
+        //TODO: Manage platformId
+        if(!m_summonerid.isEmpty() && !game->getGameinfos().object().value("participants").toArray().empty()){
+
+            for(int i = 0; i < game->getGameinfos().object().value("participants").toArray().size(); i++){
+                if(game->getGameinfos().object().value("participants").toArray().at(i).toObject().value("summonerName").toString() == m_summonername){
+                    ui->tableWidget_yourgames->insertRow(ui->tableWidget_yourgames->rowCount());
+
+                    QLabel* label = new QLabel;
+                    label->setAlignment(Qt::AlignCenter);
+                    label->setPixmap(QPixmap(":/img/" + QString::number(game->getGameinfos().object().value("participants").toArray().at(i).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+
+                    ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
+                    ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
+                    ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game->getServerid()));
+                    ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
+
+                    yourgames_filename.append(fileinfo.fileName());
+
+                    break;
+                }
+            }
+        }
     }
 }
 

@@ -33,3 +33,4 @@ INCLUDEPATH += $$PWD/qhttp/include
 DEPENDPATH += $$PWD/qhttp/include
 
 RC_FILE = openreplay.rc
+RESOURCES = openreplay.qrc

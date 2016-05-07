@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QtConcurrent/QtConcurrent>
+#include <QPainter>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -48,6 +49,7 @@ private:
 
     QList <QStringList> recording;
     QList <QString> recordedgames_filename;
+    QList <QString> yourgames_filename;
 
     QList <QJsonObject> json_status;
     QList <QJsonObject> json_featured;
@@ -81,6 +83,7 @@ private slots:
     void slot_doubleclick_savedgames(int row,int column);
     void slot_doubleclick_featured(int row,int column);
     void slot_click_featured(int row,int column);
+    void slot_click_allgames(int row,int column);
 
     void slot_replayserversAdd();
     void slot_summonerinfos_save();

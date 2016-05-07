@@ -58,10 +58,9 @@ Replay::Replay(QString filepath)
                 line.remove(0,14);
 
                 QString gamestats64 = line.left(line.indexOf(":"));
-                QByteArray gamestatsba = QByteArray::fromBase64(gamestats64.toLocal8Bit());
+                QByteArray gamestats = QByteArray::fromBase64(gamestats64.toLocal8Bit());
 
-                QJsonDocument jd_gamestats = QJsonDocument::fromJson(gamestatsba);
-                m_endofgamestats = jd_gamestats;
+                m_endofgamestats = gamestats;
             }
             else if(line.left(13) == "::ORKeyFrame:"){
                 line.remove(0,13);

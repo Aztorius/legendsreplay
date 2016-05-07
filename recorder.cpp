@@ -141,10 +141,9 @@ void Recorder::run(){
     m_startgamechunkid = QString::number(json_gameMetaData.object().value("startGameChunkId").toInt());
     m_endstartupchunkid = QString::number(json_gameMetaData.object().value("endStartupChunkId").toInt());
 
-    QByteArray ba_gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
-    QJsonDocument json_gamestats = QJsonDocument::fromJson(QByteArray::fromBase64(ba_gamestats));
+    QByteArray gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
 
-    emit toLog("End of recording : " + m_serverid + "/" + m_gameid);
+    emit toLog("End of recording " + m_serverid + "/" + m_gameid);
 
     //Save all chunks, infos and keyframes in a file
 
@@ -157,10 +156,12 @@ void Recorder::run(){
 
         if(!m_gameinfo.isEmpty()){
             stream << "::ORGameInfos:" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
+            emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Infos retrieved");
         }
 
-        if(!json_gamestats.isEmpty()){
-            stream << "::ORGameStats:" << json_gamestats.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
+        if(!gamestats.isEmpty()){
+            stream << "::ORGameStats:" << gamestats << "::" << endl;
+            emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Stats retrieved");
         }
 
         for(int i = 0; i < list_keyframes.size(); i++){
@@ -182,7 +183,7 @@ void Recorder::run(){
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
     }
     else{
-        emit toLog("Error saving replay.");
+        emit toLog("Recorder: Error saving replay : cannot open output file.");
     }
 
     emit end(m_serverid, m_gameid);

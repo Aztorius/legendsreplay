@@ -77,7 +77,7 @@ private:
     QList<int> m_chunksid;
 
     QJsonDocument m_gameinfos;
-    QJsonDocument m_endofgamestats;
+    QByteArray m_endofgamestats;
 };
 
 #endif // REPLAY_H
