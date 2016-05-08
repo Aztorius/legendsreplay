@@ -9,7 +9,7 @@ QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 
-TARGET = OpenReplay
+TARGET = LegendsReplay
 TEMPLATE = app
 
 
@@ -32,5 +32,5 @@ else:unix: LIBS += -L$$PWD/qhttp/lib/ -lqhttp
 INCLUDEPATH += $$PWD/qhttp/include
 DEPENDPATH += $$PWD/qhttp/include
 
-RC_FILE = openreplay.rc
-RESOURCES = openreplay.qrc
+RC_FILE = legendsreplay.rc
+RESOURCES = legendsreplay.qrc

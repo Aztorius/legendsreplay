@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("OpenReplay Alpha 0.8.5"));
+    setWindowTitle(tr("LegendsReplay Alpha 0.8.5"));
 
-    log(QString("OpenReplay Alpha 0.8.5 Started"));
+    log(QString("LegendsReplay Alpha 0.8.5 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -20,14 +20,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
     ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/openreplay.php"));
 
-    orsettings = new QSettings("OpenReplay", "Local");
+    orsettings = new QSettings("LegendsReplay", "Local");
 
     if(!orsettings->value("SummonerName").toString().isEmpty()){
         m_summonername = orsettings->value("SummonerName").toString();
         ui->lineEdit_summonername->setText(m_summonername);
     }
     else{
-        QMessageBox::information(this, "OpenReplay", "Please set your summoner name to record your games.");
+        QMessageBox::information(this, "LegendsReplay", "Please set your summoner name to record your games.");
     }
 
     if(!orsettings->value("SummonerId").toString().isEmpty()){
@@ -69,11 +69,11 @@ MainWindow::MainWindow(QWidget *parent) :
         docfolder = orsettings->value("ReplayDirectory").toString();
     }
 
-    if(!QDir(docfolder + "/OpenReplays").exists()){
-        QDir().mkpath(docfolder + "/OpenReplays");
+    if(!QDir(docfolder + "/LegendsReplay").exists()){
+        QDir().mkpath(docfolder + "/LegendsReplay");
     }
 
-    replaydirectory = docfolder + "/OpenReplays";
+    replaydirectory = docfolder + "/LegendsReplay";
 
     ui->lineEdit_replaysFolder->setText(replaydirectory);
 
@@ -159,14 +159,14 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     QFileInfoList list = qd.entryInfoList();
 
     if(list.size()==0){
-        QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
         return;
     }
 
     path = loldirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
 
     if(!check_path(path)){
-        QMessageBox::information(this, "OpenReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
         return;
     }
 
@@ -686,7 +686,7 @@ void MainWindow::slot_summonerinfos_save(){
         return;
     }
     if(orservers.isEmpty()){
-        QMessageBox::information(this,"OpenReplay","Please add a OpenReplay server.");
+        QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
         return;
     }
 
@@ -700,7 +700,7 @@ void MainWindow::slot_summonerinfos_save(){
     log("Retrieving summoner ID");
 
     if(suminfos.isEmpty()){
-        QMessageBox::information(this,"OpenReplay","Unknown summoner on this server.");
+        QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
         log("Unknown summoner on this server.");
         return;
     }
