@@ -8,6 +8,7 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+PRJDIR = ..
 
 TARGET = LegendsReplay
 TEMPLATE = app
@@ -20,17 +21,15 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     recorder.h \
-    replay.h \
-    qhttp/include/qhttpserver.hpp
+    replay.h
 
 FORMS    += mainwindow.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/qhttp/lib/ -lqhttp
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/qhttp/lib/ -lqhttpd
-else:unix: LIBS += -L$$PWD/qhttp/lib/ -lqhttp
+unix: LIBS += -lqhttp
+win32: LIBS += -L$$OUT_PWD/../deps/qhttp/xbin/ -lqhttp
 
-INCLUDEPATH += $$PWD/qhttp/include
-DEPENDPATH += $$PWD/qhttp/include
+INCLUDEPATH += $$PRJDIR/deps/qhttp/src
+DEPENDPATH += $$PRJDIR/deps/qhttp/src
 
 RC_FILE = legendsreplay.rc
 RESOURCES = legendsreplay.qrc
