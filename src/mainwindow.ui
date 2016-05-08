@@ -692,6 +692,11 @@
             <string>OCE</string>
            </property>
           </row>
+          <row>
+           <property name="text">
+            <string>BR</string>
+           </property>
+          </row>
           <column>
            <property name="text">
             <string>Client</string>

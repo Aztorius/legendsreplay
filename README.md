@@ -7,7 +7,7 @@ A League of Legends replay software.
 
 ## Features
 
-- EUW, EUNE, NA, JP, KR and OCE servers supported
+- EUW, EUNE, NA, JP, KR, OCE and BR servers supported
 - Show servers status
 - List all featured games
 - Launch spectator mode for featured games

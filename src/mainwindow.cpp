@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) :
     servers.append(QStringList() << "Japan" << "JP1" << "spectator.jp1.lol.riotgames.com:80" << "JP");
     servers.append(QStringList() << "Republic of Korea" << "KR" << "spectator.kr.lol.riotgames.com:80" << "KR");
     servers.append(QStringList() << "Oceania" << "OC1" << "spectator.oc1.lol.riotgames.com:80" << "OCE");
+    servers.append(QStringList() << "Brazil" << "BR1" << "spectator.br.lol.riotgames.com:80" << "BR");
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -118,6 +119,7 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/jp"))));  // GET JP SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/kr"))));  // GET KR SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/oce"))));  // GET OCE SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/br"))));  // GET BR SERVERS STATUS
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
@@ -308,6 +310,8 @@ void MainWindow::slot_featuredRefresh(){
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.kr.lol.riotgames.com/observer-mode/rest/featured"))));  // GET KR FEATURED GAMES
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.oc1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET OCE FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.br.lol.riotgames.com/observer-mode/rest/featured"))));  // GET BR FEATURED GAMES
 
 }
 
