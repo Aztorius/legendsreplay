@@ -22,6 +22,12 @@ A League of Legends replay software.
 
 ### [Website](http://aztorius.github.io/legendsreplay)
 
+## Build
+
+- ```git submodule init && git submodule update```
+- In qhttp run ̀```./update-dependencies.sh```
+- Open /src/legendsreplay.pro and build it with QtCreator
+
 ### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
 
 ### Please report issues and send pull requests to improve this software
