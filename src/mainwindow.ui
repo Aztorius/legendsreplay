@@ -677,6 +677,21 @@
             <string>NA</string>
            </property>
           </row>
+          <row>
+           <property name="text">
+            <string>JP</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>KR</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>OCE</string>
+           </property>
+          </row>
           <column>
            <property name="text">
             <string>Client</string>

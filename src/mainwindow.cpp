@@ -9,9 +9,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("LegendsReplay Alpha 0.8.5"));
+    setWindowTitle(tr("LegendsReplay Alpha 0.8.6"));
 
-    log(QString("LegendsReplay Alpha 0.8.5 Started"));
+    log(QString("LegendsReplay Alpha 0.8.6 Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -94,6 +94,9 @@ MainWindow::MainWindow(QWidget *parent) :
     servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80" << "EUW");
     servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088" << "EUNE");
     servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80" << "NA");
+    servers.append(QStringList() << "Japan" << "JP1" << "spectator.jp1.lol.riotgames.com:80" << "JP");
+    servers.append(QStringList() << "Republic of Korea" << "KR" << "spectator.kr.lol.riotgames.com:80" << "KR");
+    servers.append(QStringList() << "Oceania" << "OC1" << "spectator.oc1.lol.riotgames.com:80" << "OCE");
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -112,6 +115,9 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/euw"))));  // GET EUW SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/eune"))));  // GET EUNE SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/na"))));  // GET NA SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/jp"))));  // GET JP SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/kr"))));  // GET KR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/oce"))));  // GET OCE SERVERS STATUS
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
@@ -296,6 +302,13 @@ void MainWindow::slot_featuredRefresh(){
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.eu.lol.riotgames.com:8088/observer-mode/rest/featured"))));  // GET EUNE FEATURED GAMES
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.na.lol.riotgames.com/observer-mode/rest/featured"))));  // GET NA FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.jp1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET JP FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.kr.lol.riotgames.com/observer-mode/rest/featured"))));  // GET KR FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.oc1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET OCE FEATURED GAMES
+
 }
 
 void MainWindow::slot_click_featured(int row, int column){

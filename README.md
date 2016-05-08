@@ -1,13 +1,13 @@
 # LegendsReplay
 A League of Legends replay software.
 
-### Current Version : Alpha 0.8.5
+### Current Version : Alpha 0.8.6
 
 ### Available for Windows and Linux
 
 ## Features
 
-- EUW, EUNE and NA servers supported
+- EUW, EUNE, NA, JP, KR and OCE servers supported
 - Show servers status
 - List all featured games
 - Launch spectator mode for featured games
