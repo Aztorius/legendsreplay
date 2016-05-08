@@ -2,6 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += src
 
-SUBDIRS += deps/qhttp
+SUBDIRS += qhttp
 
-src.depends += deps/qhttp
+src.depends += qhttp

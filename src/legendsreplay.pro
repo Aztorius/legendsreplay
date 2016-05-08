@@ -25,11 +25,11 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-unix: LIBS += -lqhttp
-win32: LIBS += -L$$OUT_PWD/../deps/qhttp/xbin/ -lqhttp
+unix: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
+win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 
-INCLUDEPATH += $$PRJDIR/deps/qhttp/src
-DEPENDPATH += $$PRJDIR/deps/qhttp/src
+INCLUDEPATH += $$PRJDIR/qhttp/src
+DEPENDPATH += $$PRJDIR/qhttp/src
 
 RC_FILE = legendsreplay.rc
 RESOURCES = legendsreplay.qrc
