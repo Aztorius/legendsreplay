@@ -98,6 +98,11 @@ MainWindow::MainWindow(QWidget *parent) :
     servers.append(QStringList() << "Republic of Korea" << "KR" << "spectator.kr.lol.riotgames.com:80" << "KR");
     servers.append(QStringList() << "Oceania" << "OC1" << "spectator.oc1.lol.riotgames.com:80" << "OCE");
     servers.append(QStringList() << "Brazil" << "BR1" << "spectator.br.lol.riotgames.com:80" << "BR");
+    servers.append(QStringList() << "Latin America North" << "LA1" << "spectator.la1.lol.riotgames.com:80" << "LAN");
+    servers.append(QStringList() << "Latin America South" << "LA2" << "spectator.la2.lol.riotgames.com:80" << "LAS");
+    servers.append(QStringList() << "Russia" << "RU" << "spectator.ru.lol.riotgames.com:80" << "RU");
+    servers.append(QStringList() << "Turkey" << "TR1" << "spectator.tr.lol.riotgames.com:80" << "TR");
+    servers.append(QStringList() << "PBE" << "PBE1" << "spectator.pbe1.lol.riotgames.com:8088" << "PBE");
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -120,6 +125,11 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/kr"))));  // GET KR SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/oce"))));  // GET OCE SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/br"))));  // GET BR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/lan"))));  // GET LAN SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/las"))));  // GET LAS SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/ru"))));  // GET RU SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/tr"))));  // GET TR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.pbe.leagueoflegends.com/shards/pbe"))));  // GET PBE SERVERS STATUS
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
@@ -221,7 +231,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
     if(jsonResponse.isEmpty()){
-        ui->statusBar->showMessage(tr("Status : Error"));
+        ui->statusBar->showMessage(tr("Status: Error"));
         return;
     }
 
@@ -237,6 +247,14 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
         if(jsonObject.value(tr("name")).toString() == servers.at(i).at(0)){
             for(int j = 0; j < 4; j++){
                 ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(services[j].toObject().value(tr("status")).toString()));
+                if(services[j].toObject().value(tr("status")).toString() == "offline"){
+                    ui->tableWidget_status->item(i,j)->setBackgroundColor(Qt::red);
+                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
+                }
+                else if(services[j].toObject().value(tr("status")).toString() == "online"){
+                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(0,160,0));
+                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
+                }
             }
             break;
         }
@@ -311,7 +329,11 @@ void MainWindow::slot_featuredRefresh(){
 
     networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.oc1.lol.riotgames.com/observer-mode/rest/featured"))));  // GET OCE FEATURED GAMES
 
-    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.br.lol.riotgames.com/observer-mode/rest/featured"))));  // GET BR FEATURED GAMES
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.br.lol.riotgames.com/observer-mode/rest/featured"))));  // GET BR LAN LAS FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.ru.lol.riotgames.com/observer-mode/rest/featured"))));  // GET RU TR FEATURED GAMES
+
+    networkManager_featured->get(QNetworkRequest(QUrl(tr("http://spectator.pbe1.lol.riotgames.com:8088/observer-mode/rest/featured"))));  // GET PBE FEATURED GAMES
 
 }
 
@@ -319,10 +341,6 @@ void MainWindow::slot_click_featured(int row, int column){
     Q_UNUSED(column);
 
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
-
-    ui->lineEdit_featured_serverid->setText(ui->tableWidget_featured->item(row, 0)->text());
-    ui->lineEdit_featured_gameid->setText(ui->tableWidget_featured->item(row,1)->text());
-    ui->lineEdit_featured_key->setText(ui->tableWidget_featured->item(row,2)->text());
 
     QJsonObject game;
     for(int i = 0; i < json_featured.size(); i++){
