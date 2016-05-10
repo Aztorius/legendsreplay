@@ -239,7 +239,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
     if(jsonResponse.isEmpty()){
-        ui->statusBar->showMessage(tr("Status: Error"));
+        log(tr("Status: Error"));
         return;
     }
 

@@ -872,6 +872,51 @@
             <string>NA</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>JP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>KR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>OCE</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LAN</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>LAS</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RU</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>TR</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>PBE</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
