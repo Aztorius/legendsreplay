@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(tr("LegendsReplay Alpha 0.8.6"));
+    setWindowIcon(QIcon(":/logo.png"));
 
     log(QString("LegendsReplay Alpha 0.8.6 Started"));
 
