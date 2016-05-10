@@ -89,6 +89,7 @@ private slots:
     void slot_summonerinfos_save();
 
     void slot_featuredRefresh();
+    void slot_statusRefresh();
 
     void slot_setdirectory();
     void slot_setreplaydirectory();
