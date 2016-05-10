@@ -3,7 +3,7 @@ A League of Legends replay software.
 
 ### Current Version : Alpha 0.8.6
 
-### Available for **Windows** and **Linux**
+Available for **Windows** and **Linux**
 
 ## Features
 
@@ -26,8 +26,10 @@ A League of Legends replay software.
 
 ## Build
 
+Qt5 is required.
+
 - ``` git submodule init && git submodule update ```
-- In qhttp folder run ``` ./update-dependencies.sh ```
+- Go to qhttp folder and run ``` ./update-dependencies.sh ```
 - Open LegendsReplay.pro and build src project with QtCreator
 
 ### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
