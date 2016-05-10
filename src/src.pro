@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui network widgets
 
 PRJDIR = ..
 
@@ -30,6 +28,8 @@ win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 
 INCLUDEPATH += $$PRJDIR/qhttp/src
 DEPENDPATH += $$PRJDIR/qhttp/src
+
+CONFIG += c++11
 
 RC_FILE = legendsreplay.rc
 RESOURCES = legendsreplay.qrc
