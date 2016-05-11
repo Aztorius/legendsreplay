@@ -3,16 +3,18 @@
 #include "recorder.h"
 #include "replay.h"
 
+QString GLOBAL_VERSION = "0.8.6-2";
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("LegendsReplay Alpha 0.8.6"));
+    setWindowTitle(tr("LegendsReplay Alpha ") + GLOBAL_VERSION);
     setWindowIcon(QIcon(":/logo.png"));
 
-    log(QString("LegendsReplay Alpha 0.8.6 Started"));
+    log(QString("LegendsReplay Alpha " + GLOBAL_VERSION + " Started"));
 
     ui->lineEdit_status->setText("Starting");
 
@@ -129,6 +131,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
+
+    QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
+
+    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
+        QMessageBox::information(this, "LegendsReplay", "New version " + updatejson.object().value("version").toString() + " available !\nhttp://aztorius.github.io/legendsreplay/");
+    }
 
     ui->lineEdit_status->setText("Idle");
 }
