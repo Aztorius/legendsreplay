@@ -135,7 +135,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
 
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
-        QMessageBox::information(this, "LegendsReplay", "New version " + updatejson.object().value("version").toString() + " available !\nhttp://aztorius.github.io/legendsreplay/");
+        QMessageBox updatebox(this);
+        updatebox.setTextFormat(Qt::RichText);
+        updatebox.setText("<a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
+        updatebox.setStandardButtons(QMessageBox::Ok);
+        updatebox.exec();
     }
 
     ui->lineEdit_status->setText("Idle");
