@@ -57,7 +57,9 @@ public:
     QString getStartgamechunkid();
 
     Chunk getChunk(int id) const;
+    Chunk getPrimaryChunk(int id) const;
     Keyframe getKeyFrame(int id) const;
+    Keyframe findKeyframeByChunkId(int chunkid);
 
 private:
     QString m_gameid;

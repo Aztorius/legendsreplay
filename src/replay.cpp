@@ -167,10 +167,36 @@ Chunk Replay::getChunk(int id) const{
     return chunk;
 }
 
+Chunk Replay::getPrimaryChunk(int id) const{
+    Chunk chunk(0, "", 0);
+    for(int i = 0; i < m_primarychunks.size(); i++){
+        if(m_primarychunks.at(i).getId() == id){
+            chunk = m_primarychunks.at(i);
+            break;
+        }
+    }
+    return chunk;
+}
+
 Keyframe Replay::getKeyFrame(int id) const{
     Keyframe keyframe(0, "", 0);
     for(int i = 0; i < m_keyframes.size(); i++){
         if(m_keyframes.at(i).getId() == id){
+            keyframe = m_keyframes.at(i);
+            break;
+        }
+    }
+    return keyframe;
+}
+
+Keyframe Replay::findKeyframeByChunkId(int chunkid){
+    Keyframe keyframe(0, "", 0);
+    for(int i = 0; i < m_keyframes.size(); i++){
+        if(m_keyframes.at(i).getNextchunkid() == chunkid){
+            keyframe = m_keyframes.at(i);
+            break;
+        }
+        else if(m_keyframes.at(i).getNextchunkid() == chunkid - 1){
             keyframe = m_keyframes.at(i);
             break;
         }
