@@ -11,10 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle(tr("LegendsReplay Alpha ") + GLOBAL_VERSION);
+    setWindowTitle(tr("LegendsReplay ") + GLOBAL_VERSION);
     setWindowIcon(QIcon(":/logo.png"));
 
-    log(QString("LegendsReplay Alpha " + GLOBAL_VERSION + " Started"));
+    log(QString("LegendsReplay " + GLOBAL_VERSION + " Started"));
 
     ui->lineEdit_status->setText("Starting");
 
