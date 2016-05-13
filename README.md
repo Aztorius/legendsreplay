@@ -1,7 +1,7 @@
 # LegendsReplay
 A League of Legends replay software.
 
-### Current Version : Stable 1.0.0
+### Current Version : Stable 1.0.1
 
 Available for **Windows** and **Linux**
 
