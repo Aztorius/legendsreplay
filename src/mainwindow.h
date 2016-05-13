@@ -30,6 +30,7 @@ public:
     void lol_launch(QString serverid, QString key, QString matchid, bool local = false);
     bool check_path(QString path);
     bool game_ended(QString serverid, QString gameid);
+    void replay_launch(QString pathfile);
 
     QJsonDocument getCurrentPlayingGameInfos(QString server, QString summonerid);
     QJsonDocument getJsonFromUrl(QString url);
@@ -70,7 +71,6 @@ private:
     QTimer *m_timer;
 
     QHttpServer *httpserver;
-    QTimer *m_servertimer;
 
     int serverChunkCount;
     int serverKeyframeCount;
@@ -82,6 +82,7 @@ private slots:
     void slot_refreshPlayingStatus();
 
     void slot_doubleclick_savedgames(int row,int column);
+    void slot_doubleclick_mygames(int row, int column);
     void slot_doubleclick_featured(int row,int column);
     void slot_click_featured(int row,int column);
     void slot_click_allgames(int row,int column);
