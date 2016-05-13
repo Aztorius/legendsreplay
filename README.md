@@ -1,7 +1,7 @@
 # LegendsReplay
 A League of Legends replay software.
 
-### Current Version : Alpha 0.8.6
+### Current Version : Stable 1.0.0
 
 Available for **Windows** and **Linux**
 
@@ -19,8 +19,6 @@ Available for **Windows** and **Linux**
 ## TODO
 
 - Improve GUI interface
-- Replay all recorded games without error
-- Go back in time when replaying
 
 ### [Website](http://aztorius.github.io/legendsreplay)
 
