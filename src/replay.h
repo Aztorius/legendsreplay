@@ -51,6 +51,7 @@ public:
     QList<int> getChunksDuration();
 
     QJsonDocument getGameinfos();
+    QByteArray getEndOfGameStats();
 
     QString getServerversion();
     QString getEndstartupchunkid();

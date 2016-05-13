@@ -70,6 +70,7 @@ private:
     QTimer *m_timer;
 
     QHttpServer *httpserver;
+    QTimer *m_servertimer;
 
     int serverChunkCount;
     int serverKeyframeCount;

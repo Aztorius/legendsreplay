@@ -204,6 +204,10 @@ Keyframe Replay::findKeyframeByChunkId(int chunkid){
     return keyframe;
 }
 
+QByteArray Replay::getEndOfGameStats(){
+    return QByteArray::fromBase64(m_endofgamestats);
+}
+
 Chunk::Chunk(int id, QByteArray data, int keyframeid, int duration){
     m_id = id;
     m_keyframeid = keyframeid;
