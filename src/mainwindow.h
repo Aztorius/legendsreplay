@@ -87,6 +87,8 @@ private slots:
     void slot_click_featured(int row,int column);
     void slot_click_allgames(int row,int column);
 
+    void slot_open_replay(bool param);
+
     void slot_replayserversAdd();
     void slot_summonerinfos_save();
 

@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.0.0";
+QString GLOBAL_VERSION = "1.0.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -131,6 +131,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
+    connect(ui->tableWidget_yourgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_mygames(int,int)));
+
+    connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
 
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
 
@@ -858,6 +861,13 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
     return gameinfos;
 }
 
+void MainWindow::slot_open_replay(bool param){
+    Q_UNUSED(param);
+
+    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"),replaydirectory);
+    replay_launch(path);
+}
+
 void MainWindow::slot_doubleclick_savedgames(int row, int column){
     Q_UNUSED(column);
 
@@ -929,10 +939,10 @@ void MainWindow::replay_launch(QString pathfile){
         }
         else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid()))
         {
-
             int endstartupchunkid = replay->getEndstartupchunkid().toInt();
             int startgamechunkid = replay->getStartgamechunkid().toInt();
             int endgamechunkid = 0;
+            int nextavailablechunk = 3000;
 
             if(serverChunkCount < replay->getChunks().first().getId()){
                 serverChunkCount = replay->getChunks().first().getId();
@@ -942,24 +952,20 @@ void MainWindow::replay_launch(QString pathfile){
                 serverChunkCount = replay->getChunks().last().getId();
                 serverKeyframeCount = replay->getKeyFrames().last().getId();
                 endgamechunkid = replay->getChunks().last().getId();
+                nextavailablechunk = 90000;
             }
             else{
-                serverKeyframeCount = replay->getChunk(serverChunkCount).getKeyframeId();
+                serverKeyframeCount = replay->findKeyframeByChunkId(serverChunkCount).getId();
             }
 
             int currentChunkid = serverChunkCount;
 
-            int nextavailablechunk = 3000;
-
-            if(serverChunkCount == replay->getChunks().last().getId()){
-                nextavailablechunk = 90000;
-                endgamechunkid = serverChunkCount;
-            }
-
             Keyframe currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
             while(currentKeyframe.getId() == 0 && currentChunkid < replay->getChunks().last().getId()){
                 currentChunkid++;
+                serverChunkCount++;
                 currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
+                serverKeyframeCount = currentKeyframe.getId();
             }
 
             QString data = "{";
