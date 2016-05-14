@@ -582,19 +582,16 @@ void MainWindow::slot_featuredRecord(){
 
     ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
 
-    QJsonDocument gameinfo = getCurrentPlayingGameInfos(serverid,m_summonerid);
+    QJsonDocument gameinfo;
 
-    if(gameinfo.isEmpty()){
-        for(int i = 0; i < json_featured.size(); i++){
-            if(json_featured.at(i).value("gameList").toArray().first().toObject().value("platformId").toString() == serverid){
-                QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
-                for(int j = 0; j < gamelist.size(); j++){
-                    if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toULongLong()) == gameid){
-                        gameinfo = QJsonDocument(gamelist.at(j).toObject());
-                        break;
-                    }
-                }
-                break;
+    for(int i = 0; i < json_featured.size(); i++){
+        QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
+        for(int k = 0; k < gamelist.size(); k++){
+            if(gamelist.at(k).toObject().value("platformId").toString() == serverid){
+                 if(QString::number(gamelist.at(k).toObject().value("gameId").toVariant().toULongLong()) == gameid){
+                     gameinfo = QJsonDocument(gamelist.at(k).toObject());
+                     break;
+                 }
             }
         }
     }
