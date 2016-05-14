@@ -215,7 +215,12 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
         return;
     }
 
-    path = loldirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+    if(serverid == "PBE1"){
+        path = lolpbedirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+    }
+    else{
+        path = loldirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+    }
 
     if(!check_path(path)){
         QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
@@ -229,9 +234,9 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"", QStringList(), path);
+        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
 
-        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " \"" + key + "\" " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
     }
     else{
         for(int i = 0; i < servers.size(); i++){
@@ -249,7 +254,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"", QStringList(), path);
+        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
 
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
     }
