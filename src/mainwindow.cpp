@@ -994,7 +994,7 @@ void MainWindow::replay_launch(QString pathfile){
                 serverKeyframeCount = currentKeyframe.getId();
             }
 
-            if(currentChunkid <= replay->getChunks().at(replay->getChunks().size()/10).getId()){
+            if(currentChunkid <= replay->getChunks().first().getId() + 6){
                 nextavailablechunk = 6000;
             }
             else if(currentChunkid < replay->getChunks().last().getId()){
