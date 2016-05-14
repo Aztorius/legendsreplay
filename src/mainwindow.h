@@ -59,6 +59,7 @@ private:
     QList <QString> orservers;
 
     QString loldirectory;
+    QString lolpbedirectory;
     QString replaydirectory;
 
     bool replaying;
@@ -96,6 +97,7 @@ private slots:
     void slot_statusRefresh();
 
     void slot_setdirectory();
+    void slot_setpbedirectory();
     void slot_setreplaydirectory();
 
     void slot_featuredLaunch();

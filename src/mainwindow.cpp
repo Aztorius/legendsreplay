@@ -58,6 +58,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     ui->lineEdit_4->setText(loldirectory);
 
+    if(!orsettings->value("LoLPBEDirectory").toString().isEmpty()){
+        lolpbedirectory = orsettings->value("LoLPBEDirectory").toString();
+        ui->lineEdit_pbefolder->setText(lolpbedirectory);
+    }
+
     QString docfolder;
     if(orsettings->value("ReplayDirectory").toString().isEmpty()){
         QStringList folders = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
@@ -113,6 +118,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
+    connect(ui->toolButton_pbefolder, SIGNAL(released()), this, SLOT(slot_setpbedirectory()));
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
     connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
     connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
@@ -194,7 +200,12 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     QString path;
 
     QDir qd;
-    qd.setPath(loldirectory + "\\solutions\\lol_game_client_sln\\releases\\");
+    if(serverid == "PBE1"){
+        qd.setPath(lolpbedirectory + "\\solutions\\lol_game_client_sln\\releases\\");
+    }
+    else{
+        qd.setPath(loldirectory + "\\solutions\\lol_game_client_sln\\releases\\");
+    }
     qd.setFilter(QDir::Dirs);
     qd.setSorting(QDir::Name | QDir::Reversed);
     QFileInfoList list = qd.entryInfoList();
@@ -432,6 +443,16 @@ void MainWindow::slot_setdirectory(){
     loldirectory = dir;
     orsettings->setValue("LoLDirectory", loldirectory);
     ui->lineEdit_4->setText(dir);
+}
+
+void MainWindow::slot_setpbedirectory(){
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if(dir.isEmpty()){
+        return;
+    }
+    lolpbedirectory = dir;
+    orsettings->setValue("LoLPBEDirectory", lolpbedirectory);
+    ui->lineEdit_pbefolder->setText(dir);
 }
 
 void MainWindow::slot_setreplaydirectory(){
@@ -942,7 +963,7 @@ void MainWindow::replay_launch(QString pathfile){
             int endstartupchunkid = replay->getEndstartupchunkid().toInt();
             int startgamechunkid = replay->getStartgamechunkid().toInt();
             int endgamechunkid = 0;
-            int nextavailablechunk = 3000;
+            int nextavailablechunk = 6000;
 
             if(serverChunkCount < replay->getChunks().first().getId()){
                 serverChunkCount = replay->getChunks().first().getId();
@@ -966,6 +987,13 @@ void MainWindow::replay_launch(QString pathfile){
                 serverChunkCount++;
                 currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
                 serverKeyframeCount = currentKeyframe.getId();
+            }
+
+            if(currentChunkid <= replay->getChunks().at(replay->getChunks().size()/10).getId()){
+                nextavailablechunk = 6000;
+            }
+            else if(currentChunkid < replay->getChunks().last().getId()){
+                nextavailablechunk = 1000;
             }
 
             QString data = "{";
