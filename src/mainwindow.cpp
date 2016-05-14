@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.1.0";
+QString GLOBAL_VERSION = "1.1.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -201,6 +201,11 @@ void MainWindow::slot_doubleclick_featured(int row,int column){
 }
 
 void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool local){
+    if(serverid.isEmpty() || key.isEmpty() || matchid.isEmpty()){
+        log("Invalid game parameters.");
+        return;
+    }
+
     QString path;
 
     QDir qd;
