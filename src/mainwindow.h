@@ -36,6 +36,7 @@ public:
     QJsonDocument getJsonFromUrl(QString url);
     QByteArray getFileFromUrl(QString url);
 
+    QPixmap getImg(int id);
     void refresh_recordedGames();
     bool islolRunning();
     bool islolclientRunning();
