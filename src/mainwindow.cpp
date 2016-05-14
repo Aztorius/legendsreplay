@@ -180,6 +180,10 @@ void MainWindow::slot_statusRefresh(){
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/ru"))));  // GET RU SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/tr"))));  // GET TR SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.pbe.leagueoflegends.com/shards/pbe"))));  // GET PBE SERVERS STATUS
+
+    for(int i = 0; i < servers.size(); i++){
+        networkManager_status->get(QNetworkRequest(QUrl(tr("http://") + servers.at(i).at(2) + tr("/observer-mode/rest/consumer/version"))));
+    }
 }
 
 void MainWindow::slot_doubleclick_featured(int row,int column){
@@ -262,16 +266,81 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply){
 
-    if (reply->error() != QNetworkReply::NoError)
+    if(reply->error() != QNetworkReply::NoError){
+        QString host = reply->request().url().host();
+        QString port = QString::number(reply->request().url().port());
+        QString domain = host + ":" + port;
+        QString platformid;
+        int row = -1;
+
+        for(int i = 0; i < servers.size(); i++){
+            if(servers.at(i).at(2) == domain){
+                platformid = servers.at(i).at(3);
+                row = i;
+                break;
+            }
+        }
+
+        if(platformid.isEmpty() || row == -1){
             return;
+        }
+
+        if(reply->url().path() == "/observer-mode/rest/consumer/version"){
+            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("offline"));
+            ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
+            ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+        }
+        else{
+            for(int i = 0; i < 4; i++){
+                ui->tableWidget_status->setItem(row,i,new QTableWidgetItem("offline"));
+                ui->tableWidget_status->item(row,i)->setBackgroundColor(Qt::red);
+                ui->tableWidget_status->item(row,i)->setTextColor(Qt::white);
+            }
+        }
+        return;
+    }
 
     QString data = (QString) reply->readAll();
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
     if(jsonResponse.isEmpty()){
-        log(tr("Status: Error"));
-        return;
+        if(reply->url().path() == "/observer-mode/rest/consumer/version"){
+            QString host = reply->request().url().host();
+            QString port = QString::number(reply->request().url().port());
+            QString domain = host + ":" + port;
+            QString platformid;
+            int row = -1;
+
+            for(int i = 0; i < servers.size(); i++){
+                if(servers.at(i).at(2) == domain){
+                    platformid = servers.at(i).at(3);
+                    row = i;
+                    break;
+                }
+            }
+
+            if(platformid.isEmpty() || row == -1){
+                return;
+            }
+
+            if(data.isEmpty()){
+                ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("offline"));
+                ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
+                ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+                return;
+            }
+
+            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("online"));
+            ui->tableWidget_status->item(row,4)->setBackgroundColor(QColor(0,160,0));
+            ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+
+            return;
+        }
+        else{
+            log(tr("Status: Error"));
+            return;
+        }
     }
 
     QJsonObject jsonObject = jsonResponse.object();
