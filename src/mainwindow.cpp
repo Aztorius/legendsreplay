@@ -407,6 +407,8 @@ void MainWindow::slot_click_featured(int row, int column){
         return;
     }
 
+    ui->label_featuredgames_gamemode->setText(game.value("gameMode").toString());
+
     QJsonArray participants = game.value("participants").toArray();
 
     if(participants.size()>=10){
@@ -655,6 +657,12 @@ void MainWindow::slot_click_allgames(int row, int column)
     Q_UNUSED(column);
 
     Replay game(replaydirectory + "/" + recordedgames_filename.at(row));
+
+    ui->label_allgames_gamemode->setText(game.getGameinfos().object().value("gameMode").toString());
+
+    if(game.getGameinfos().isEmpty()){
+        return;
+    }
 
     if(game.getGameinfos().object().value("participants").toArray().size() >= 10){
         QJsonArray array = game.getGameinfos().object().value("participants").toArray();
