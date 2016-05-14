@@ -1,7 +1,7 @@
 # LegendsReplay
 A League of Legends replay software.
 
-### Current Version : Stable 1.0.1
+### Current Version : Stable 1.1.0
 
 Available for **Windows** and **Linux**
 
@@ -14,7 +14,7 @@ Available for **Windows** and **Linux**
 - Record featured games
 - Record multiple games at the same time (multithreading)
 - Autorecord current playing game (with openreplay servers)
-- Replay recorded games (experimental)
+- Replay recorded games
 
 ## TODO
 

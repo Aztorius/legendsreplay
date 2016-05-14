@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.0.1";
+QString GLOBAL_VERSION = "1.1.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
