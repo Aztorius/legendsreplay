@@ -929,6 +929,16 @@ void MainWindow::slot_refreshPlayingStatus(){
 
             QJsonDocument gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
 
+            QTimer timer;
+            QEventLoop loop;
+            connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+            while(gameinfos.isEmpty()){
+                gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
+                timer.start(30000);
+                loop.exec();
+            }
+
             QString serverid, serveraddress;
             QString gameid = QString::number(gameinfos.object().value("gameId").toVariant().toLongLong());
 
