@@ -65,7 +65,7 @@ void Recorder::run(){
     QEventLoop loop2;
     connect(&timer2, SIGNAL(timeout()), &loop2, SLOT(quit()));
 
-    while(json_gameMetaData.isEmpty() || json_lastChunkInfo.object().value("chunkId").toInt() == 0){
+    while(json_gameMetaData.isEmpty() || json_lastChunkInfo.isEmpty() || json_lastChunkInfo.object().value("chunkId").toInt() == 0){
         json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
 
@@ -161,10 +161,6 @@ void Recorder::run(){
         timer.start(10000);
         loop.exec();
     }
-
-    json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
-
-    //TODO: loop until we get good values
 
     m_startgamechunkid = QString::number(json_gameMetaData.object().value("startGameChunkId").toInt());
     m_endstartupchunkid = QString::number(json_gameMetaData.object().value("endStartupChunkId").toInt());

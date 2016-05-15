@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.1.1";
+QString GLOBAL_VERSION = "1.1.2";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -933,7 +933,7 @@ void MainWindow::slot_refreshPlayingStatus(){
             QEventLoop loop;
             connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
 
-            while(gameinfos.isEmpty()){
+            while(gameinfos.isEmpty() || gameinfos.object().value("gameStartTime").toVariant().toLongLong() == 0){
                 gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
                 timer.start(30000);
                 loop.exec();
