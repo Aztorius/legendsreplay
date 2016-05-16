@@ -932,10 +932,17 @@ void MainWindow::slot_refreshPlayingStatus(){
             QTimer timer;
             QEventLoop loop;
             connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+            unsigned int counter = 0;
 
             while(gameinfos.isEmpty() || gameinfos.object().value("gameStartTime").toVariant().toLongLong() == 0){
+                if(counter > 5){
+                    log("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly");
+                    log("End of recording");
+                    return;
+                }
+                counter++;
                 gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
-                timer.start(30000);
+                timer.start(45000);
                 loop.exec();
             }
 
@@ -951,6 +958,7 @@ void MainWindow::slot_refreshPlayingStatus(){
             }
 
             if(serverid.isEmpty()){
+                log("[ERROR] Server not found");
                 return;
             }
 

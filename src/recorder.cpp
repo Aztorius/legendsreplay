@@ -64,8 +64,15 @@ void Recorder::run(){
     QTimer timer2;
     QEventLoop loop2;
     connect(&timer2, SIGNAL(timeout()), &loop2, SLOT(quit()));
+    unsigned int counter = 0;
 
-    while(json_gameMetaData.isEmpty() || json_lastChunkInfo.isEmpty() || json_lastChunkInfo.object().value("chunkId").toInt() == 0){
+    while(json_gameMetaData.isEmpty() || json_lastChunkInfo.isEmpty() || json_lastChunkInfo.object().value("chunkId").toInt() == 0)
+    {
+        counter++;
+        if(counter > 30){
+            emit toLog("[ERROR] No valid response from spectator server, aborting recorder : " + m_serverid + "/" + m_gameid);
+            return;
+        }
         json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
 
@@ -105,6 +112,7 @@ void Recorder::run(){
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
         if(json_lastChunkInfo.isEmpty())
         {
+            emit toLog("[WARN] Spectator server response empty, stop recording : " + m_serverid + "/" + m_gameid);
             break;
         }
 
@@ -157,8 +165,8 @@ void Recorder::run(){
             }
         }
 
-        //Retry every 10 seconds
-        timer.start(10000);
+        //Retry every 15 seconds
+        timer.start(15000);
         loop.exec();
     }
 
@@ -207,7 +215,7 @@ void Recorder::run(){
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
     }
     else{
-        emit toLog("Recorder: Error saving replay : cannot open output file.");
+        emit toLog("[ERROR] Error saving replay : cannot open output file : " + m_serverid + "-" + m_gameid + ".lor");
     }
 
     emit end(m_serverid, m_gameid);
