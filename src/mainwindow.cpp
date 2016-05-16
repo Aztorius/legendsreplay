@@ -300,6 +300,8 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
             return;
         }
 
+        log("[ERROR] Status of " + platformid + ": " + reply->errorString());
+
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("offline"));
             ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
@@ -943,8 +945,10 @@ void MainWindow::slot_refreshPlayingStatus(){
             QEventLoop loop;
             connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
             unsigned int counter = 0;
+            timer.start(150000);
 
             while(gameinfos.isEmpty() || gameinfos.object().value("gameStartTime").toVariant().toLongLong() == 0){
+                loop.exec();
                 if(counter > 5){
                     log("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly");
                     log("End of recording");
@@ -953,7 +957,6 @@ void MainWindow::slot_refreshPlayingStatus(){
                 counter++;
                 gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
                 timer.start(45000);
-                loop.exec();
             }
 
             QString serverid, serveraddress;
