@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.1.2";
+QString GLOBAL_VERSION = "1.2.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -145,6 +145,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
         QMessageBox updatebox(this);
+        updatebox.setIcon(QMessageBox::Information);
         updatebox.setTextFormat(Qt::RichText);
         updatebox.setText("<a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
         updatebox.setStandardButtons(QMessageBox::Ok);
@@ -163,6 +164,15 @@ void MainWindow::log(QString s){
 
     ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + s);
     ui->textEdit->append(QTime::currentTime().toString() + " | " + s);
+}
+
+void MainWindow::setArgs(int argc, char *argv[]){
+    if(argc > 1){
+        Replay replay(argv[1]);
+        if(!replay.getGameid().isEmpty()){
+            replay_launch(argv[1]);
+        }
+    }
 }
 
 void MainWindow::slot_statusRefresh(){

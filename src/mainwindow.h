@@ -27,6 +27,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    void setArgs(int argc, char *argv[]);
+
     void lol_launch(QString serverid, QString key, QString matchid, bool local = false);
     bool check_path(QString path);
     bool game_ended(QString serverid, QString gameid);
