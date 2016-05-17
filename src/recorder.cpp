@@ -190,10 +190,16 @@ void Recorder::run(){
             stream << "::ORGameInfos:" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
             emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Infos retrieved");
         }
+        else{
+            emit toLog("[WARN] Recorder: " + m_serverid + "/" + m_gameid + " Game Infos lost");
+        }
 
         if(!gamestats.isEmpty()){
             stream << "::ORGameStats:" << gamestats << "::" << endl;
             emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Stats retrieved");
+        }
+        else{
+            emit toLog("[WARN] Recorder: " + m_serverid + "/" + m_gameid + " Game Stats lost");
         }
 
         for(int i = 0; i < list_keyframes.size(); i++){
@@ -213,6 +219,10 @@ void Recorder::run(){
         file.close();
 
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
+
+        if(list_primarychunks.isEmpty() || list_chunks.isEmpty() || list_keyframes.isEmpty()){
+            emit toLog("Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
+        }
     }
     else{
         emit toLog("[ERROR] Error saving replay : cannot open output file : " + m_serverid + "-" + m_gameid + ".lor");

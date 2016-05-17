@@ -219,12 +219,14 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     QString path;
 
     QDir qd;
+
     if(serverid == "PBE1"){
-        qd.setPath(lolpbedirectory + "\\solutions\\lol_game_client_sln\\releases\\");
+        qd.setPath(lolpbedirectory + "/solutions/lol_game_client_sln/releases/");
     }
     else{
-        qd.setPath(loldirectory + "\\solutions\\lol_game_client_sln\\releases\\");
+        qd.setPath(loldirectory + "/solutions/lol_game_client_sln/releases/");
     }
+
     qd.setFilter(QDir::Dirs);
     qd.setSorting(QDir::Name | QDir::Reversed);
     QFileInfoList list = qd.entryInfoList();
@@ -235,10 +237,10 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     }
 
     if(serverid == "PBE1"){
-        path = lolpbedirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+        path = lolpbedirectory + "/solutions/lol_game_client_sln/releases/" + list.at(0).fileName() + "/deploy/";
     }
     else{
-        path = loldirectory + "\\solutions\\lol_game_client_sln\\releases\\" + list.at(0).fileName() + "\\deploy\\";
+        path = loldirectory + "/solutions/lol_game_client_sln/releases/" + list.at(0).fileName() + "/deploy/";
     }
 
     if(!check_path(path)){
@@ -251,11 +253,24 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     if(local){
         address = "127.0.0.1:8088";
 
+#ifdef WIN32
+
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
         process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
 
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+
+#else
+        //QProcess *process = new QProcess;
+        //process->setWorkingDirectory(path);
+        //process->startDetached("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+
+        //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("LoL Launch isn't available for Linux yet");
+
+#endif
+
     }
     else{
         for(int i = 0; i < servers.size(); i++){
@@ -271,11 +286,25 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
             return;
         }
 
+#ifdef WIN32
+
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
         process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
 
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+
+#else
+
+        //QProcess *process = new QProcess;
+        //process->setWorkingDirectory(path);
+        //process->startDetached("wine \"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
+
+        //log("wine \"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("LoL Launch isn't available for Linux yet");
+
+#endif
+
     }
 }
 
@@ -396,7 +425,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
     if(jsonResponse.isEmpty()){
-        ui->statusBar->showMessage(tr("Featured : Error"));
+        log(tr("Featured : Error"));
         return;
     }
 
