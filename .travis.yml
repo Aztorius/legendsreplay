@@ -10,3 +10,4 @@ script:
   - ./update-dependencies.sh
   - cd ..
   - qmake LegendsReplay.pro
+  - make
