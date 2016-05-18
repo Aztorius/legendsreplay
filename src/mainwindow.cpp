@@ -1190,6 +1190,7 @@ void MainWindow::replay_launch(QString pathfile)
             int currentChunkid = serverChunkCount;
 
             Keyframe currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
+
             while(currentKeyframe.getId() == 0 && currentChunkid < replay->getChunks().last().getId()){
                 currentChunkid++;
                 serverChunkCount++;
