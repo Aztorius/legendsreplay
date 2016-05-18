@@ -9,4 +9,4 @@ script:
   - cd qhttp
   - ./update-dependencies.sh
   - cd ..
-  - cd qmake LegendsReplay.pro
+  - qmake LegendsReplay.pro
