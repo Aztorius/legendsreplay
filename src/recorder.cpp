@@ -104,9 +104,10 @@ void Recorder::run(){
 
     QByteArray bytearray_keyframe, bytearray_chunk;
 
-    QTimer timer;
-    QEventLoop loop;
+    QTimer timer, timer3;
+    QEventLoop loop, loop3;
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+    connect(&timer3, SIGNAL(timeout()), &loop3, SLOT(quit()));
 
     while(lastsavedchunkid != json_lastChunkInfo.object().value("endGameChunkId").toInt() || lastsavedkeyframeid != json_lastChunkInfo.object().value("keyFrameId").toInt() || json_lastChunkInfo.object().value("endGameChunkId").toInt() == -1){
 
@@ -135,6 +136,9 @@ void Recorder::run(){
                 list_keyframes.append(Keyframe(keyframeid, bytearray_keyframe, nextchunkid));
                 lastsavedkeyframeid = keyframeid;
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(keyframeid) + " " + QString::number(nextchunkid));
+
+                timer3.start(2000);
+                loop3.exec();
             }
             else{
                 emit toLog("Recorder: KeyFrame lost " + m_serverid + "/" + m_gameid + " : " + QString::number(keyframeid));
@@ -153,12 +157,15 @@ void Recorder::run(){
                 int local_keyframeid = json_lastChunkInfo.object().value("keyFrameId").toInt();
                 int duration = json_lastChunkInfo.object().value("duration").toInt();
                 if(chunkid != json_lastChunkInfo.object().value("chunkId").toInt()){
-                    local_keyframeid = ceil((chunkid - json_lastChunkInfo.object().value("endStartupChunkId").toInt())/2.0);
+                    local_keyframeid = floor((chunkid - json_lastChunkInfo.object().value("endStartupChunkId").toInt())/2.0);
                     duration = 30000;
                 }
                 list_chunks.append(Chunk(chunkid, bytearray_chunk, local_keyframeid, duration));
                 lastsavedchunkid = chunkid;
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(chunkid) + " " + QString::number(local_keyframeid) + " " + QString::number(duration));
+
+                timer3.start(2000);
+                loop3.exec();
             }
             else{
                 emit toLog("Recorder: Chunk lost " + m_serverid + "/" + m_gameid + " : " + QString::number(chunkid));
@@ -172,14 +179,17 @@ void Recorder::run(){
                 list_primarychunks.append(Chunk(startupchunkid, bytearray_chunk, 0));
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(startupchunkid));
                 startupchunkid += 1;
+
+                timer3.start(2000);
+                loop3.exec();
             }
             else{
                 emit toLog("Recorder: PrimaryChunk lost " + m_serverid + "/" + m_gameid + " : " + QString::number(startupchunkid));
             }
         }
 
-        //Retry every 16 seconds
-        timer.start(16000);
+        //Retry every 20 seconds
+        timer.start(20000);
         loop.exec();
     }
 
@@ -242,6 +252,10 @@ void Recorder::run(){
     else{
         emit toLog("[ERROR] Error saving replay : cannot open output file : " + m_serverid + "-" + m_gameid + ".lor");
     }
+
+    list_keyframes.clear();
+    list_chunks.clear();
+    list_primarychunks.clear();
 
     emit end(m_serverid, m_gameid);
 }
