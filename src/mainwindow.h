@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QtConcurrent/QtConcurrent>
 #include <QPainter>
+#include <QSystemTrayIcon>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -51,6 +52,8 @@ private:
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;
 
+    QSystemTrayIcon *systemtrayicon;
+
     QList <QStringList> recording;
     QList <QString> recordedgames_filename;
     QList <QString> yourgames_filename;
@@ -67,6 +70,7 @@ private:
 
     bool replaying;
     bool playing;
+    bool systemtrayavailable;
 
     QString m_summonername;
     QString m_summonerid;
@@ -109,6 +113,7 @@ private slots:
     void slot_changedTab(int index);
     void slot_endRecording(QString serverid, QString gameid);
     void log(QString);
+    void showmessage(QString message);
 };
 
 #endif // MAINWINDOW_H

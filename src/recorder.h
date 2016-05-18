@@ -30,6 +30,7 @@ class Recorder : public QThread
     signals:
         void toLog(QString logstring);
         void end(QString serverid, QString gameid);
+        void toShowmessage(QString message);
 };
 
 #endif // RECORDER_H

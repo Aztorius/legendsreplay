@@ -142,6 +142,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
 
+    systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
+
+    if(systemtrayavailable){
+        systemtrayicon = new QSystemTrayIcon;
+        systemtrayicon->setIcon(QIcon(":/logo.png"));
+        systemtrayicon->show();
+    }
+
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
 
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
@@ -171,9 +179,15 @@ void MainWindow::log(QString s)
 void MainWindow::setArgs(int argc, char *argv[])
 {
     if(argc > 1){
+        if(argv[1] == "--silent"){
+            this->showMinimized();
+            return;
+        }
+
         Replay replay(argv[1]);
         if(!replay.getGameid().isEmpty()){
             replay_launch(argv[1]);
+            return;
         }
     }
 }
@@ -1321,4 +1335,9 @@ void MainWindow::replay_launch(QString pathfile)
 
     //Launch lol client
     lol_launch(replay->getServerid(),replay->getEncryptionkey(),replay->getGameid(),true);
+}
+
+void MainWindow::showmessage(QString message)
+{
+    systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
 }

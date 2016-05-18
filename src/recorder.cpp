@@ -11,6 +11,7 @@ Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, 
     m_replaydirectory = replaydirectory;
 
     connect(this, SIGNAL(toLog(QString)), window, SLOT(log(QString)));
+    connect(this, SIGNAL(toShowmessage(QString)), window, SLOT(showmessage(QString)));
 }
 
 QByteArray Recorder::getFileFromUrl(QString url){
@@ -188,6 +189,8 @@ void Recorder::run(){
     QByteArray gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
 
     emit toLog("End of recording " + m_serverid + "/" + m_gameid);
+
+    emit toShowmessage("End of recording " + m_serverid + "/" + m_gameid);
 
     //Save all chunks, infos and keyframes in a file
 
