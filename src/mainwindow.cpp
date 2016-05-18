@@ -179,7 +179,7 @@ void MainWindow::log(QString s)
 void MainWindow::setArgs(int argc, char *argv[])
 {
     if(argc > 1){
-        if(argv[1] == "--silent"){
+        if(std::string(argv[1]) == "--silent"){
             this->showMinimized();
             return;
         }
