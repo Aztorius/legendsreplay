@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     else{
         QMessageBox::information(this, "LegendsReplay", "Please set your summoner name to record your games.");
+        log("[WARN] Please set your summoner name to record your games.");
     }
 
     if(!orsettings->value("SummonerId").toString().isEmpty()){
@@ -51,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
         loldirectory = orsettings->value("LoLDirectory").toString();
     }
     else if(rootfolder.isEmpty()){
-        loldirectory = "C:\\Program Files\\Riot\\League of Legends\\RADS";
+        loldirectory = "C:\\Program Files\\Riot Games\\League of Legends\\RADS";
     }
     else{
         loldirectory = rootfolder;
@@ -150,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
         updatebox.setText("<a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
         updatebox.setStandardButtons(QMessageBox::Ok);
         updatebox.exec();
+        log("New version "+ updatejson.object().value("version").toString() + " available !");
     }
 
     ui->lineEdit_status->setText("Idle");
@@ -160,13 +162,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::log(QString s){
-
+void MainWindow::log(QString s)
+{
     ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + s);
     ui->textEdit->append(QTime::currentTime().toString() + " | " + s);
 }
 
-void MainWindow::setArgs(int argc, char *argv[]){
+void MainWindow::setArgs(int argc, char *argv[])
+{
     if(argc > 1){
         Replay replay(argv[1]);
         if(!replay.getGameid().isEmpty()){
@@ -175,7 +178,8 @@ void MainWindow::setArgs(int argc, char *argv[]){
     }
 }
 
-void MainWindow::slot_statusRefresh(){
+void MainWindow::slot_statusRefresh()
+{
     ui->tableWidget_status->clearContents();
 
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/euw"))));  // GET EUW SERVERS STATUS
@@ -196,7 +200,8 @@ void MainWindow::slot_statusRefresh(){
     }
 }
 
-void MainWindow::slot_doubleclick_featured(int row,int column){
+void MainWindow::slot_doubleclick_featured(int row,int column)
+{
     Q_UNUSED(column);
 
     QString serverid = ui->tableWidget_featured->item(row,0)->text();
@@ -204,13 +209,15 @@ void MainWindow::slot_doubleclick_featured(int row,int column){
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
 
     if(game_ended(serverid, gameid)){
+        log("Game " + serverid + "/" + gameid + " has already ended");
         return;
     }
 
     lol_launch(serverid, key, gameid);
 }
 
-void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool local){
+void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool local)
+{
     if(serverid.isEmpty() || key.isEmpty() || matchid.isEmpty()){
         log("Invalid game parameters.");
         return;
@@ -231,8 +238,9 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     qd.setSorting(QDir::Name | QDir::Reversed);
     QFileInfoList list = qd.entryInfoList();
 
-    if(list.size()==0){
+    if(list.isEmpty()){
         QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        log("[WARN] Invalid League of Legends directory. No release folder found.");
         return;
     }
 
@@ -245,6 +253,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
     if(!check_path(path)){
         QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
+        log("[WARN] Invalid League of Legends directory. Invalid path.");
         return;
     }
 
@@ -308,9 +317,11 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     }
 }
 
-void MainWindow::slot_networkResult_status(QNetworkReply *reply){
+void MainWindow::slot_networkResult_status(QNetworkReply *reply)
+{
 
-    if(reply->error() != QNetworkReply::NoError){
+    if(reply->error() != QNetworkReply::NoError)
+    {
         QString host = reply->request().url().host();
         QString port = QString::number(reply->request().url().port());
         QString domain = host + ":" + port;
@@ -326,6 +337,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
         }
 
         if(platformid.isEmpty() || row == -1){
+            log("[ERROR] Unknown platform id");
             return;
         }
 
@@ -350,7 +362,8 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
-    if(jsonResponse.isEmpty()){
+    if(jsonResponse.isEmpty())
+    {
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             QString host = reply->request().url().host();
             QString port = QString::number(reply->request().url().port());
@@ -367,6 +380,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
             }
 
             if(platformid.isEmpty() || row == -1){
+                log("[ERROR] Unknown platform id");
                 return;
             }
 
@@ -384,7 +398,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
             return;
         }
         else{
-            log(tr("Status: Error"));
+            log("[ERROR] Status");
             return;
         }
     }
@@ -397,7 +411,8 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
 
     log(jsonObject.value(tr("name")).toString() + tr(" : Status server infos"));
 
-    for(int i = 0; i < servers.size(); i++){
+    for(int i = 0; i < servers.size(); i++)
+    {
         if(jsonObject.value(tr("name")).toString() == servers.at(i).at(0)){
             for(int j = 0; j < 4; j++){
                 ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(services[j].toObject().value(tr("status")).toString()));
@@ -415,17 +430,19 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply){
     }
 }
 
-void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
-
-    if (reply->error() != QNetworkReply::NoError)
-            return;
+void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
+{
+    if(reply->error() != QNetworkReply::NoError){
+        log("[ERROR] Network featured games : " + reply->errorString());
+        return;
+    }
 
     QString data = (QString) reply->readAll();
 
     QJsonDocument jsonResponse = QJsonDocument::fromJson(data.toUtf8());
 
     if(jsonResponse.isEmpty()){
-        log(tr("Featured : Error"));
+        log("[ERROR] Featured games empty reponse");
         return;
     }
 
@@ -436,6 +453,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
     QJsonArray gamelist = jsonObject.value(tr("gameList")).toArray();
 
     if(gamelist.size() == 0){
+        log("[WARN] Featured games empty response");
         return;
     }
 
@@ -465,7 +483,8 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply){
 
 }
 
-void MainWindow::slot_featuredRefresh(){
+void MainWindow::slot_featuredRefresh()
+{
     while(ui->tableWidget_featured->rowCount() > 0){
         ui->tableWidget_featured->removeRow(0);
     }
@@ -491,7 +510,8 @@ void MainWindow::slot_featuredRefresh(){
 
 }
 
-QPixmap MainWindow::getImg(int id){
+QPixmap MainWindow::getImg(int id)
+{
     int finalid = 0;
 
     QFileInfo info(":/img/" + QString::number(id) + ".png");
@@ -503,7 +523,8 @@ QPixmap MainWindow::getImg(int id){
     return img.scaled(60, 60, Qt::KeepAspectRatio);
 }
 
-void MainWindow::slot_click_featured(int row, int column){
+void MainWindow::slot_click_featured(int row, int column)
+{
     Q_UNUSED(column);
 
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
@@ -519,6 +540,7 @@ void MainWindow::slot_click_featured(int row, int column){
     }
 
     if(game.isEmpty()){
+        log("[ERROR] Game selected ");
         return;
     }
 
@@ -569,7 +591,8 @@ void MainWindow::slot_click_featured(int row, int column){
     }
 }
 
-void MainWindow::slot_setdirectory(){
+void MainWindow::slot_setdirectory()
+{
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
@@ -579,7 +602,8 @@ void MainWindow::slot_setdirectory(){
     ui->lineEdit_4->setText(dir);
 }
 
-void MainWindow::slot_setpbedirectory(){
+void MainWindow::slot_setpbedirectory()
+{
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
@@ -589,7 +613,8 @@ void MainWindow::slot_setpbedirectory(){
     ui->lineEdit_pbefolder->setText(dir);
 }
 
-void MainWindow::slot_setreplaydirectory(){
+void MainWindow::slot_setreplaydirectory()
+{
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),replaydirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
@@ -599,8 +624,9 @@ void MainWindow::slot_setreplaydirectory(){
     ui->lineEdit_replaysFolder->setText(dir);
 }
 
-void MainWindow::slot_featuredLaunch(){
-    if(ui->tableWidget_featured->selectedItems().size() == 0){
+void MainWindow::slot_featuredLaunch()
+{
+    if(ui->tableWidget_featured->selectedItems().isEmpty()){
         return;
     }
     int row = ui->tableWidget_featured->currentRow();
@@ -608,7 +634,7 @@ void MainWindow::slot_featuredLaunch(){
     slot_refreshPlayingStatus();
 
     if(playing){
-        log("Replay aborted. LoL is currently running.");
+        log("[WARN] Replay aborted. LoL is currently running.");
         return;
     }
 
@@ -617,18 +643,21 @@ void MainWindow::slot_featuredLaunch(){
     replaying = true;
 }
 
-bool MainWindow::check_path(QString path){
+bool MainWindow::check_path(QString path)
+{
     QFileInfo checkFile(path);
     return(checkFile.exists());
 }
 
-void MainWindow::slot_changedTab(int index){
+void MainWindow::slot_changedTab(int index)
+{
     if(index == 1){
         slot_featuredRefresh();
     }
 }
 
-bool MainWindow::game_ended(QString serverid, QString gameid){
+bool MainWindow::game_ended(QString serverid, QString gameid)
+{
     //Get serverID
     QString serveraddress;
     for(int i = 0; i < servers.size(); i++){
@@ -636,7 +665,7 @@ bool MainWindow::game_ended(QString serverid, QString gameid){
             serveraddress = servers.at(i).at(2);
         }
     }
-    if(serveraddress.size() == 0){
+    if(serveraddress.isEmpty()){
         return false;
     }
 
@@ -658,7 +687,8 @@ bool MainWindow::game_ended(QString serverid, QString gameid){
     }
 }
 
-QJsonDocument MainWindow::getJsonFromUrl(QString url){
+QJsonDocument MainWindow::getJsonFromUrl(QString url)
+{
     QNetworkAccessManager local_networkResult;
     QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
 
@@ -666,9 +696,10 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url){
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    if(reply->error() != QNetworkReply::NoError){
+    if(reply->error() != QNetworkReply::NoError)
+    {
         QJsonDocument jsonEmpty;
-        log("Error : " + reply->errorString());
+        log("[ERROR] Get JSON : " + reply->errorString());
         return jsonEmpty;
     }
 
@@ -679,8 +710,9 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url){
     return jsonResponse;
 }
 
-void MainWindow::slot_featuredRecord(){
-    if(ui->tableWidget_featured->selectedItems().size() == 0){
+void MainWindow::slot_featuredRecord()
+{
+    if(ui->tableWidget_featured->selectedItems().isEmpty()){
         return;
     }
     int row = ui->tableWidget_featured->currentRow();
@@ -696,13 +728,14 @@ void MainWindow::slot_featuredRecord(){
             break;
         }
     }
-    if(serveraddress.size() == 0){
+    if(serveraddress.isEmpty()){
         return;
     }
 
     for(int i = 0; i < recording.size(); i++){
         if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
             //Game is already recording
+            log("Game is already recording");
             return;
         }
     }
@@ -731,9 +764,12 @@ void MainWindow::slot_featuredRecord(){
     recorder->start();
 }
 
-void MainWindow::slot_endRecording(QString serverid, QString gameid){
-    for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+void MainWindow::slot_endRecording(QString serverid, QString gameid)
+{
+    for(int i = 0; i < recording.size(); i++)
+    {
+        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
+        {
             recording.removeAt(i);
         }
     }
@@ -748,7 +784,8 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid){
     refresh_recordedGames();
 }
 
-QByteArray MainWindow::getFileFromUrl(QString url){
+QByteArray MainWindow::getFileFromUrl(QString url)
+{
     QNetworkAccessManager local_networkResult;
     QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
 
@@ -756,9 +793,10 @@ QByteArray MainWindow::getFileFromUrl(QString url){
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
-    if(reply->error() != QNetworkReply::NoError){
+    if(reply->error() != QNetworkReply::NoError)
+    {
         QByteArray emptyArray;
-        log("Error : " + reply->errorString());
+        log("[ERROR] Get Data : " + reply->errorString());
         return emptyArray;
     }
 
@@ -776,10 +814,12 @@ void MainWindow::slot_click_allgames(int row, int column)
     ui->label_allgames_gamemode->setText(game.getGameinfos().object().value("gameMode").toString());
 
     if(game.getGameinfos().isEmpty()){
+        log("[ERROR] No game infos found. Aborting.");
         return;
     }
 
-    if(game.getGameinfos().object().value("participants").toArray().size() >= 10){
+    if(game.getGameinfos().object().value("participants").toArray().size() >= 1)
+    {
         QJsonArray array = game.getGameinfos().object().value("participants").toArray();
 
         ui->label_sum1->setAlignment(Qt::AlignCenter);
@@ -825,7 +865,8 @@ void MainWindow::slot_click_allgames(int row, int column)
     }
 }
 
-void MainWindow::refresh_recordedGames(){
+void MainWindow::refresh_recordedGames()
+{
     //Find saved replays
 
     recordedgames_filename.clear();
@@ -886,7 +927,8 @@ void MainWindow::refresh_recordedGames(){
     }
 }
 
-void MainWindow::slot_replayserversAdd(){
+void MainWindow::slot_replayserversAdd()
+{
     if(ui->lineEdit_replayserver_address->text().isEmpty()){
         return;
     }
@@ -897,12 +939,14 @@ void MainWindow::slot_replayserversAdd(){
     ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(ui->lineEdit_replayserver_address->text()));
 }
 
-void MainWindow::slot_summonerinfos_save(){
+void MainWindow::slot_summonerinfos_save()
+{
     if(ui->lineEdit_summonername->text().isEmpty()){
         return;
     }
     if(orservers.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
+        log("Please add a LegendsReplay server.");
         return;
     }
 
@@ -911,9 +955,9 @@ void MainWindow::slot_summonerinfos_save(){
 
     //Retrieving summoner ID
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
-
     log("Retrieving summoner ID");
+
+    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
@@ -931,7 +975,8 @@ void MainWindow::slot_summonerinfos_save(){
     }
 }
 
-bool MainWindow::islolRunning() {
+bool MainWindow::islolRunning()
+{
   QProcess tasklist;
 
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq League of Legends.exe"));
@@ -941,7 +986,8 @@ bool MainWindow::islolRunning() {
   return output.startsWith(QString("\"League of Legends.exe\""));
 }
 
-bool MainWindow::islolclientRunning() {
+bool MainWindow::islolclientRunning()
+{
   QProcess tasklist;
 
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq LolClient.exe"));
@@ -951,7 +997,8 @@ bool MainWindow::islolclientRunning() {
   return output.startsWith(QString("\"LolClient.exe\""));
 }
 
-void MainWindow::slot_refreshPlayingStatus(){
+void MainWindow::slot_refreshPlayingStatus()
+{
     if(!islolRunning()){
         replaying = false;
         playing = false;
@@ -1018,7 +1065,8 @@ void MainWindow::slot_refreshPlayingStatus(){
     m_timer->start(60000);
 }
 
-QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString summonerid){
+QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString summonerid)
+{
     QString servertag;
 
     for(int i = 0; i < servers.size(); i++){
@@ -1030,6 +1078,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
 
     if(servertag.isEmpty() || orservers.isEmpty()){
         QJsonDocument docempty;
+        log("[ERROR] Unknown server");
         return docempty;
     }
 
@@ -1038,27 +1087,30 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
     return gameinfos;
 }
 
-void MainWindow::slot_open_replay(bool param){
+void MainWindow::slot_open_replay(bool param)
+{
     Q_UNUSED(param);
 
     QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"),replaydirectory);
     replay_launch(path);
 }
 
-void MainWindow::slot_doubleclick_savedgames(int row, int column){
+void MainWindow::slot_doubleclick_savedgames(int row, int column)
+{
     Q_UNUSED(column);
 
     replay_launch(replaydirectory + "/" + recordedgames_filename.at(row));
 }
 
-void MainWindow::slot_doubleclick_mygames(int row, int column){
+void MainWindow::slot_doubleclick_mygames(int row, int column)
+{
     Q_UNUSED(column);
 
     replay_launch(replaydirectory + "/" + yourgames_filename.at(row));
 }
 
-void MainWindow::replay_launch(QString pathfile){
-
+void MainWindow::replay_launch(QString pathfile)
+{
     serverChunkCount = 0;
     serverKeyframeCount = 1;
 
@@ -1170,7 +1222,8 @@ void MainWindow::replay_launch(QString pathfile){
 
             log("Server: send lastChunkInfo");
         }
-        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid()))
+        {
             int chunkid = -1;
 
             //Get and send the chunk
@@ -1204,13 +1257,15 @@ void MainWindow::replay_launch(QString pathfile){
 
                 log("Server: send primary chunk " + QString::number(chunkid));
             }
-            else{
+            else
+            {
                 res->setStatusCode(qhttp::ESTATUS_NOT_FOUND);
                 res->end("");
                 log("Server: unknown requested chunk " + QString::number(chunkid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid()))
+        {
             int keyframeid = -1;
 
             //Get and send the keyframe
@@ -1234,7 +1289,8 @@ void MainWindow::replay_launch(QString pathfile){
                 log("Server: unknown requested keyframe " + QString::number(keyframeid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getServerid() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getServerid() + "/" + replay->getGameid()))
+        {
             //End of game stats requested
             res->setStatusCode(qhttp::ESTATUS_OK);
             res->addHeader("Content-Type", "application/octet-stream");
@@ -1242,7 +1298,8 @@ void MainWindow::replay_launch(QString pathfile){
 
             log("Server: End of game stats sent");
         }
-        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getServerid() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getServerid() + "/" + replay->getGameid()))
+        {
             //End of replay requested : error while replaying
             res->setStatusCode(qhttp::ESTATUS_OK);
             res->addHeader("Content-Type", "text/plain");
@@ -1251,7 +1308,8 @@ void MainWindow::replay_launch(QString pathfile){
             log("Server: End of replay requested");
             httpserver->stopListening();
         }
-        else{
+        else
+        {
             res->setStatusCode(qhttp::ESTATUS_OK);
             res->addHeader("Content-Type", "text/plain");
             res->end("");
