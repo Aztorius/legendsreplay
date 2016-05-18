@@ -76,8 +76,8 @@ void Recorder::run(){
         json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
 
-        //Retry every 30 seconds
-        timer2.start(30000);
+        //Retry every 28 seconds
+        timer2.start(28000);
         loop2.exec();
     }
 

@@ -1,0 +1,10 @@
+install:
+  - sudo apt-get update
+  - sudo apt-get install qt5-default qttools5-dev-tools
+
+script:
+  - git submodule init && git submodule update
+  - cd qhttp
+  - ./update-dependencies.sh
+  - cd ..
+  - cd qmake LegendsReplay.pro
