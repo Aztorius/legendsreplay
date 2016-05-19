@@ -534,7 +534,7 @@ QPixmap MainWindow::getImg(int id)
     }
 
     QPixmap img(":/img/" + QString::number(finalid) + ".png");
-    return img.scaled(60, 60, Qt::KeepAspectRatio);
+    return img.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
 void MainWindow::slot_click_featured(int row, int column)

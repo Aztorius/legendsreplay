@@ -95,8 +95,8 @@ void Recorder::run(){
     int lastsavedkeyframeid = -1;
     int chunkid = json_gameMetaData.object().value("pendingAvailableChunkInfo").toArray().first().toObject().value("id").toInt();
 
-    if(chunkid < json_lastChunkInfo.object().value("startGameChunkId").toInt() - 1){
-        chunkid = json_lastChunkInfo.object().value("startGameChunkId").toInt() - 1;
+    if(chunkid <= json_lastChunkInfo.object().value("endStartupChunkId").toInt()){
+        chunkid = json_lastChunkInfo.object().value("endStartupChunkId").toInt() + 1;
     }
 
     int lastsavedchunkid = -1;
@@ -135,7 +135,7 @@ void Recorder::run(){
                 }
                 list_keyframes.append(Keyframe(keyframeid, bytearray_keyframe, nextchunkid));
                 lastsavedkeyframeid = keyframeid;
-                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(keyframeid) + " " + QString::number(nextchunkid));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(keyframeid) + " " + QString::number(nextchunkid) + " Size: " + QString::number(bytearray_keyframe.size()/1024) + " ko");
 
                 timer3.start(2000);
                 loop3.exec();
@@ -162,7 +162,7 @@ void Recorder::run(){
                 }
                 list_chunks.append(Chunk(chunkid, bytearray_chunk, local_keyframeid, duration));
                 lastsavedchunkid = chunkid;
-                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(chunkid) + " " + QString::number(local_keyframeid) + " " + QString::number(duration));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(chunkid) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
 
                 timer3.start(2000);
                 loop3.exec();
@@ -177,7 +177,7 @@ void Recorder::run(){
             bytearray_chunk = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameDataChunk/" + m_serverid + "/" + m_gameid + "/" + QString::number(startupchunkid) + "/0"));
             if(!bytearray_chunk.isEmpty()){
                 list_primarychunks.append(Chunk(startupchunkid, bytearray_chunk, 0));
-                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(startupchunkid));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(startupchunkid) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
                 startupchunkid += 1;
 
                 timer3.start(2000);

@@ -231,6 +231,10 @@ int Chunk::getDuration() const{
     return m_duration;
 }
 
+int Chunk::getSize() const{
+    return m_data.size();
+}
+
 Keyframe::Keyframe(int id, QByteArray data, int nextchunkid){
     m_id = id;
     m_nextchunkid = nextchunkid;
@@ -247,4 +251,8 @@ int Keyframe::getNextchunkid() const{
 
 QByteArray Keyframe::getData() const{
     return m_data;
+}
+
+int Keyframe::getSize() const{
+    return m_data.size();
 }

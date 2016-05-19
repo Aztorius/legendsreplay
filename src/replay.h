@@ -11,6 +11,7 @@ public:
     int getKeyframeId() const;
     QByteArray getData() const;
     int getDuration() const;
+    int getSize() const;
 
 private:
     int m_id;
@@ -26,6 +27,7 @@ public:
     int getId() const;
     int getNextchunkid() const;
     QByteArray getData() const;
+    int getSize() const;
 
 private:
     int m_id;
