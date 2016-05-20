@@ -2,7 +2,7 @@
 A League of Legends replay software.
 
 [![Build Status](https://travis-ci.org/Aztorius/legendsreplay.svg?branch=master)](https://travis-ci.org/Aztorius/legendsreplay)
-### Current Version : Stable 1.1.3
+### Current Version : Stable 1.1.4
 
 Available for **Windows** and **Linux**
 
@@ -11,15 +11,11 @@ Available for **Windows** and **Linux**
 - All servers supported (EUW, EUNE, NA, JP, KR, OCE, BR, LAN, LAS, RU, TR, PBE)
 - Show servers status
 - List all featured games
-- Launch spectator mode for featured games
+- Launch spectator mode for featured games (Windows only)
 - Record featured games
 - Record multiple games at the same time (multithreading)
-- Autorecord current playing game (with openreplay servers)
-- Replay recorded games
-
-## TODO
-
-- Improve GUI interface
+- Autorecord current playing game (with openreplay servers, Windows only)
+- Replay recorded games (Windows only)
 
 ### [Website](http://aztorius.github.io/legendsreplay)
 
