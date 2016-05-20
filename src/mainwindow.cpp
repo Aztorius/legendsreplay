@@ -115,7 +115,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
-    connect(ui->tableWidget_featured, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_featured(int,int)));
+    connect(ui->tableWidget_featured, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_featured()));
     connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
@@ -134,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
 
-    connect(ui->tableWidget_recordedgames, SIGNAL(cellClicked(int,int)), this, SLOT(slot_click_allgames(int,int)));
+    connect(ui->tableWidget_recordedgames, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_allgames()));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
@@ -537,11 +537,13 @@ QPixmap MainWindow::getImg(int id)
     return img.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-void MainWindow::slot_click_featured(int row, int column)
+void MainWindow::slot_click_featured()
 {
-    Q_UNUSED(column);
+    if(ui->tableWidget_featured->selectedItems().isEmpty()){
+        return;
+    }
 
-    QString gameid = ui->tableWidget_featured->item(row,1)->text();
+    QString gameid = ui->tableWidget_featured->item(ui->tableWidget_featured->currentRow(),1)->text();
 
     QJsonObject game;
     for(int i = 0; i < json_featured.size(); i++){
@@ -819,11 +821,13 @@ QByteArray MainWindow::getFileFromUrl(QString url)
     return data;
 }
 
-void MainWindow::slot_click_allgames(int row, int column)
+void MainWindow::slot_click_allgames()
 {
-    Q_UNUSED(column);
+    if(ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+        return;
+    }
 
-    Replay game(replaydirectory + "/" + recordedgames_filename.at(row));
+    Replay game(replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->currentRow()));
 
     ui->label_allgames_gamemode->setText(game.getGameinfos().object().value("gameMode").toString());
 

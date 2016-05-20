@@ -92,8 +92,8 @@ private slots:
     void slot_doubleclick_savedgames(int row,int column);
     void slot_doubleclick_mygames(int row, int column);
     void slot_doubleclick_featured(int row,int column);
-    void slot_click_featured(int row,int column);
-    void slot_click_allgames(int row,int column);
+    void slot_click_featured();
+    void slot_click_allgames();
 
     void slot_open_replay(bool param);
 
