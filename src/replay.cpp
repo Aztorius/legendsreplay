@@ -66,7 +66,6 @@ Replay::Replay(QString filepath)
                 line.remove(0,13);
 
                 int keyframeid = line.left(line.indexOf(":")).toInt();
-                m_keyframesid.append(keyframeid);
                 line.remove(0,line.indexOf(":")+1);
 
                 int nextchunkid = line.left(line.indexOf(":")).toInt();
@@ -80,14 +79,12 @@ Replay::Replay(QString filepath)
                 line.remove(0,10);
 
                 int chunkid = line.left(line.indexOf(":")).toInt();
-                m_chunksid.append(chunkid);
                 line.remove(0,line.indexOf(":")+1);
 
                 int keyframeid = line.left(line.indexOf(":")).toInt();
                 line.remove(0,line.indexOf(":")+1);
 
                 int chunkduration = line.left(line.indexOf(":")).toInt();
-                m_chunksduration.append(chunkduration);
                 line.remove(0,line.indexOf(":")+1);
 
                 QString chunk = line.left(line.indexOf(":"));
@@ -128,14 +125,6 @@ QList<Chunk> Replay::getPrimaryChunks(){
     return m_primarychunks;
 }
 
-QList<int> Replay::getKeyFramesid(){
-    return m_keyframesid;
-}
-
-QList<int> Replay::getChunksid(){
-    return m_chunksid;
-}
-
 QJsonDocument Replay::getGameinfos(){
     return m_gameinfos;
 }
@@ -150,10 +139,6 @@ QString Replay::getEndstartupchunkid(){
 
 QString Replay::getStartgamechunkid(){
     return m_startgamechunkid;
-}
-
-QList<int> Replay::getChunksDuration(){
-    return m_chunksduration;
 }
 
 Chunk Replay::getChunk(int id) const{

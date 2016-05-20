@@ -51,10 +51,6 @@ public:
     QList<Chunk> getChunks();
     QList<Chunk> getPrimaryChunks();
 
-    QList<int> getKeyFramesid();
-    QList<int> getChunksid();
-    QList<int> getChunksDuration();
-
     QJsonDocument getGameinfos();
     QByteArray getEndOfGameStats();
 
@@ -77,12 +73,8 @@ private:
     QString m_startgamechunkid;
 
     QList<Keyframe> m_keyframes;
-    QList<int> m_keyframesid;
     QList<Chunk> m_chunks;
     QList<Chunk> m_primarychunks;
-    QList<int> m_chunksduration;
-    QList<int> m_chunkskeyframesid;
-    QList<int> m_chunksid;
 
     QJsonDocument m_gameinfos;
     QByteArray m_endofgamestats;
