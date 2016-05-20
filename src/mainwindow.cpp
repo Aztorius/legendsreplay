@@ -91,6 +91,8 @@ MainWindow::MainWindow(QWidget *parent) :
     replaying = false;
     playing = false;
 
+    replay = NULL;
+
     serverChunkCount = 0;
     serverKeyframeCount = 1;
 
@@ -930,7 +932,7 @@ void MainWindow::refresh_recordedGames()
 
                     QLabel* label = new QLabel;
                     label->setAlignment(Qt::AlignCenter);
-                    label->setPixmap(QPixmap(":/img/" + QString::number(game.getGameinfos().object().value("participants").toArray().at(i).toObject().value("championId").toInt())).scaled(60, 60, Qt::KeepAspectRatio));
+                    label->setPixmap(getImg(game.getGameinfos().object().value("participants").toArray().at(i).toObject().value("championId").toInt()));
 
                     ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
                     ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
@@ -1023,6 +1025,10 @@ void MainWindow::slot_refreshPlayingStatus()
         playing = false;
         if(httpserver->isListening()){
             httpserver->stopListening();
+            if(replay != NULL){
+                delete replay;
+                replay = NULL;
+            }
             log("Server: stoped due to inactivity");
         }
     }
@@ -1137,7 +1143,12 @@ void MainWindow::replay_launch(QString pathfile)
 
     //Launch spectator server
 
-    Replay *replay = new Replay(pathfile);
+    if(replay != NULL){
+        delete replay;
+        replay = NULL;
+    }
+
+    replay = new Replay(pathfile);
 
     log("Opening : " + pathfile);
 
@@ -1145,7 +1156,7 @@ void MainWindow::replay_launch(QString pathfile)
 
     httpserver->stopListening();
 
-    httpserver->listen(QHostAddress::Any, 8088, [replay,this](QHttpRequest* req, QHttpResponse* res) {
+    httpserver->listen(QHostAddress::Any, 8088, [this](QHttpRequest* req, QHttpResponse* res) {
         QString url = req->url().toString();
 
         if(url == "/observer-mode/rest/consumer/version"){
@@ -1326,6 +1337,12 @@ void MainWindow::replay_launch(QString pathfile)
             res->end("");
 
             log("Server: End of replay requested");
+
+            if(replay != NULL){
+                delete replay;
+                replay = NULL;
+            }
+
             httpserver->stopListening();
         }
         else

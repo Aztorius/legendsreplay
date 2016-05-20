@@ -14,6 +14,8 @@
 #include "qhttpserverresponse.hpp"
 #include "qhttpserverrequest.hpp"
 
+#include "replay.h"
+
 using namespace qhttp::server;
 
 namespace Ui {
@@ -79,6 +81,7 @@ private:
     QTimer *m_timer;
 
     QHttpServer *httpserver;
+    Replay *replay;
 
     int serverChunkCount;
     int serverKeyframeCount;

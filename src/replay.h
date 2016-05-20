@@ -1,7 +1,10 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
-#include "mainwindow.h"
+#include <QMainWindow>
+#include <QFile>
+#include <QTextStream>
+#include <QJsonDocument>
 
 class Chunk
 {
