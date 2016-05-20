@@ -245,7 +245,8 @@ void Recorder::run(){
 
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
 
-        if(list_primarychunks.isEmpty() || list_chunks.isEmpty() || list_keyframes.isEmpty()){
+        if(list_primarychunks.isEmpty() || list_chunks.isEmpty() || list_keyframes.isEmpty())
+        {
             emit toLog("Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
         }
     }
