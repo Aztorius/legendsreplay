@@ -9,6 +9,7 @@
 #include <QtConcurrent/QtConcurrent>
 #include <QPainter>
 #include <QSystemTrayIcon>
+#include <QPixmapCache>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"

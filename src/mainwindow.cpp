@@ -564,6 +564,8 @@ void MainWindow::slot_click_featured()
 
     ui->label_featuredgames_gamemode->setText(game.value("gameMode").toString());
 
+    QPixmapCache::clear();
+
     QJsonArray participants = game.value("participants").toArray();
 
     if(participants.size()>=10){
@@ -837,6 +839,8 @@ void MainWindow::slot_click_allgames()
         log("[ERROR] No game infos found. Aborting.");
         return;
     }
+
+    QPixmapCache::clear();
 
     if(game.getGameinfos().object().value("participants").toArray().size() >= 1)
     {
