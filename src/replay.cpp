@@ -8,7 +8,8 @@ Replay::Replay(QString filepath)
     if(file.open(QIODevice::ReadOnly | QIODevice::Text)){
         QTextStream in(&file);
         in.setCodec("UTF-8");
-        while (!in.atEnd()) {
+        while (!in.atEnd())
+        {
             QString line = in.readLine();
 
             if(line == "::OREnd::"){
@@ -98,6 +99,8 @@ Replay::Replay(QString filepath)
                 }
             }
         }
+
+        file.close();
     }
 }
 

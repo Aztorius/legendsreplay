@@ -564,8 +564,6 @@ void MainWindow::slot_click_featured()
 
     ui->label_featuredgames_gamemode->setText(game.value("gameMode").toString());
 
-    QPixmapCache::clear();
-
     QJsonArray participants = game.value("participants").toArray();
 
     if(participants.size()>=10){
@@ -609,6 +607,8 @@ void MainWindow::slot_click_featured()
         ui->label_sumf10->setAlignment(Qt::AlignCenter);
         ui->label_sumf10->setPixmap(getImg(participants.at(9).toObject().value("championId").toInt()));
     }
+
+    QPixmapCache::clear();
 }
 
 void MainWindow::slot_setdirectory()
@@ -840,8 +840,6 @@ void MainWindow::slot_click_allgames()
         return;
     }
 
-    QPixmapCache::clear();
-
     if(game.getGameinfos().object().value("participants").toArray().size() >= 1)
     {
         QJsonArray array = game.getGameinfos().object().value("participants").toArray();
@@ -887,6 +885,8 @@ void MainWindow::slot_click_allgames()
         ui->label_sum10->setPixmap(getImg(array.at(9).toObject().value("championId").toInt()));
 
     }
+
+    QPixmapCache::clear();
 }
 
 void MainWindow::refresh_recordedGames()
@@ -950,6 +950,8 @@ void MainWindow::refresh_recordedGames()
             }
         }
     }
+
+    QPixmapCache::clear();
 }
 
 void MainWindow::slot_replayserversAdd()
