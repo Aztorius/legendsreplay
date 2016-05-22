@@ -170,6 +170,14 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     systemtrayicon->hide();
+    httpserver->deleteLater();
+    networkManager_featured->deleteLater();
+    networkManager_status->deleteLater();
+    m_timer->deleteLater();
+    orsettings->deleteLater();
+    systemtrayicon->deleteLater();
+
+    delete replay;
     delete ui;
 }
 
