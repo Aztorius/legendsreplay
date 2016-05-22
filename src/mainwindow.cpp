@@ -1323,6 +1323,13 @@ void MainWindow::replay_launch(QString pathfile)
             log("Server: send server version");
         }
         else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getServerid() + "/" + replay->getGameid())){
+            int firstchunkid = replay->getChunks().first().getId();
+
+            while(replay->findKeyframeByChunkId(firstchunkid).getId() == 0)
+            {
+                firstchunkid++;
+            }
+
             QString metadata = "{\"gameKey\":{";
             metadata.append("\"gameId\":" + replay->getGameid());
             metadata.append(",\"platformId\":\"" + replay->getServerid() + "\"}");
@@ -1331,8 +1338,8 @@ void MainWindow::replay_launch(QString pathfile)
             metadata.append(",\"encryptionKey\":\"\"");
             metadata.append(",\"chunkTimeInterval\":30000");
             metadata.append(",\"gameEnded\":false");
-            metadata.append(",\"lastChunkId\":" + QString::number(replay->getKeyFrames().first().getNextchunkid()));
-            metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->getKeyFrames().first().getId()));
+            metadata.append(",\"lastChunkId\":" + QString::number(firstchunkid));
+            metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->findKeyframeByChunkId(firstchunkid).getId()));
             metadata.append(",\"endStartupChunkId\":" + replay->getEndstartupchunkid());
             metadata.append(",\"delayTime\":150000");
             metadata.append(",\"keyFrameTimeInterval\":60000");
@@ -1378,7 +1385,8 @@ void MainWindow::replay_launch(QString pathfile)
 
             Keyframe currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
 
-            while(currentKeyframe.getId() == 0 && currentChunkid < replay->getChunks().last().getId()){
+            while((currentKeyframe.getId() == 0 || replay->findKeyframeByChunkId(currentChunkid).getId() != replay->findKeyframeByChunkId(currentChunkid + 1).getId()) && currentChunkid < replay->getChunks().last().getId())
+            {
                 currentChunkid++;
                 serverChunkCount++;
                 currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
