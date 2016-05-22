@@ -1,5 +1,4 @@
 #include "recorder.h"
-#include "replay.h"
 
 Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory)
 {

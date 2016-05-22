@@ -169,6 +169,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    systemtrayicon->hide();
     delete ui;
 }
 
@@ -564,48 +565,117 @@ void MainWindow::slot_click_featured()
 
     ui->label_featuredgames_gamemode->setText(game.value("gameMode").toString());
 
-    QJsonArray participants = game.value("participants").toArray();
+    ui->label_sumf1->clear();
+    ui->label_sumf2->clear();
+    ui->label_sumf3->clear();
+    ui->label_sumf4->clear();
+    ui->label_sumf5->clear();
+    ui->label_sumf6->clear();
+    ui->label_sumf7->clear();
+    ui->label_sumf8->clear();
+    ui->label_sumf9->clear();
+    ui->label_sumf10->clear();
 
-    if(participants.size()>=10){
+    ui->label_sumf16->clear();
+    ui->label_sumf27->clear();
+    ui->label_sumf38->clear();
+    ui->label_sumf49->clear();
+    ui->label_sumf510->clear();
+
+    QJsonArray array = game.value("participants").toArray();
+    QList<int> leftids;
+    QList<QString> leftnames;
+    QList<int> rightids;
+    QList<QString> rightnames;
+
+    for(int i = 0; i < array.size(); i++){
+        if(array.at(i).toObject().value("teamId").toInt() == 200)
+        {
+            rightids.append(array.at(i).toObject().value("championId").toInt());
+            rightnames.append(array.at(i).toObject().value("summonerName").toString());
+        }
+        else{
+            leftids.append(array.at(i).toObject().value("championId").toInt());
+            leftnames.append(array.at(i).toObject().value("summonerName").toString());
+        }
+    }
+
+    if(leftids.size() >= 1)
+    {
         ui->label_sumf1->setAlignment(Qt::AlignCenter);
-        ui->label_sumf1->setPixmap(getImg(participants.at(0).toObject().value("championId").toInt()));
+        ui->label_sumf1->setPixmap(getImg(leftids.at(0)));
 
-        ui->label_sumf16->setText(participants.at(0).toObject().value("summonerName").toString() + " / " + participants.at(5).toObject().value("summonerName").toString());
+        ui->label_sumf16->setText(leftnames.at(0));
 
-        ui->label_sumf2->setAlignment(Qt::AlignCenter);
-        ui->label_sumf2->setPixmap(getImg(participants.at(1).toObject().value("championId").toInt()));
+        if(leftids.size() >= 2)
+        {
+            ui->label_sumf2->setAlignment(Qt::AlignCenter);
+            ui->label_sumf2->setPixmap(getImg(leftids.at(1)));
 
-        ui->label_sumf27->setText(participants.at(1).toObject().value("summonerName").toString() + " / " + participants.at(6).toObject().value("summonerName").toString());
+            ui->label_sumf27->setText(leftnames.at(1));
 
-        ui->label_sumf3->setAlignment(Qt::AlignCenter);
-        ui->label_sumf3->setPixmap(getImg(participants.at(2).toObject().value("championId").toInt()));
+            if(leftids.size() >= 3)
+            {
+                ui->label_sumf3->setAlignment(Qt::AlignCenter);
+                ui->label_sumf3->setPixmap(getImg(leftids.at(2)));
 
-        ui->label_sumf38->setText(participants.at(2).toObject().value("summonerName").toString() + " / " + participants.at(7).toObject().value("summonerName").toString());
+                ui->label_sumf38->setText(leftnames.at(2));
 
-        ui->label_sumf4->setAlignment(Qt::AlignCenter);
-        ui->label_sumf4->setPixmap(getImg(participants.at(3).toObject().value("championId").toInt()));
+                if(leftids.size() >= 4)
+                {
+                    ui->label_sumf4->setAlignment(Qt::AlignCenter);
+                    ui->label_sumf4->setPixmap(getImg(leftids.at(3)));
 
-        ui->label_sumf49->setText(participants.at(3).toObject().value("summonerName").toString() + " / " + participants.at(8).toObject().value("summonerName").toString());
+                    ui->label_sumf49->setText(leftnames.at(3));
 
-        ui->label_sumf5->setAlignment(Qt::AlignCenter);
-        ui->label_sumf5->setPixmap(getImg(participants.at(4).toObject().value("championId").toInt()));
+                    if(leftids.size() >= 5){
+                        ui->label_sumf5->setAlignment(Qt::AlignCenter);
+                        ui->label_sumf5->setPixmap(getImg(leftids.at(4)));
 
-        ui->label_sumf510->setText(participants.at(4).toObject().value("summonerName").toString() + " / " + participants.at(9).toObject().value("summonerName").toString());
+                        ui->label_sumf510->setText(leftnames.at(4));
+                    }
+                }
+            }
+        }
+    }
 
+    if(rightids.size() >= 1)
+    {
         ui->label_sumf6->setAlignment(Qt::AlignCenter);
-        ui->label_sumf6->setPixmap(getImg(participants.at(5).toObject().value("championId").toInt()));
+        ui->label_sumf6->setPixmap(getImg(rightids.at(0)));
 
-        ui->label_sumf7->setAlignment(Qt::AlignCenter);
-        ui->label_sumf7->setPixmap(getImg(participants.at(6).toObject().value("championId").toInt()));
+        ui->label_sumf16->setText(ui->label_sumf16->text() + " / " + rightnames.at(0));
 
-        ui->label_sumf8->setAlignment(Qt::AlignCenter);
-        ui->label_sumf8->setPixmap(getImg(participants.at(7).toObject().value("championId").toInt()));
+        if(rightids.size() >= 2)
+        {
+            ui->label_sumf7->setAlignment(Qt::AlignCenter);
+            ui->label_sumf7->setPixmap(getImg(rightids.at(1)));
 
-        ui->label_sumf9->setAlignment(Qt::AlignCenter);
-        ui->label_sumf9->setPixmap(getImg(participants.at(8).toObject().value("championId").toInt()));
+            ui->label_sumf27->setText(ui->label_sumf27->text() + " / " + rightnames.at(1));
 
-        ui->label_sumf10->setAlignment(Qt::AlignCenter);
-        ui->label_sumf10->setPixmap(getImg(participants.at(9).toObject().value("championId").toInt()));
+            if(rightids.size() >= 3)
+            {
+                ui->label_sumf8->setAlignment(Qt::AlignCenter);
+                ui->label_sumf8->setPixmap(getImg(rightids.at(2)));
+
+                ui->label_sumf38->setText(ui->label_sumf38->text() + " / " + rightnames.at(2));
+
+                if(rightids.size() >= 4)
+                {
+                    ui->label_sumf9->setAlignment(Qt::AlignCenter);
+                    ui->label_sumf9->setPixmap(getImg(rightids.at(3)));
+
+                    ui->label_sumf49->setText(ui->label_sumf49->text() + " / " + rightnames.at(3));
+
+                    if(rightids.size() >= 5){
+                        ui->label_sumf10->setAlignment(Qt::AlignCenter);
+                        ui->label_sumf10->setPixmap(getImg(rightids.at(4)));
+
+                        ui->label_sumf510->setText(ui->label_sumf510->text() + " / " + rightnames.at(4));
+                    }
+                }
+            }
+        }
     }
 
     QPixmapCache::clear();
@@ -791,6 +861,7 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
         if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
+            break;
         }
     }
 
@@ -840,50 +911,117 @@ void MainWindow::slot_click_allgames()
         return;
     }
 
-    if(game.getGameinfos().object().value("participants").toArray().size() >= 1)
+    ui->label_sum1->clear();
+    ui->label_sum2->clear();
+    ui->label_sum3->clear();
+    ui->label_sum4->clear();
+    ui->label_sum5->clear();
+    ui->label_sum6->clear();
+    ui->label_sum7->clear();
+    ui->label_sum8->clear();
+    ui->label_sum9->clear();
+    ui->label_sum10->clear();
+
+    ui->label_sum16->clear();
+    ui->label_sum27->clear();
+    ui->label_sum38->clear();
+    ui->label_sum49->clear();
+    ui->label_sum510->clear();
+
+    QJsonArray array = game.getGameinfos().object().value("participants").toArray();
+    QList<int> leftids;
+    QList<QString> leftnames;
+    QList<int> rightids;
+    QList<QString> rightnames;
+
+    for(int i = 0; i < array.size(); i++){
+        if(array.at(i).toObject().value("teamId").toInt() == 200)
+        {
+            rightids.append(array.at(i).toObject().value("championId").toInt());
+            rightnames.append(array.at(i).toObject().value("summonerName").toString());
+        }
+        else{
+            leftids.append(array.at(i).toObject().value("championId").toInt());
+            leftnames.append(array.at(i).toObject().value("summonerName").toString());
+        }
+    }
+
+    if(leftids.size() >= 1)
     {
-        QJsonArray array = game.getGameinfos().object().value("participants").toArray();
-
         ui->label_sum1->setAlignment(Qt::AlignCenter);
-        ui->label_sum1->setPixmap(getImg(array.at(0).toObject().value("championId").toInt()));
+        ui->label_sum1->setPixmap(getImg(leftids.at(0)));
 
-        ui->label_sum16->setText(array.at(0).toObject().value("summonerName").toString() + " / " + array.at(5).toObject().value("summonerName").toString());
+        ui->label_sum16->setText(leftnames.at(0));
 
-        ui->label_sum2->setAlignment(Qt::AlignCenter);
-        ui->label_sum2->setPixmap(getImg(array.at(1).toObject().value("championId").toInt()));
+        if(leftids.size() >= 2)
+        {
+            ui->label_sum2->setAlignment(Qt::AlignCenter);
+            ui->label_sum2->setPixmap(getImg(leftids.at(1)));
 
-        ui->label_sum27->setText(array.at(1).toObject().value("summonerName").toString() + " / " + array.at(6).toObject().value("summonerName").toString());
+            ui->label_sum27->setText(leftnames.at(1));
 
-        ui->label_sum3->setAlignment(Qt::AlignCenter);
-        ui->label_sum3->setPixmap(getImg(array.at(2).toObject().value("championId").toInt()));
+            if(leftids.size() >= 3)
+            {
+                ui->label_sum3->setAlignment(Qt::AlignCenter);
+                ui->label_sum3->setPixmap(getImg(leftids.at(2)));
 
-        ui->label_sum38->setText(array.at(2).toObject().value("summonerName").toString() + " / " + array.at(7).toObject().value("summonerName").toString());
+                ui->label_sum38->setText(leftnames.at(2));
 
-        ui->label_sum4->setAlignment(Qt::AlignCenter);
-        ui->label_sum4->setPixmap(getImg(array.at(3).toObject().value("championId").toInt()));
+                if(leftids.size() >= 4)
+                {
+                    ui->label_sum4->setAlignment(Qt::AlignCenter);
+                    ui->label_sum4->setPixmap(getImg(leftids.at(3)));
 
-        ui->label_sum49->setText(array.at(3).toObject().value("summonerName").toString() + " / " + array.at(8).toObject().value("summonerName").toString());
+                    ui->label_sum49->setText(leftnames.at(3));
 
-        ui->label_sum5->setAlignment(Qt::AlignCenter);
-        ui->label_sum5->setPixmap(getImg(array.at(4).toObject().value("championId").toInt()));
+                    if(leftids.size() >= 5){
+                        ui->label_sum5->setAlignment(Qt::AlignCenter);
+                        ui->label_sum5->setPixmap(getImg(leftids.at(4)));
 
-        ui->label_sum510->setText(array.at(4).toObject().value("summonerName").toString() + " / " + array.at(9).toObject().value("summonerName").toString());
+                        ui->label_sum510->setText(leftnames.at(4));
+                    }
+                }
+            }
+        }
+    }
 
+    if(rightids.size() >= 1)
+    {
         ui->label_sum6->setAlignment(Qt::AlignCenter);
-        ui->label_sum6->setPixmap(getImg(array.at(5).toObject().value("championId").toInt()));
+        ui->label_sum6->setPixmap(getImg(rightids.at(0)));
 
-        ui->label_sum7->setAlignment(Qt::AlignCenter);
-        ui->label_sum7->setPixmap(getImg(array.at(6).toObject().value("championId").toInt()));
+        ui->label_sum16->setText(ui->label_sum16->text() + " / " + rightnames.at(0));
 
-        ui->label_sum8->setAlignment(Qt::AlignCenter);
-        ui->label_sum8->setPixmap(getImg(array.at(7).toObject().value("championId").toInt()));
+        if(rightids.size() >= 2)
+        {
+            ui->label_sum7->setAlignment(Qt::AlignCenter);
+            ui->label_sum7->setPixmap(getImg(rightids.at(1)));
 
-        ui->label_sum9->setAlignment(Qt::AlignCenter);
-        ui->label_sum9->setPixmap(getImg(array.at(8).toObject().value("championId").toInt()));
+            ui->label_sum27->setText(ui->label_sum27->text() + " / " + rightnames.at(1));
 
-        ui->label_sum10->setAlignment(Qt::AlignCenter);
-        ui->label_sum10->setPixmap(getImg(array.at(9).toObject().value("championId").toInt()));
+            if(rightids.size() >= 3)
+            {
+                ui->label_sum8->setAlignment(Qt::AlignCenter);
+                ui->label_sum8->setPixmap(getImg(rightids.at(2)));
 
+                ui->label_sum38->setText(ui->label_sum38->text() + " / " + rightnames.at(2));
+
+                if(rightids.size() >= 4)
+                {
+                    ui->label_sum9->setAlignment(Qt::AlignCenter);
+                    ui->label_sum9->setPixmap(getImg(rightids.at(3)));
+
+                    ui->label_sum49->setText(ui->label_sum49->text() + " / " + rightnames.at(3));
+
+                    if(rightids.size() >= 5){
+                        ui->label_sum10->setAlignment(Qt::AlignCenter);
+                        ui->label_sum10->setPixmap(getImg(rightids.at(4)));
+
+                        ui->label_sum510->setText(ui->label_sum510->text() + " / " + rightnames.at(4));
+                    }
+                }
+            }
+        }
     }
 
     QPixmapCache::clear();

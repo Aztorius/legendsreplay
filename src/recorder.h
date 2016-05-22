@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QMutex>
 #include "mainwindow.h"
+#include "replay.h"
 
 class Recorder : public QThread
 {
