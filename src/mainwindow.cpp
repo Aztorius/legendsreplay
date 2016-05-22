@@ -126,6 +126,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
     connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
     connect(ui->pushButton_summonersave, SIGNAL(released()), this, SLOT(slot_summonerinfos_save()));
+    connect(ui->pushButton_searchsummoner, SIGNAL(released()), this, SLOT(slot_searchsummoner()));
+    connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
+    connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -749,7 +752,7 @@ bool MainWindow::check_path(QString path)
 
 void MainWindow::slot_changedTab(int index)
 {
-    if(index == 1){
+    if(index == 2){
         slot_featuredRefresh();
     }
 }
@@ -787,8 +790,10 @@ bool MainWindow::game_ended(QString serverid, QString gameid)
 
 QJsonDocument MainWindow::getJsonFromUrl(QString url)
 {
+    QString finalurl = url;
+    finalurl.replace(" ","");
     QNetworkAccessManager local_networkResult;
-    QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
+    QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(finalurl)));
 
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -1514,4 +1519,204 @@ void MainWindow::replay_launch(QString pathfile)
 void MainWindow::showmessage(QString message)
 {
     systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
+}
+
+void MainWindow::slot_searchsummoner()
+{
+    QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
+    QString summonername = ui->lineEdit_searchsummoner->text();
+
+    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + serverid + "&summonername=" + summonername);
+
+    if(suminfos.isEmpty())
+    {
+        return;
+    }
+
+    QString summonerid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
+
+    if(summonerid.isEmpty())
+    {
+        return;
+    }
+
+    QJsonDocument game = getCurrentPlayingGameInfos(serverid,summonerid);
+
+    ui->label_sums1->clear();
+    ui->label_sums2->clear();
+    ui->label_sums3->clear();
+    ui->label_sums4->clear();
+    ui->label_sums5->clear();
+    ui->label_sums6->clear();
+    ui->label_sums7->clear();
+    ui->label_sums8->clear();
+    ui->label_sums9->clear();
+    ui->label_sums10->clear();
+
+    ui->label_sums16->clear();
+    ui->label_sums27->clear();
+    ui->label_sums38->clear();
+    ui->label_sums49->clear();
+    ui->label_sums510->clear();
+
+    m_searchsummoner_game = game;
+
+    if(game.isEmpty())
+    {
+        ui->label_searchsummoner_status->setText("offline");
+
+        ui->label_searchsummoner_gamemode->setText("Game Mode");
+    }
+    else
+    {
+        ui->label_searchsummoner_status->setText("online");
+
+        ui->label_searchsummoner_gamemode->setText(game.object().value("gameMode").toString());
+
+        QJsonArray array = game.object().value("participants").toArray();
+
+        QList<int> leftids;
+        QList<QString> leftnames;
+        QList<int> rightids;
+        QList<QString> rightnames;
+
+        for(int i = 0; i < array.size(); i++){
+            if(array.at(i).toObject().value("teamId").toInt() == 200)
+            {
+                rightids.append(array.at(i).toObject().value("championId").toInt());
+                rightnames.append(array.at(i).toObject().value("summonerName").toString());
+            }
+            else{
+                leftids.append(array.at(i).toObject().value("championId").toInt());
+                leftnames.append(array.at(i).toObject().value("summonerName").toString());
+            }
+        }
+
+        if(leftids.size() >= 1)
+        {
+            ui->label_sums1->setAlignment(Qt::AlignCenter);
+            ui->label_sums1->setPixmap(getImg(leftids.at(0)));
+
+            ui->label_sums16->setText(leftnames.at(0));
+
+            if(leftids.size() >= 2)
+            {
+                ui->label_sums2->setAlignment(Qt::AlignCenter);
+                ui->label_sums2->setPixmap(getImg(leftids.at(1)));
+
+                ui->label_sums27->setText(leftnames.at(1));
+
+                if(leftids.size() >= 3)
+                {
+                    ui->label_sums3->setAlignment(Qt::AlignCenter);
+                    ui->label_sums3->setPixmap(getImg(leftids.at(2)));
+
+                    ui->label_sums38->setText(leftnames.at(2));
+
+                    if(leftids.size() >= 4)
+                    {
+                        ui->label_sums4->setAlignment(Qt::AlignCenter);
+                        ui->label_sums4->setPixmap(getImg(leftids.at(3)));
+
+                        ui->label_sums49->setText(leftnames.at(3));
+
+                        if(leftids.size() >= 5){
+                            ui->label_sums5->setAlignment(Qt::AlignCenter);
+                            ui->label_sums5->setPixmap(getImg(leftids.at(4)));
+
+                            ui->label_sums510->setText(leftnames.at(4));
+                        }
+                    }
+                }
+            }
+        }
+
+        if(rightids.size() >= 1)
+        {
+            ui->label_sums6->setAlignment(Qt::AlignCenter);
+            ui->label_sums6->setPixmap(getImg(rightids.at(0)));
+
+            ui->label_sums16->setText(ui->label_sums16->text() + " / " + rightnames.at(0));
+
+            if(rightids.size() >= 2)
+            {
+                ui->label_sums7->setAlignment(Qt::AlignCenter);
+                ui->label_sums7->setPixmap(getImg(rightids.at(1)));
+
+                ui->label_sums27->setText(ui->label_sums27->text() + " / " + rightnames.at(1));
+
+                if(rightids.size() >= 3)
+                {
+                    ui->label_sums8->setAlignment(Qt::AlignCenter);
+                    ui->label_sums8->setPixmap(getImg(rightids.at(2)));
+
+                    ui->label_sums38->setText(ui->label_sums38->text() + " / " + rightnames.at(2));
+
+                    if(rightids.size() >= 4)
+                    {
+                        ui->label_sums9->setAlignment(Qt::AlignCenter);
+                        ui->label_sums9->setPixmap(getImg(rightids.at(3)));
+
+                        ui->label_sums49->setText(ui->label_sums49->text() + " / " + rightnames.at(3));
+
+                        if(rightids.size() >= 5){
+                            ui->label_sums10->setAlignment(Qt::AlignCenter);
+                            ui->label_sums10->setPixmap(getImg(rightids.at(4)));
+
+                            ui->label_sums510->setText(ui->label_sums510->text() + " / " + rightnames.at(4));
+                        }
+                    }
+                }
+            }
+        }
+
+        QPixmapCache::clear();
+    }
+}
+
+void MainWindow::slot_click_searchsummoner_spectate()
+{
+    if(m_searchsummoner_game.isEmpty()){
+        return;
+    }
+
+    lol_launch(m_searchsummoner_game.object().value("platformId").toString(), m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), QString::number(m_searchsummoner_game.object().value("gameId").toVariant().toULongLong()));
+}
+
+void MainWindow::slot_click_searchsummoner_record()
+{
+    if(m_searchsummoner_game.isEmpty()){
+        return;
+    }
+
+    QString serveraddress;
+    QString serverid = m_searchsummoner_game.object().value("platformId").toString();
+    QString gameid = QString::number(m_searchsummoner_game.object().value("gameId").toVariant().toULongLong());
+
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).at(1) == serverid){
+            serveraddress = servers.at(i).at(2);
+            break;
+        }
+    }
+    if(serveraddress.isEmpty()){
+        return;
+    }
+
+    for(int i = 0; i < recording.size(); i++){
+        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+            //Game is already recording
+            log("Game is already recording");
+            return;
+        }
+    }
+
+    recording.append(QStringList() << serverid << gameid);
+
+    ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+
+    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observer").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
+    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+    recorder->start();
 }

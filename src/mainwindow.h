@@ -84,6 +84,8 @@ private:
     QHttpServer *httpserver;
     Replay *replay;
 
+    QJsonDocument m_searchsummoner_game;
+
     int serverChunkCount;
     int serverKeyframeCount;
 
@@ -98,6 +100,10 @@ private slots:
     void slot_doubleclick_featured(int row,int column);
     void slot_click_featured();
     void slot_click_allgames();
+    void slot_click_searchsummoner_spectate();
+    void slot_click_searchsummoner_record();
+
+    void slot_searchsummoner();
 
     void slot_open_replay(bool param);
 
