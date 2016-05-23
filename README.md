@@ -2,7 +2,6 @@
 A League of Legends replay software.
 
 [![Build Status](https://travis-ci.org/Aztorius/legendsreplay.svg?branch=master)](https://travis-ci.org/Aztorius/legendsreplay)
-### Current Version : Stable 1.1.4
 
 Available for **Windows** and **Linux**
 

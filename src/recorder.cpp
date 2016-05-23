@@ -187,8 +187,8 @@ void Recorder::run(){
             }
         }
 
-        //Retry every 20 seconds
-        timer.start(20000);
+        //Retry every 16 seconds
+        timer.start(16000);
         loop.exec();
     }
 

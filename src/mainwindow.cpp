@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.1.4";
+QString GLOBAL_VERSION = "1.2.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -158,12 +158,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
 
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
-        QMessageBox updatebox(this);
+        /*QMessageBox updatebox(this);
         updatebox.setIcon(QMessageBox::Information);
         updatebox.setTextFormat(Qt::RichText);
         updatebox.setText("<a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
         updatebox.setStandardButtons(QMessageBox::Ok);
-        updatebox.exec();
+        updatebox.exec();*/
+        showmessage("New version "+ updatejson.object().value("version").toString() + " available !");
         log("New version "+ updatejson.object().value("version").toString() + " available !");
     }
 
@@ -172,13 +173,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    systemtrayicon->hide();
+    if(systemtrayavailable)
+    {
+        systemtrayicon->hide();
+        systemtrayicon->deleteLater();
+    }
+
     httpserver->deleteLater();
     networkManager_featured->deleteLater();
     networkManager_status->deleteLater();
     m_timer->deleteLater();
-    orsettings->deleteLater();
-    systemtrayicon->deleteLater();
+    orsettings->deleteLater();    
 
     delete replay;
     delete ui;
@@ -301,7 +306,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 #else
         //QProcess *process = new QProcess;
         //process->setWorkingDirectory(path);
-        //process->startDetached("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+        //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
 
         //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
         log("LoL Launch isn't available for Linux yet");
@@ -1526,7 +1531,10 @@ void MainWindow::replay_launch(QString pathfile)
 
 void MainWindow::showmessage(QString message)
 {
-    systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
+    if(systemtrayavailable)
+    {
+        systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
+    }
 }
 
 void MainWindow::slot_searchsummoner()
@@ -1538,6 +1546,7 @@ void MainWindow::slot_searchsummoner()
 
     if(suminfos.isEmpty())
     {
+        log("Summoner name not found on this server");
         return;
     }
 
@@ -1545,6 +1554,7 @@ void MainWindow::slot_searchsummoner()
 
     if(summonerid.isEmpty())
     {
+        log("[EROOR] Summoner id not valid");
         return;
     }
 
@@ -1571,13 +1581,17 @@ void MainWindow::slot_searchsummoner()
 
     if(game.isEmpty())
     {
-        ui->label_searchsummoner_status->setText("offline");
+        log("Summoner " + summonername + " is not in a game");
+
+        ui->label_searchsummoner_status->setText("not playing");
 
         ui->label_searchsummoner_gamemode->setText("Game Mode");
     }
     else
     {
-        ui->label_searchsummoner_status->setText("online");
+        log("Summoner " + summonername + " is in a game");
+
+        ui->label_searchsummoner_status->setText("playing");
 
         ui->label_searchsummoner_gamemode->setText(game.object().value("gameMode").toString());
 
