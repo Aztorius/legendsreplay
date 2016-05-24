@@ -157,15 +157,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
 
-    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION){
-        /*QMessageBox updatebox(this);
-        updatebox.setIcon(QMessageBox::Information);
-        updatebox.setTextFormat(Qt::RichText);
-        updatebox.setText("<a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
-        updatebox.setStandardButtons(QMessageBox::Ok);
-        updatebox.exec();*/
+    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
+    {
         showmessage("New version "+ updatejson.object().value("version").toString() + " available !");
-        log("New version "+ updatejson.object().value("version").toString() + " available !");
+        log("<a href='http://aztorius.github.io/legendsreplay/'>New version "+ updatejson.object().value("version").toString() + " available !</a>");
     }
 
     ui->lineEdit_status->setText("Idle");
@@ -192,7 +187,7 @@ MainWindow::~MainWindow()
 void MainWindow::log(QString s)
 {
     ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + s);
-    ui->textEdit->append(QTime::currentTime().toString() + " | " + s);
+    ui->textBrowser->append(QTime::currentTime().toString() + " | " + s);
 }
 
 void MainWindow::setArgs(int argc, char *argv[])

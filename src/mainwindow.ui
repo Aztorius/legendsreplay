@@ -906,8 +906,17 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QTextEdit" name="textEdit">
+         <widget class="QTextBrowser" name="textBrowser">
+          <property name="lineWrapMode">
+           <enum>QTextEdit::WidgetWidth</enum>
+          </property>
           <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+          </property>
+          <property name="openExternalLinks">
            <bool>true</bool>
           </property>
          </widget>
@@ -1264,7 +1273,7 @@
      <x>0</x>
      <y>0</y>
      <width>724</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

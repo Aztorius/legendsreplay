@@ -9,7 +9,9 @@
 class Chunk
 {
 public:
+    Chunk();
     Chunk(int id, QByteArray data, int keyframeid, int duration = 30000);
+    ~Chunk();
     int getId() const;
     int getKeyframeId() const;
     QByteArray getData() const;
@@ -26,7 +28,9 @@ private:
 class Keyframe
 {
 public:
+    Keyframe();
     Keyframe(int id, QByteArray data, int nextchunkid);
+    ~Keyframe();
     int getId() const;
     int getNextchunkid() const;
     QByteArray getData() const;
