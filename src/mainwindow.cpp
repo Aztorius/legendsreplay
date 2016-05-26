@@ -1534,6 +1534,8 @@ void MainWindow::showmessage(QString message)
 
 void MainWindow::slot_searchsummoner()
 {
+    ui->label_searchsummoner_status->setText("...");
+
     QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
     QString summonername = ui->lineEdit_searchsummoner->text();
 

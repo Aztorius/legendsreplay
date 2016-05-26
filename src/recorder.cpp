@@ -108,8 +108,6 @@ void Recorder::run(){
 
     QByteArray bytearray_keyframe, bytearray_chunk;
 
-    //QList<int> chunks;
-
     QTimer timer, timer3;
     QEventLoop loop, loop3;
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
@@ -179,7 +177,15 @@ void Recorder::run(){
             }
             else
             {
-                emit toLog("Recorder: Chunk lost " + m_serverid + "/" + m_gameid + " : " + QString::number(chunkid));
+                if(chunkid < json_lastChunkInfo.object().value("chunkId").toInt())
+                {
+                    lastsavedchunkid++;
+                    emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Skip Chunk " + QString::number(chunkid));
+                }
+                else
+                {
+                    emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Empty Chunk " + QString::number(chunkid));
+                }
             }
         }
 
