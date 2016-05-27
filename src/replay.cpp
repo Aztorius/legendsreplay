@@ -229,6 +229,12 @@ QByteArray Replay::getEndOfGameStats()
     return QByteArray::fromBase64(m_endofgamestats);
 }
 
+void Replay::repair(){
+    while(m_keyframes.size() > 0 && this->getChunk(m_keyframes.first().getNextchunkid()).getId() == 0){
+        m_keyframes.removeFirst();
+    }
+}
+
 Chunk::Chunk()
 {
     m_id = 0;

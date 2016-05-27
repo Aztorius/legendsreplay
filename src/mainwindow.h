@@ -124,6 +124,7 @@ private slots:
     void slot_endRecording(QString serverid, QString gameid);
     void log(QString);
     void showmessage(QString message);
+    void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);
 };
 
 #endif // MAINWINDOW_H

@@ -14,14 +14,60 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("LegendsReplay ") + GLOBAL_VERSION);
     setWindowIcon(QIcon(":/logo.png"));
 
-    log(QString("LegendsReplay " + GLOBAL_VERSION + " Started"));
+    log(QString(tr("LegendsReplay ") + GLOBAL_VERSION + tr(" Started")));
 
     ui->lineEdit_status->setText("Starting");
 
-    orservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
+    QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
-    ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
-    ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+    if(!serversfile.open(QIODevice::ReadOnly)){
+        log(tr("[ERROR] Opening servers file : ") + serversfile.errorString());
+
+        log(tr("Creating LegendsReplayServers.txt file"));
+        QDir filedir(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first());
+
+        if(!filedir.exists()){
+            filedir.mkpath(".");
+        }
+
+        QFile::copy(":/LegendsReplayServers.txt",QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
+
+        QFile localserversfile(":/LegendsReplayServers.txt");
+
+        if(!localserversfile.open(QIODevice::ReadOnly)){
+            QTextStream in(&localserversfile);
+
+            while(!in.atEnd()){
+                QString line = in.readLine();
+                if(!line.isEmpty()){
+                    orservers.append(line);
+                    ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+                    ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
+                }
+            }
+
+            localserversfile.close();
+        }
+        else{
+            orservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
+            ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+            ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+        }
+    }
+    else{
+        QTextStream in(&serversfile);
+
+        while(!in.atEnd()){
+            QString line = in.readLine();
+            if(!line.isEmpty()){
+                orservers.append(line);
+                ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+                ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
+            }
+        }
+
+        serversfile.close();
+    }
 
     orsettings = new QSettings("LegendsReplay", "Local");
 
@@ -153,6 +199,7 @@ MainWindow::MainWindow(QWidget *parent) :
         systemtrayicon = new QSystemTrayIcon;
         systemtrayicon->setIcon(QIcon(":/logo.png"));
         systemtrayicon->show();
+        connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
     }
 
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
@@ -1307,6 +1354,8 @@ void MainWindow::replay_launch(QString pathfile)
 
     replay = new Replay(pathfile);
 
+    replay->repair();
+
     log("Opening : " + pathfile);
 
     log("Server: started");
@@ -1385,7 +1434,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             Keyframe currentKeyframe = replay->findKeyframeByChunkId(currentChunkid);
 
-            while((currentKeyframe.getId() == 0 || replay->findKeyframeByChunkId(currentChunkid).getId() != replay->findKeyframeByChunkId(currentChunkid + 1).getId()) && currentChunkid < replay->getChunks().last().getId())
+            while(currentKeyframe.getId() == 0 && currentChunkid < replay->getChunks().last().getId())
             {
                 currentChunkid++;
                 serverChunkCount++;
@@ -1393,11 +1442,11 @@ void MainWindow::replay_launch(QString pathfile)
                 serverKeyframeCount = currentKeyframe.getId();
             }
 
-            if(currentChunkid <= replay->getChunks().first().getId() + 6){
-                nextavailablechunk = 6000;
+            if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 3){
+                nextavailablechunk = 5000;
             }
-            else if(currentChunkid < replay->getChunks().last().getId()){
-                nextavailablechunk = 1000;
+            else{
+                nextavailablechunk = 500;
             }
 
             QString data = "{";
@@ -1438,7 +1487,7 @@ void MainWindow::replay_launch(QString pathfile)
                 res->end(chunk_ba);
 
                 if(serverChunkCount >= replay->getEndstartupchunkid().toInt() && chunkid > replay->getEndstartupchunkid().toInt()){
-                    serverChunkCount += 1;
+                    serverChunkCount++;
                 }
 
                 log("Server: send chunk " + QString::number(chunkid));
@@ -1476,8 +1525,6 @@ void MainWindow::replay_launch(QString pathfile)
                 res->setStatusCode(qhttp::ESTATUS_OK);
                 res->addHeader("Content-Type", "application/octet-stream");
                 res->end(keyframe_ba);
-
-                serverKeyframeCount += 1;
 
                 log("Server: send keyframe " + QString::number(keyframeid));
             }
@@ -1738,4 +1785,12 @@ void MainWindow::slot_click_searchsummoner_record()
     connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
     connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
     recorder->start();
+}
+
+void MainWindow::systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if(reason == QSystemTrayIcon::DoubleClick)
+    {
+        this->showNormal();
+    }
 }

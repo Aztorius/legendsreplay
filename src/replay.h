@@ -67,6 +67,8 @@ public:
     Keyframe getKeyFrame(int id) const;
     Keyframe findKeyframeByChunkId(int chunkid);
 
+    void repair();
+
 private:
     QString m_gameid;
     QString m_serverid;
