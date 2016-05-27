@@ -267,8 +267,8 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     QFileInfoList list = qd.entryInfoList();
 
     if(list.isEmpty()){
-        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
-        log("[WARN] Invalid League of Legends directory. No release folder found.");
+        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends (or PBE) directory.\nPlease set a valid one.");
+        log("[WARN] Invalid League of Legends (or PBE) directory. No releases folder found.");
         return;
     }
 
@@ -280,8 +280,8 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     }
 
     if(!check_path(path)){
-        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends directory.\nPlease set a valid one.");
-        log("[WARN] Invalid League of Legends directory. Invalid path.");
+        QMessageBox::information(this, "LegendsReplay", "Invalid League of Legends (or PBE) directory.\nPlease set a valid one.");
+        log("[WARN] Invalid League of Legends (or PBE) directory. Invalid path.");
         return;
     }
 
