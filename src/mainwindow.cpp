@@ -1158,6 +1158,18 @@ void MainWindow::slot_replayserversAdd()
         return;
     }
 
+    QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
+
+    if(!serversfile.open(QIODevice::WriteOnly | QIODevice::Append)){
+        log(tr("[WARN] Unable to write to LRServers file : ") + serversfile.errorString());
+    }
+    else{
+        QTextStream out(&serversfile);
+        out << ui->lineEdit_replayserver_address->text();
+
+        serversfile.close();
+    }
+
     orservers.append(ui->lineEdit_replayserver_address->text());
 
     ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
