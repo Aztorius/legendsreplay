@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->lineEdit_status->setText("Starting");
 
+    qsrand(1);
+
     QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
     if(!serversfile.open(QIODevice::ReadOnly)){
@@ -32,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         QFile localserversfile(":/LegendsReplayServers.txt");
 
-        if(!localserversfile.open(QIODevice::ReadOnly)){
+        if(localserversfile.open(QIODevice::ReadOnly)){
             QTextStream in(&localserversfile);
 
             while(!in.atEnd()){
@@ -1151,6 +1153,7 @@ void MainWindow::refresh_recordedGames()
                     label->setPixmap(getImg(game.getGameinfos().object().value("participants").toArray().at(i).toObject().value("championId").toInt()));
 
                     ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
+                    ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem("Soon"));
                     ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString()));
                     ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getServerid()));
                     ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
@@ -1220,7 +1223,7 @@ void MainWindow::slot_summonerinfos_save()
 
     log("Retrieving summoner ID");
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
@@ -1349,7 +1352,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
         return docempty;
     }
 
-    QJsonDocument gameinfos = getJsonFromUrl("http://" + lrservers.first() + "?platformid=" + servertag + "&summonerid=" + summonerid);
+    QJsonDocument gameinfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?platformid=" + servertag + "&summonerid=" + summonerid);
 
     return gameinfos;
 }
@@ -1627,7 +1630,7 @@ void MainWindow::slot_searchsummoner()
     QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
     QString summonername = ui->lineEdit_searchsummoner->text();
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.first() + "?region=" + serverid + "&summonername=" + summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?region=" + serverid + "&summonername=" + summonername);
 
     if(suminfos.isEmpty())
     {
