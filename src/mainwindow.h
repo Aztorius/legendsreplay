@@ -65,7 +65,7 @@ private:
     QList <QJsonObject> json_featured;
 
     QList <QStringList> servers;
-    QList <QString> orservers;
+    QList <QString> lrservers;
 
     QString loldirectory;
     QString lolpbedirectory;

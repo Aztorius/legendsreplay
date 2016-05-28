@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.0";
+QString GLOBAL_VERSION = "1.2.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
     if(!serversfile.open(QIODevice::ReadOnly)){
-        log(tr("[ERROR] Opening servers file : ") + serversfile.errorString());
+        log(tr("[WARN] Opening servers file : ") + serversfile.errorString());
 
         log(tr("Creating LegendsReplayServers.txt file"));
         QDir filedir(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first());
@@ -29,8 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
         if(!filedir.exists()){
             filedir.mkpath(".");
         }
-
-        QFile::copy(":/LegendsReplayServers.txt",QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
         QFile localserversfile(":/LegendsReplayServers.txt");
 
@@ -40,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
             while(!in.atEnd()){
                 QString line = in.readLine();
                 if(!line.isEmpty()){
-                    orservers.append(line);
+                    lrservers.append(line);
                     ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
                     ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
                 }
@@ -49,9 +47,25 @@ MainWindow::MainWindow(QWidget *parent) :
             localserversfile.close();
         }
         else{
-            orservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
+            log("[ERROR] Unable to open internal servers file");
+            lrservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
             ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
             ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+        }
+
+        QFile customserversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
+
+        if(customserversfile.open(QIODevice::WriteOnly | QIODevice::Text)){
+            QTextStream out(&customserversfile);
+
+            for(int i = 0; i < lrservers.size(); i++){
+                out << lrservers.at(i) << "\n";
+            }
+
+            customserversfile.close();
+        }
+        else{
+            log("[WARN] Unable to copy LegendsReplayServers.txt file into " + QStandardPaths::standardLocations(QStandardPaths::DataLocation).first());
         }
     }
     else{
@@ -60,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
         while(!in.atEnd()){
             QString line = in.readLine();
             if(!line.isEmpty()){
-                orservers.append(line);
+                lrservers.append(line);
                 ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
                 ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
             }
@@ -1158,22 +1172,34 @@ void MainWindow::slot_replayserversAdd()
         return;
     }
 
+    QFile oldserversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
+
+    oldserversfile.remove();
+
     QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
-    if(!serversfile.open(QIODevice::WriteOnly | QIODevice::Append)){
-        log(tr("[WARN] Unable to write to LRServers file : ") + serversfile.errorString());
+    if(!serversfile.open(QIODevice::WriteOnly | QIODevice::Text)){
+        log(tr("[WARN] Unable to write to LegendsReplayServers.txt file : ") + serversfile.errorString());
+        return;
     }
     else{
         QTextStream out(&serversfile);
+
+        for(int i = 0; i < lrservers.size(); i++)
+        {
+            out << lrservers.at(i) << "\n";
+        }
         out << ui->lineEdit_replayserver_address->text();
 
         serversfile.close();
     }
 
-    orservers.append(ui->lineEdit_replayserver_address->text());
+    lrservers.append(ui->lineEdit_replayserver_address->text());
 
     ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
     ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(ui->lineEdit_replayserver_address->text()));
+
+    ui->lineEdit_replayserver_address->clear();
 }
 
 void MainWindow::slot_summonerinfos_save()
@@ -1181,7 +1207,7 @@ void MainWindow::slot_summonerinfos_save()
     if(ui->lineEdit_summonername->text().isEmpty()){
         return;
     }
-    if(orservers.isEmpty()){
+    if(lrservers.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
         log("Please add a LegendsReplay server.");
         return;
@@ -1194,7 +1220,7 @@ void MainWindow::slot_summonerinfos_save()
 
     log("Retrieving summoner ID");
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.first() + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
@@ -1317,13 +1343,13 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
         }
     }
 
-    if(servertag.isEmpty() || orservers.isEmpty()){
+    if(servertag.isEmpty() || lrservers.isEmpty()){
         QJsonDocument docempty;
         log("[ERROR] Unknown server");
         return docempty;
     }
 
-    QJsonDocument gameinfos = getJsonFromUrl("http://" + orservers.first() + "?platformid=" + servertag + "&summonerid=" + summonerid);
+    QJsonDocument gameinfos = getJsonFromUrl("http://" + lrservers.first() + "?platformid=" + servertag + "&summonerid=" + summonerid);
 
     return gameinfos;
 }
@@ -1456,6 +1482,9 @@ void MainWindow::replay_launch(QString pathfile)
 
             if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 3){
                 nextavailablechunk = 5000;
+            }
+            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 9){
+                nextavailablechunk = 2000;
             }
             else{
                 nextavailablechunk = 500;
@@ -1598,7 +1627,7 @@ void MainWindow::slot_searchsummoner()
     QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
     QString summonername = ui->lineEdit_searchsummoner->text();
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + orservers.first() + "?region=" + serverid + "&summonername=" + summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.first() + "?region=" + serverid + "&summonername=" + summonername);
 
     if(suminfos.isEmpty())
     {
