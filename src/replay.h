@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QJsonDocument>
+#include <QJsonObject>
 
 class Chunk
 {

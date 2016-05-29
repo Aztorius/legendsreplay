@@ -1040,38 +1040,6 @@
         <string>Replay Servers</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_8">
-        <item row="0" column="1">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Add a replay server</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_9">
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_replayserver_address"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_4">
-             <property name="text">
-              <string>Address :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QPushButton" name="pushButton_add_replayserver">
-             <property name="text">
-              <string>Add</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
         <item row="0" column="0">
          <widget class="QTableWidget" name="tableWidget_replayservers">
           <property name="editTriggers">
@@ -1084,7 +1052,7 @@
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
           <attribute name="horizontalHeaderDefaultSectionSize">
-           <number>250</number>
+           <number>400</number>
           </attribute>
           <attribute name="verticalHeaderVisible">
            <bool>false</bool>
@@ -1094,6 +1062,38 @@
             <string>Address</string>
            </property>
           </column>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>250</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Add a LegendsReplay server</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_replayserver_address"/>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Address :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="pushButton_add_replayserver">
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
@@ -1276,7 +1276,7 @@
      <x>0</x>
      <y>0</y>
      <width>724</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">

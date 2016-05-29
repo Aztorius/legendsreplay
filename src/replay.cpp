@@ -108,8 +108,22 @@ Replay::Replay(QString filepath)
                 }
             }
         }
-
         file.close();
+
+        if(m_encryptionkey.isEmpty() && !m_gameinfos.isEmpty() && !m_gameinfos.object().value("observers").toObject().value("encryptionKey").toString().isEmpty()){
+            m_encryptionkey = m_gameinfos.object().value("observers").toObject().value("encryptionKey").toString();
+        }
+
+        if(m_serverid.isEmpty() && !m_gameinfos.isEmpty() && !m_gameinfos.object().value("platformId").toString().isEmpty()){
+            m_serverid = m_gameinfos.object().value("platformId").toString();
+        }
+
+        if(m_gameid.isEmpty() && !m_gameinfos.isEmpty() && m_gameinfos.object().value("gameId").toVariant().toULongLong() != 0){
+            m_gameid = QString::number(m_gameinfos.object().value("gameId").toVariant().toULongLong());
+        }
+    }
+    else{
+        //ERROR : cannot open the file
     }
 }
 

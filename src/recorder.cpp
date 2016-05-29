@@ -198,9 +198,6 @@ void Recorder::run(){
                 list_primarychunks.append(Chunk(startupchunkid, bytearray_chunk, 0));
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(startupchunkid) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
                 startupchunkid += 1;
-
-                timer3.start(2000);
-                loop3.exec();
             }
             else
             {
@@ -226,7 +223,7 @@ void Recorder::run(){
 
     QFile file(m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
 
-    if(file.open(QIODevice::WriteOnly))
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QTextStream stream(&file);
 
@@ -268,14 +265,14 @@ void Recorder::run(){
             stream << "::ORChunk:" << QString::number(list_chunks.at(i).getId()) << ":" << QString::number(list_chunks.at(i).getKeyframeId()) << ":" << QString::number(list_chunks.at(i).getDuration()) << ":";
             stream << list_chunks.at(i).getData().toBase64() << "::" << endl;
         }
-        stream << "::OREnd::";
+        stream << "::OREnd::" << endl;
         file.close();
 
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
 
         if(list_primarychunks.isEmpty() || list_chunks.isEmpty() || list_keyframes.isEmpty())
         {
-            emit toLog("Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
+            emit toLog("[WARN] Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
         }
     }
     else

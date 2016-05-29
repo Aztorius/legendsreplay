@@ -1407,9 +1407,9 @@ void MainWindow::replay_launch(QString pathfile)
 
     replay->repair();
 
-    log("Opening : " + pathfile);
+    log(tr("Opening : ") + pathfile);
 
-    log("Server: started");
+    log(tr("Server: started"));
 
     httpserver->stopListening();
 
@@ -1420,7 +1420,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->setStatusCode(qhttp::ESTATUS_OK);      // http status 200
             res->addHeader("Content-Type", "text/plain");
             res->end(replay->getServerversion().toLocal8Bit());
-            log("Server: send server version");
+            log(tr("Server: send server version"));
         }
         else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getServerid() + "/" + replay->getGameid())){
             int firstchunkid = replay->getChunks().first().getId();
@@ -1458,7 +1458,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->addHeader("Content-Type", "application/json; charset=UTF-8");
             res->end(metadata.toUtf8());
 
-            log("Server: send game metadata");
+            log(tr("Server: send game metadata"));
         }
         else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid()))
         {
@@ -1519,7 +1519,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->addHeader("Content-Type", "application/json; charset=UTF-8");
             res->end(data.toUtf8());
 
-            log("Server: send lastChunkInfo");
+            log(tr("Server: send lastChunkInfo"));
         }
         else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid()))
         {
@@ -1544,7 +1544,7 @@ void MainWindow::replay_launch(QString pathfile)
                     serverChunkCount++;
                 }
 
-                log("Server: send chunk " + QString::number(chunkid));
+                log(tr("Server: send chunk ") + QString::number(chunkid));
             }
             else if(primarychunk.getId() > 0){
                 QByteArray chunk_ba = primarychunk.getData();
@@ -1554,13 +1554,13 @@ void MainWindow::replay_launch(QString pathfile)
                 res->addHeader("Content-Length", QString::number(chunk_ba.size()).toLocal8Bit());
                 res->end(chunk_ba);
 
-                log("Server: send primary chunk " + QString::number(chunkid));
+                log(tr("Server: send primary chunk ") + QString::number(chunkid));
             }
             else
             {
                 res->setStatusCode(qhttp::ESTATUS_NOT_FOUND);
                 res->end("");
-                log("Server: unknown requested chunk " + QString::number(chunkid));
+                log(tr("Server: unknown requested chunk ") + QString::number(chunkid));
             }
         }
         else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid()))
@@ -1580,10 +1580,10 @@ void MainWindow::replay_launch(QString pathfile)
                 res->addHeader("Content-Type", "application/octet-stream");
                 res->end(keyframe_ba);
 
-                log("Server: send keyframe " + QString::number(keyframeid));
+                log(tr("Server: send keyframe ") + QString::number(keyframeid));
             }
             else{
-                log("Server: unknown requested keyframe " + QString::number(keyframeid));
+                log(tr("Server: unknown requested keyframe ") + QString::number(keyframeid));
             }
         }
         else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getServerid() + "/" + replay->getGameid()))
@@ -1593,7 +1593,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->addHeader("Content-Type", "application/octet-stream");
             res->end(replay->getEndOfGameStats());
 
-            log("Server: End of game stats sent");
+            log(tr("Server: End of game stats sent"));
         }
         else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getServerid() + "/" + replay->getGameid()))
         {
@@ -1602,7 +1602,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->addHeader("Content-Type", "text/plain");
             res->end("");
 
-            log("Server: End of replay requested");
+            log(tr("Server: End of replay requested"));
 
             if(replay != NULL){
                 delete replay;
@@ -1617,7 +1617,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->addHeader("Content-Type", "text/plain");
             res->end("");
 
-            log("Server: Unknown requested link " + url);
+            log(tr("Server: Unknown requested link ") + url);
         }
     });
 
@@ -1644,7 +1644,7 @@ void MainWindow::slot_searchsummoner()
 
     if(suminfos.isEmpty())
     {
-        log("Summoner name not found on this server");
+        log(tr("Summoner name not found on this server"));
         return;
     }
 
@@ -1652,7 +1652,7 @@ void MainWindow::slot_searchsummoner()
 
     if(summonerid.isEmpty())
     {
-        log("[EROOR] Summoner id not valid");
+        log(tr("[ERROR] Summoner id not valid"));
         return;
     }
 
@@ -1679,17 +1679,17 @@ void MainWindow::slot_searchsummoner()
 
     if(game.isEmpty())
     {
-        log("Summoner " + summonername + " is not in a game");
+        log(tr("Summoner ") + summonername + tr(" is not in a game"));
 
-        ui->label_searchsummoner_status->setText("not playing");
+        ui->label_searchsummoner_status->setText(tr("not playing"));
 
-        ui->label_searchsummoner_gamemode->setText("Game Mode");
+        ui->label_searchsummoner_gamemode->setText(tr("Game Mode"));
     }
     else
     {
-        log("Summoner " + summonername + " is in a game");
+        log(tr("Summoner ") + summonername + tr(" is in a game"));
 
-        ui->label_searchsummoner_status->setText("playing");
+        ui->label_searchsummoner_status->setText(tr("playing"));
 
         ui->label_searchsummoner_gamemode->setText(game.object().value("gameMode").toString());
 
@@ -1825,15 +1825,14 @@ void MainWindow::slot_click_searchsummoner_record()
 
     for(int i = 0; i < recording.size(); i++){
         if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
-            //Game is already recording
-            log("Game is already recording");
+            log(tr("Game is already recording"));
             return;
         }
     }
 
     recording.append(QStringList() << serverid << gameid);
 
-    ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+    ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
 
     Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observer").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
     connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
