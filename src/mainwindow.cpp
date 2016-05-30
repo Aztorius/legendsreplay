@@ -92,8 +92,10 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->lineEdit_summonername->setText(m_summonername);
     }
     else{
-        QMessageBox::information(this, tr("LegendsReplay"), tr("Please set your summoner name to record your games."));
-        log(tr("[WARN] Please set your summoner name to record your games."));
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Please set your summoner name and then let the software open to record your games."));
+        log(tr("[WARN] Please set your summoner name and then let the software open to record your games."));
+
+        ui->tabWidget->setCurrentIndex(6);
     }
 
     if(!orsettings->value("SummonerId").toString().isEmpty()){
