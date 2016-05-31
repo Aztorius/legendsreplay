@@ -5,9 +5,18 @@ Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, 
     m_serverid = serverid;
     m_serveraddress = serveraddress;
     m_gameid = gameid;
-    m_encryptionkey = encryptionkey;
     m_gameinfo = gameinfo;
     m_replaydirectory = replaydirectory;
+
+    if(!encryptionkey.isEmpty()){
+        m_encryptionkey = encryptionkey;
+    }
+    else if(!m_gameinfo.isEmpty()){
+        m_encryptionkey = m_gameinfo.object().value("observers").toObject().value("encryptionKey").toString();
+    }
+    else{
+        m_encryptionkey = "";
+    }
 
     connect(this, SIGNAL(toLog(QString)), window, SLOT(log(QString)));
     connect(this, SIGNAL(toShowmessage(QString)), window, SLOT(showmessage(QString)));
@@ -185,6 +194,11 @@ void Recorder::run(){
                 else
                 {
                     emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Empty Chunk " + QString::number(chunkid));
+                }
+
+                if(chunkid > json_lastChunkInfo.object().value("endGameChunkId").toInt() && json_lastChunkInfo.object().value("endGameChunkId").toInt() > 0){
+                    emit toLog("[WARN] Chunk out of range : stop recording");
+                    break;
                 }
             }
         }

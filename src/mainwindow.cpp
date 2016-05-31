@@ -1836,7 +1836,7 @@ void MainWindow::slot_click_searchsummoner_record()
 
     ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
 
-    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observer").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
+    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
     connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
     connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
     recorder->start();
