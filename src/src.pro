@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     recorder.cpp \
-    replay.cpp
+    replay.cpp \
+    chunk.cpp \
+    keyframe.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
-    replay.h
+    replay.h \
+    chunk.h \
+    keyframe.h
 
 FORMS    += mainwindow.ui
 

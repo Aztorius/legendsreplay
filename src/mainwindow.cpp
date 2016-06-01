@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.1";
+QString GLOBAL_VERSION = "1.2.2";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -978,7 +978,7 @@ void MainWindow::slot_click_allgames()
         return;
     }
 
-    Replay game(replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->currentRow()));
+    Replay game(replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->currentRow()), true);
 
     ui->label_allgames_gamemode->setText(game.getGameinfos().object().value("gameMode").toString());
 
@@ -1128,7 +1128,7 @@ void MainWindow::refresh_recordedGames()
         QFileInfo fileinfo = replayslist.at(i);
         ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
 
-        Replay game(fileinfo.filePath());
+        Replay game(fileinfo.filePath(), true);
 
         QDateTime datetime;
         datetime.setMSecsSinceEpoch(quint64(game.getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));

@@ -1,6 +1,6 @@
 #include "replay.h"
 
-Replay::Replay(QString filepath)
+Replay::Replay(QString filepath, bool loadInfosOnly)
 {
     QFile file(filepath);
     m_filepath = filepath;
@@ -68,7 +68,7 @@ Replay::Replay(QString filepath)
 
                 m_endofgamestats = gamestats;
             }
-            else if(line.left(13) == "::ORKeyFrame:")
+            else if(line.left(13) == "::ORKeyFrame:" && !loadInfosOnly)
             {
                 line.remove(0,13);
 
@@ -82,7 +82,7 @@ Replay::Replay(QString filepath)
                 QByteArray ba_keyframe = QByteArray::fromBase64(keyframe.toLocal8Bit());
                 m_keyframes.append(Keyframe(keyframeid, ba_keyframe, nextchunkid));
             }
-            else if(line.left(10) == "::ORChunk:")
+            else if(line.left(10) == "::ORChunk:" && !loadInfosOnly)
             {
                 line.remove(0,10);
 
@@ -124,7 +124,13 @@ Replay::Replay(QString filepath)
     }
     else{
         //ERROR : cannot open the file
+        qDebug() << "[ERROR] Cannot open the file";
     }
+}
+
+Replay::~Replay()
+{
+
 }
 
 QString Replay::getGameid()
@@ -247,89 +253,4 @@ void Replay::repair(){
     while(m_keyframes.size() > 0 && this->getChunk(m_keyframes.first().getNextchunkid()).getId() == 0){
         m_keyframes.removeFirst();
     }
-}
-
-Chunk::Chunk()
-{
-    m_id = 0;
-    m_keyframeid = 0;
-    m_data = "";
-    m_duration = 30000;
-}
-
-Chunk::Chunk(int id, QByteArray data, int keyframeid, int duration)
-{
-    m_id = id;
-    m_keyframeid = keyframeid;
-    m_data = data;
-    m_duration = duration;
-}
-
-Chunk::~Chunk()
-{
-
-}
-
-int Chunk::getId() const
-{
-    return m_id;
-}
-
-int Chunk::getKeyframeId() const
-{
-    return m_keyframeid;
-}
-
-QByteArray Chunk::getData() const
-{
-    return m_data;
-}
-
-int Chunk::getDuration() const
-{
-    return m_duration;
-}
-
-int Chunk::getSize() const
-{
-    return m_data.size();
-}
-
-Keyframe::Keyframe()
-{
-    m_id = 0;
-    m_nextchunkid = 0;
-    m_data = "";
-}
-
-Keyframe::Keyframe(int id, QByteArray data, int nextchunkid)
-{
-    m_id = id;
-    m_nextchunkid = nextchunkid;
-    m_data = data;
-}
-
-Keyframe::~Keyframe()
-{
-
-}
-
-int Keyframe::getId() const
-{
-    return m_id;
-}
-
-int Keyframe::getNextchunkid() const
-{
-    return m_nextchunkid;
-}
-
-QByteArray Keyframe::getData() const
-{
-    return m_data;
-}
-
-int Keyframe::getSize() const
-{
-    return m_data.size();
 }

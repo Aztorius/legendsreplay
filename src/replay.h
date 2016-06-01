@@ -6,47 +6,16 @@
 #include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDebug>
 
-class Chunk
-{
-public:
-    Chunk();
-    Chunk(int id, QByteArray data, int keyframeid, int duration = 30000);
-    ~Chunk();
-    int getId() const;
-    int getKeyframeId() const;
-    QByteArray getData() const;
-    int getDuration() const;
-    int getSize() const;
-
-private:
-    int m_id;
-    int m_keyframeid;
-    QByteArray m_data;
-    int m_duration;
-};
-
-class Keyframe
-{
-public:
-    Keyframe();
-    Keyframe(int id, QByteArray data, int nextchunkid);
-    ~Keyframe();
-    int getId() const;
-    int getNextchunkid() const;
-    QByteArray getData() const;
-    int getSize() const;
-
-private:
-    int m_id;
-    int m_nextchunkid;
-    QByteArray m_data;
-};
+#include "chunk.h"
+#include "keyframe.h"
 
 class Replay
 {
 public:
-    Replay(QString filepath);
+    Replay(QString filepath, bool loadInfosOnly = false);
+    ~Replay();
 
     QString getGameid();
     QString getServerid();

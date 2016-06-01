@@ -22,6 +22,11 @@ Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, 
     connect(this, SIGNAL(toShowmessage(QString)), window, SLOT(showmessage(QString)));
 }
 
+Recorder::~Recorder()
+{
+
+}
+
 QByteArray Recorder::getFileFromUrl(QString url){
     QNetworkAccessManager local_networkResult;
     QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));

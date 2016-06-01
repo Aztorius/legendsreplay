@@ -22,6 +22,7 @@ class Recorder : public QThread
 
     public:
         Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory);
+        ~Recorder();
         QByteArray getFileFromUrl(QString url);
         QJsonDocument getJsonFromUrl(QString url);
 
