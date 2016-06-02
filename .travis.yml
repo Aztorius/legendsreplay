@@ -1,4 +1,5 @@
-dist: trusty
+language: cpp
+dist: wily
 
 before_install:
  - sudo apt-get update -qq
