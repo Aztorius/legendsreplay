@@ -1,12 +1,14 @@
 #include "recorder.h"
 
-Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory)
+Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory)
 {
     m_serverid = serverid;
     m_serveraddress = serveraddress;
     m_gameid = gameid;
     m_gameinfo = gameinfo;
     m_replaydirectory = replaydirectory;
+    m_startgamechunkid = "0";
+    m_endstartupchunkid = "0";
 
     if(!encryptionkey.isEmpty()){
         m_encryptionkey = encryptionkey;
@@ -17,9 +19,6 @@ Recorder::Recorder(MainWindow *window, QString serverid, QString serveraddress, 
     else{
         m_encryptionkey = "";
     }
-
-    connect(this, SIGNAL(toLog(QString)), window, SLOT(log(QString)));
-    connect(this, SIGNAL(toShowmessage(QString)), window, SLOT(showmessage(QString)));
 }
 
 Recorder::~Recorder()
@@ -67,7 +66,7 @@ QJsonDocument Recorder::getJsonFromUrl(QString url){
     return jsonResponse;
 }
 
-void Recorder::run(){
+void Recorder::launch(){
 
     emit toLog("Start recording : " + m_serverid + "/" + m_gameid);
 
@@ -161,7 +160,7 @@ void Recorder::run(){
             }
             else
             {
-                emit toLog("Recorder: KeyFrame lost " + m_serverid + "/" + m_gameid + " : " + QString::number(keyframeid));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe lost " + QString::number(keyframeid));
             }
         }
 
@@ -185,15 +184,13 @@ void Recorder::run(){
                 list_chunks.append(Chunk(chunkid, bytearray_chunk, local_keyframeid, duration));
                 lastsavedchunkid = chunkid;
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(chunkid) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
-
-                timer3.start(2000);
-                loop3.exec();
             }
             else
             {
-                if(chunkid < json_lastChunkInfo.object().value("chunkId").toInt())
+                if(chunkid < json_lastChunkInfo.object().value("chunkId").toInt() - 3)
                 {
-                    lastsavedchunkid++;
+                    lastsavedchunkid = json_lastChunkInfo.object().value("chunkId").toInt() - 3;
+
                     emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Skip Chunk " + QString::number(chunkid));
                 }
                 else
@@ -300,4 +297,6 @@ void Recorder::run(){
     }
 
     emit end(m_serverid, m_gameid);
+
+    emit finished();
 }

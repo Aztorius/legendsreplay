@@ -1,12 +1,16 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
-#include <QThread>
-#include <QMutex>
-#include "mainwindow.h"
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QEventLoop>
+#include <QTimer>
+#include <QJsonArray>
+#include <math.h>
+
 #include "replay.h"
 
-class Recorder : public QThread
+class Recorder : public QObject
 {
     Q_OBJECT
 
@@ -21,18 +25,19 @@ class Recorder : public QThread
         QString m_startgamechunkid;
 
     public:
-        Recorder(MainWindow *window, QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory);
+        Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory);
         ~Recorder();
         QByteArray getFileFromUrl(QString url);
         QJsonDocument getJsonFromUrl(QString url);
 
     public slots:
-        void run();
+        void launch();
 
     signals:
         void toLog(QString logstring);
         void end(QString serverid, QString gameid);
         void toShowmessage(QString message);
+        void finished();
 };
 
 #endif // RECORDER_H

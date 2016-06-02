@@ -924,10 +924,18 @@ void MainWindow::slot_featuredRecord()
         }
     }
 
-    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, ui->tableWidget_featured->item(row,2)->text(), gameinfo, replaydirectory);
-    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    QThread *recorderThread = new QThread;
+    Recorder *recorder = new Recorder(serverid, serveraddress, gameid, ui->tableWidget_featured->item(row,2)->text(), gameinfo, replaydirectory);
+    recorder->moveToThread(recorderThread);
+    connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+    connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
     connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
-    recorder->start();
+    connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+    connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+    recorderThread->start();
 }
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
@@ -1337,10 +1345,18 @@ void MainWindow::slot_refreshPlayingStatus()
 
             ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
 
-            Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, gameinfos.object().value("observers").toObject().value("encryptionKey").toString(), gameinfos, replaydirectory);
-            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+            Recorder *recorder = new Recorder(serverid, serveraddress, gameid, gameinfos.object().value("observers").toObject().value("encryptionKey").toString(), gameinfos, replaydirectory);
+            QThread *recorderThread = new QThread;
+            recorder->moveToThread(recorderThread);
+            connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+            connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
             connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
-            recorder->start();
+            connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+            connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+            connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+            recorderThread->start();
         }
     }
 
@@ -1477,7 +1493,6 @@ void MainWindow::replay_launch(QString pathfile)
                 serverChunkCount = replay->getChunks().last().getId();
                 serverKeyframeCount = replay->getKeyFrames().last().getId();
                 endgamechunkid = replay->getChunks().last().getId();
-                nextavailablechunk = 90000;
             }
             else{
                 serverKeyframeCount = replay->findKeyframeByChunkId(serverChunkCount).getId();
@@ -1495,8 +1510,11 @@ void MainWindow::replay_launch(QString pathfile)
                 serverKeyframeCount = currentKeyframe.getId();
             }
 
-            if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 3){
-                nextavailablechunk = 5000;
+            if(serverKeyframeCount == replay->getKeyFrames().first().getId()){
+                nextavailablechunk = 1000;
+            }
+            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 3){
+                nextavailablechunk = 10000;
             }
             else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 9){
                 nextavailablechunk = 2000;
@@ -1836,10 +1854,18 @@ void MainWindow::slot_click_searchsummoner_record()
 
     ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
 
-    Recorder *recorder = new Recorder(this, serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
-    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    Recorder *recorder = new Recorder(serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
+    QThread *recorderThread = new QThread;
+    recorder->moveToThread(recorderThread);
+    connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+    connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
     connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
-    recorder->start();
+    connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+    connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+    recorderThread->start();
 }
 
 void MainWindow::systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason)

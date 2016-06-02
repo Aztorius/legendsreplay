@@ -68,7 +68,7 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
 
                 m_endofgamestats = gamestats;
             }
-            else if(line.left(13) == "::ORKeyFrame:" && !loadInfosOnly)
+            else if(!loadInfosOnly && line.left(13) == "::ORKeyFrame:")
             {
                 line.remove(0,13);
 
@@ -82,7 +82,7 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
                 QByteArray ba_keyframe = QByteArray::fromBase64(keyframe.toLocal8Bit());
                 m_keyframes.append(Keyframe(keyframeid, ba_keyframe, nextchunkid));
             }
-            else if(line.left(10) == "::ORChunk:" && !loadInfosOnly)
+            else if(!loadInfosOnly && line.left(10) == "::ORChunk:")
             {
                 line.remove(0,10);
 
@@ -249,8 +249,10 @@ QByteArray Replay::getEndOfGameStats()
     return QByteArray::fromBase64(m_endofgamestats);
 }
 
-void Replay::repair(){
+bool Replay::repair(){
     while(m_keyframes.size() > 0 && this->getChunk(m_keyframes.first().getNextchunkid()).getId() == 0){
         m_keyframes.removeFirst();
     }
+
+    return true;
 }

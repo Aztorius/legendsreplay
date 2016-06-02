@@ -1,9 +1,7 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
-#include <QMainWindow>
 #include <QFile>
-#include <QTextStream>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDebug>
@@ -37,7 +35,7 @@ public:
     Keyframe getKeyFrame(int id) const;
     Keyframe findKeyframeByChunkId(int chunkid);
 
-    void repair();
+    bool repair();
 
 private:
     QString m_gameid;
