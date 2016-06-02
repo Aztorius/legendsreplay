@@ -79,6 +79,8 @@ private:
     QString m_summonerid;
     QString m_summonerserver;
 
+    QString m_currentLegendsReplayServer;
+
     QTimer *m_timer;
 
     QHttpServer *httpserver;

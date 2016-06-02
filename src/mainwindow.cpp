@@ -85,6 +85,15 @@ MainWindow::MainWindow(QWidget *parent) :
         serversfile.close();
     }
 
+    if(lrservers.isEmpty()){
+        // Critical
+        QMessageBox::critical(this, tr("LegendsReplay"), tr("Unable to find a Legends Replay server"));
+        this->close();
+        return;
+    }
+
+    m_currentLegendsReplayServer = lrservers.at(qrand()%lrservers.size());
+
     orsettings = new QSettings("LegendsReplay", "Local");
 
     if(!orsettings->value("SummonerName").toString().isEmpty()){
@@ -1243,7 +1252,7 @@ void MainWindow::slot_summonerinfos_save()
 
     log("Retrieving summoner ID");
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
@@ -1380,7 +1389,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
         return docempty;
     }
 
-    QJsonDocument gameinfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?platformid=" + servertag + "&summonerid=" + summonerid);
+    QJsonDocument gameinfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?platformid=" + servertag + "&summonerid=" + summonerid);
 
     return gameinfos;
 }
@@ -1660,7 +1669,7 @@ void MainWindow::slot_searchsummoner()
     QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
     QString summonername = ui->lineEdit_searchsummoner->text();
 
-    QJsonDocument suminfos = getJsonFromUrl("http://" + lrservers.at(qrand()%lrservers.size()) + "?region=" + serverid + "&summonername=" + summonername);
+    QJsonDocument suminfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?region=" + serverid + "&summonername=" + summonername);
 
     if(suminfos.isEmpty())
     {
