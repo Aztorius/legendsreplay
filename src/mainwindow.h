@@ -104,6 +104,7 @@ private slots:
     void slot_click_allgames();
     void slot_click_searchsummoner_spectate();
     void slot_click_searchsummoner_record();
+    void slot_click_replayservers();
 
     void slot_searchsummoner();
 

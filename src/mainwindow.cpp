@@ -199,6 +199,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_searchsummoner, SIGNAL(released()), this, SLOT(slot_searchsummoner()));
     connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
+    connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -1883,4 +1884,15 @@ void MainWindow::systemtrayiconActivated(QSystemTrayIcon::ActivationReason reaso
     {
         this->showNormal();
     }
+}
+
+void MainWindow::slot_click_replayservers()
+{
+    if(ui->tableWidget_replayservers->selectedItems().size() == 0){
+        return;
+    }
+
+    m_currentLegendsReplayServer = ui->tableWidget_replayservers->itemAt(ui->tableWidget_replayservers->selectedItems().first()->row(),0)->text();
+
+    log("LegendsReplay server switch to " + m_currentLegendsReplayServer);
 }
