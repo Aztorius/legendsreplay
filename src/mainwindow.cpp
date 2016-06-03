@@ -673,6 +673,10 @@ void MainWindow::slot_click_featured()
     QList<int> rightids;
     QList<QString> rightnames;
 
+    if(array.isEmpty()){
+        return;
+    }
+
     for(int i = 0; i < array.size(); i++){
         if(array.at(i).toObject().value("teamId").toInt() == 200)
         {
@@ -685,35 +689,35 @@ void MainWindow::slot_click_featured()
         }
     }
 
-    if(leftids.size() >= 1)
+    if(leftids.size() >= 1 && leftnames.size() >= 1)
     {
         ui->label_sumf1->setAlignment(Qt::AlignCenter);
         ui->label_sumf1->setPixmap(getImg(leftids.at(0)));
 
         ui->label_sumf16->setText(leftnames.at(0));
 
-        if(leftids.size() >= 2)
+        if(leftids.size() >= 2 && leftnames.size() >= 2)
         {
             ui->label_sumf2->setAlignment(Qt::AlignCenter);
             ui->label_sumf2->setPixmap(getImg(leftids.at(1)));
 
             ui->label_sumf27->setText(leftnames.at(1));
 
-            if(leftids.size() >= 3)
+            if(leftids.size() >= 3 && leftnames.size() >= 3)
             {
                 ui->label_sumf3->setAlignment(Qt::AlignCenter);
                 ui->label_sumf3->setPixmap(getImg(leftids.at(2)));
 
                 ui->label_sumf38->setText(leftnames.at(2));
 
-                if(leftids.size() >= 4)
+                if(leftids.size() >= 4 && leftnames.size() >= 4)
                 {
                     ui->label_sumf4->setAlignment(Qt::AlignCenter);
                     ui->label_sumf4->setPixmap(getImg(leftids.at(3)));
 
                     ui->label_sumf49->setText(leftnames.at(3));
 
-                    if(leftids.size() >= 5){
+                    if(leftids.size() >= 5 && leftnames.size() >= 5){
                         ui->label_sumf5->setAlignment(Qt::AlignCenter);
                         ui->label_sumf5->setPixmap(getImg(leftids.at(4)));
 
@@ -724,35 +728,35 @@ void MainWindow::slot_click_featured()
         }
     }
 
-    if(rightids.size() >= 1)
+    if(rightids.size() >= 1 && rightnames.size() >= 1)
     {
         ui->label_sumf6->setAlignment(Qt::AlignCenter);
         ui->label_sumf6->setPixmap(getImg(rightids.at(0)));
 
         ui->label_sumf16->setText(ui->label_sumf16->text() + " / " + rightnames.at(0));
 
-        if(rightids.size() >= 2)
+        if(rightids.size() >= 2 && rightnames.size() >= 2)
         {
             ui->label_sumf7->setAlignment(Qt::AlignCenter);
             ui->label_sumf7->setPixmap(getImg(rightids.at(1)));
 
             ui->label_sumf27->setText(ui->label_sumf27->text() + " / " + rightnames.at(1));
 
-            if(rightids.size() >= 3)
+            if(rightids.size() >= 3 && rightnames.size() >= 3)
             {
                 ui->label_sumf8->setAlignment(Qt::AlignCenter);
                 ui->label_sumf8->setPixmap(getImg(rightids.at(2)));
 
                 ui->label_sumf38->setText(ui->label_sumf38->text() + " / " + rightnames.at(2));
 
-                if(rightids.size() >= 4)
+                if(rightids.size() >= 4 && rightnames.size() >= 4)
                 {
                     ui->label_sumf9->setAlignment(Qt::AlignCenter);
                     ui->label_sumf9->setPixmap(getImg(rightids.at(3)));
 
                     ui->label_sumf49->setText(ui->label_sumf49->text() + " / " + rightnames.at(3));
 
-                    if(rightids.size() >= 5){
+                    if(rightids.size() >= 5 && rightnames.size() >= 5){
                         ui->label_sumf10->setAlignment(Qt::AlignCenter);
                         ui->label_sumf10->setPixmap(getImg(rightids.at(4)));
 
@@ -1737,6 +1741,10 @@ void MainWindow::slot_searchsummoner()
         QList<int> rightids;
         QList<QString> rightnames;
 
+        if(array.isEmpty()){
+            return;
+        }
+
         for(int i = 0; i < array.size(); i++){
             if(array.at(i).toObject().value("teamId").toInt() == 200)
             {
@@ -1749,35 +1757,35 @@ void MainWindow::slot_searchsummoner()
             }
         }
 
-        if(leftids.size() >= 1)
+        if(leftids.size() >= 1 && leftnames.size() >= 1)
         {
             ui->label_sums1->setAlignment(Qt::AlignCenter);
             ui->label_sums1->setPixmap(getImg(leftids.at(0)));
 
             ui->label_sums16->setText(leftnames.at(0));
 
-            if(leftids.size() >= 2)
+            if(leftids.size() >= 2 && leftnames.size() >= 2)
             {
                 ui->label_sums2->setAlignment(Qt::AlignCenter);
                 ui->label_sums2->setPixmap(getImg(leftids.at(1)));
 
                 ui->label_sums27->setText(leftnames.at(1));
 
-                if(leftids.size() >= 3)
+                if(leftids.size() >= 3 && leftnames.size() >= 3)
                 {
                     ui->label_sums3->setAlignment(Qt::AlignCenter);
                     ui->label_sums3->setPixmap(getImg(leftids.at(2)));
 
                     ui->label_sums38->setText(leftnames.at(2));
 
-                    if(leftids.size() >= 4)
+                    if(leftids.size() >= 4 && leftnames.size() >= 4)
                     {
                         ui->label_sums4->setAlignment(Qt::AlignCenter);
                         ui->label_sums4->setPixmap(getImg(leftids.at(3)));
 
                         ui->label_sums49->setText(leftnames.at(3));
 
-                        if(leftids.size() >= 5){
+                        if(leftids.size() >= 5 && leftnames.size() >= 5){
                             ui->label_sums5->setAlignment(Qt::AlignCenter);
                             ui->label_sums5->setPixmap(getImg(leftids.at(4)));
 
@@ -1788,35 +1796,35 @@ void MainWindow::slot_searchsummoner()
             }
         }
 
-        if(rightids.size() >= 1)
+        if(rightids.size() >= 1 && rightnames.size() >= 1)
         {
             ui->label_sums6->setAlignment(Qt::AlignCenter);
             ui->label_sums6->setPixmap(getImg(rightids.at(0)));
 
             ui->label_sums16->setText(ui->label_sums16->text() + " / " + rightnames.at(0));
 
-            if(rightids.size() >= 2)
+            if(rightids.size() >= 2 && rightnames.size() >= 2)
             {
                 ui->label_sums7->setAlignment(Qt::AlignCenter);
                 ui->label_sums7->setPixmap(getImg(rightids.at(1)));
 
                 ui->label_sums27->setText(ui->label_sums27->text() + " / " + rightnames.at(1));
 
-                if(rightids.size() >= 3)
+                if(rightids.size() >= 3 && rightnames.size() >= 3)
                 {
                     ui->label_sums8->setAlignment(Qt::AlignCenter);
                     ui->label_sums8->setPixmap(getImg(rightids.at(2)));
 
                     ui->label_sums38->setText(ui->label_sums38->text() + " / " + rightnames.at(2));
 
-                    if(rightids.size() >= 4)
+                    if(rightids.size() >= 4 && rightnames.size() >= 4)
                     {
                         ui->label_sums9->setAlignment(Qt::AlignCenter);
                         ui->label_sums9->setPixmap(getImg(rightids.at(3)));
 
                         ui->label_sums49->setText(ui->label_sums49->text() + " / " + rightnames.at(3));
 
-                        if(rightids.size() >= 5){
+                        if(rightids.size() >= 5 && rightnames.size() >= 5){
                             ui->label_sums10->setAlignment(Qt::AlignCenter);
                             ui->label_sums10->setPixmap(getImg(rightids.at(4)));
 
