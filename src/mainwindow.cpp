@@ -1129,8 +1129,8 @@ void MainWindow::refresh_recordedGames()
     yourgames_filename.clear();
 
     QDir dirreplays(replaydirectory);
-    dirreplays.setFilter(QDir::Files);
-    dirreplays.setSorting(QDir::Time | QDir::Reversed);
+    dirreplays.setFilter(QDir::Files | QDir::Readable);
+    dirreplays.setSorting(QDir::Time);
 
     QFileInfoList replayslist = dirreplays.entryInfoList();
 
@@ -1142,59 +1142,66 @@ void MainWindow::refresh_recordedGames()
         ui->tableWidget_yourgames->removeRow(0);
     }
 
+    qDebug() << "Refresh recorded games";
+
     for(int i = 0; i < replayslist.size(); i++){
         QFileInfo fileinfo = replayslist.at(i);
-        ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
 
-        Replay game(fileinfo.filePath(), true);
+        if(fileinfo.suffix() == "lor"){
+            ui->tableWidget_recordedgames->insertRow(ui->tableWidget_recordedgames->rowCount());
 
-        QDateTime datetime;
-        datetime.setMSecsSinceEpoch(quint64(game.getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));
+            Replay game(fileinfo.filePath(), true);
 
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getServerid()));
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameid()));
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
-        ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
+            QDateTime datetime;
+            datetime.setMSecsSinceEpoch(quint64(game.getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));
 
-        recordedgames_filename.append(fileinfo.fileName());
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getServerid()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameid()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
 
-        //Get platformId of the user
-        QString local_platformid;
+            recordedgames_filename.append(fileinfo.fileName());
 
-        for(int k = 0; k < servers.size(); k++){
-            if(servers.at(k).at(3) == m_summonerserver){
-                local_platformid = servers.at(k).at(1);
-                break;
+            //Get platformId of the user
+            QString local_platformid;
+
+            for(int k = 0; k < servers.size(); k++){
+                if(servers.at(k).at(3) == m_summonerserver){
+                    local_platformid = servers.at(k).at(1);
+                    break;
+                }
             }
-        }
 
-        if(!local_platformid.isEmpty() && game.getServerid() == local_platformid)
-        {
-            if(!m_summonerid.isEmpty() && !game.getGameinfos().object().value("participants").toArray().empty())
+            if(!local_platformid.isEmpty() && game.getServerid() == local_platformid)
             {
-                for(int j = 0; j < game.getGameinfos().object().value("participants").toArray().size(); j++)
+                if(!m_summonerid.isEmpty() && !game.getGameinfos().object().value("participants").toArray().isEmpty())
                 {
-                    if(game.getGameinfos().object().value("participants").toArray().at(j).toObject().value("summonerName").toString() == m_summonername){
-                        ui->tableWidget_yourgames->insertRow(ui->tableWidget_yourgames->rowCount());
+                    for(int j = 0; j < game.getGameinfos().object().value("participants").toArray().size(); j++)
+                    {
+                        if(game.getGameinfos().object().value("participants").toArray().at(j).toObject().value("summonerName").toString() == m_summonername){
+                            ui->tableWidget_yourgames->insertRow(ui->tableWidget_yourgames->rowCount());
 
-                        QLabel* label = new QLabel;
-                        label->setAlignment(Qt::AlignCenter);
-                        label->setPixmap(getImg(game.getGameinfos().object().value("participants").toArray().at(j).toObject().value("championId").toInt()));
+                            QLabel* label = new QLabel;
+                            label->setAlignment(Qt::AlignCenter);
+                            label->setPixmap(getImg(game.getGameinfos().object().value("participants").toArray().at(j).toObject().value("championId").toInt()));
 
-                        ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
-                        ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem("Soon"));
-                        ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString()));
-                        ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getServerid()));
-                        ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
+                            ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem("Soon"));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString()));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getServerid()));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
 
-                        yourgames_filename.append(fileinfo.fileName());
+                            yourgames_filename.append(fileinfo.fileName());
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
         }
     }
+
+    qDebug() << "End of refresh recorded games";
 
     QPixmapCache::clear();
 }

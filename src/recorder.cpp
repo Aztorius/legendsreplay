@@ -160,7 +160,8 @@ void Recorder::launch(){
             }
             else
             {
-                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe lost " + QString::number(keyframeid));
+                lastsavedkeyframeid = keyframeid - 1;
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe empty " + QString::number(keyframeid));
             }
         }
 
@@ -271,17 +272,21 @@ void Recorder::launch(){
             stream << QString::number(list_keyframes.at(i).getNextchunkid()) << ":";
             stream << list_keyframes.at(i).getData().toBase64() << "::" << endl;
         }
+
         for(int i = 0; i < list_primarychunks.size(); i++)
         {
             stream << "::ORChunk:" << QString::number(list_primarychunks.at(i).getId()) << ":" << QString::number(list_primarychunks.at(i).getKeyframeId()) << ":" << QString::number(list_primarychunks.at(i).getDuration()) << ":";
             stream << list_primarychunks.at(i).getData().toBase64() << "::" << endl;
         }
+
         for(int i = 0; i < list_chunks.size(); i++)
         {
             stream << "::ORChunk:" << QString::number(list_chunks.at(i).getId()) << ":" << QString::number(list_chunks.at(i).getKeyframeId()) << ":" << QString::number(list_chunks.at(i).getDuration()) << ":";
             stream << list_chunks.at(i).getData().toBase64() << "::" << endl;
         }
+
         stream << "::OREnd::" << endl;
+
         file.close();
 
         emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
