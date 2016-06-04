@@ -107,6 +107,10 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
                     m_chunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration));
                 }
             }
+
+            if(loadInfosOnly && !m_gameinfos.isEmpty() && !m_endofgamestats.isEmpty() && !m_encryptionkey.isEmpty()){
+                break;
+            }
         }
         file.close();
 

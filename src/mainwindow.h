@@ -43,7 +43,6 @@ public:
     QByteArray getFileFromUrl(QString url);
 
     QPixmap getImg(int id);
-    void refresh_recordedGames();
     bool islolRunning();
     bool islolclientRunning();
 
@@ -96,6 +95,7 @@ private slots:
     void slot_networkResult_featured(QNetworkReply *reply);
 
     void slot_refreshPlayingStatus();
+    void slot_refresh_recordedGames();
 
     void slot_doubleclick_savedgames(int row,int column);
     void slot_doubleclick_mygames(int row, int column);
@@ -128,6 +128,10 @@ private slots:
     void log(QString);
     void showmessage(QString message);
     void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);
+
+signals:
+
+    void refresh_recordedGames();
 };
 
 #endif // MAINWINDOW_H

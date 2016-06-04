@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.2";
+QString GLOBAL_VERSION = "1.2.3";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -207,6 +207,8 @@ MainWindow::MainWindow(QWidget *parent) :
     slot_statusRefresh();
     connect(ui->pushButton_statusRefresh, SIGNAL(pressed()), this, SLOT(slot_statusRefresh()));
 
+    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()), Qt::QueuedConnection);
+
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
 
@@ -218,7 +220,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
 
-    refresh_recordedGames();
+    emit refresh_recordedGames();
 
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
@@ -766,8 +768,6 @@ void MainWindow::slot_click_featured()
             }
         }
     }
-
-    QPixmapCache::clear();
 }
 
 void MainWindow::slot_setdirectory()
@@ -956,7 +956,7 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
 {
     for(int i = 0; i < recording.size(); i++)
     {
-        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
+        if(recording.at(i).size() == 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
             break;
@@ -970,7 +970,7 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
         ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
     }
 
-    refresh_recordedGames();
+    emit refresh_recordedGames();
 }
 
 QByteArray MainWindow::getFileFromUrl(QString url)
@@ -1044,35 +1044,35 @@ void MainWindow::slot_click_allgames()
         }
     }
 
-    if(leftids.size() >= 1)
+    if(leftids.size() >= 1 && leftnames.size() >= 1)
     {
         ui->label_sum1->setAlignment(Qt::AlignCenter);
         ui->label_sum1->setPixmap(getImg(leftids.at(0)));
 
         ui->label_sum16->setText(leftnames.at(0));
 
-        if(leftids.size() >= 2)
+        if(leftids.size() >= 2 && leftnames.size() >= 2)
         {
             ui->label_sum2->setAlignment(Qt::AlignCenter);
             ui->label_sum2->setPixmap(getImg(leftids.at(1)));
 
             ui->label_sum27->setText(leftnames.at(1));
 
-            if(leftids.size() >= 3)
+            if(leftids.size() >= 3 && leftnames.size() >= 3)
             {
                 ui->label_sum3->setAlignment(Qt::AlignCenter);
                 ui->label_sum3->setPixmap(getImg(leftids.at(2)));
 
                 ui->label_sum38->setText(leftnames.at(2));
 
-                if(leftids.size() >= 4)
+                if(leftids.size() >= 4 && leftnames.size() >= 4)
                 {
                     ui->label_sum4->setAlignment(Qt::AlignCenter);
                     ui->label_sum4->setPixmap(getImg(leftids.at(3)));
 
                     ui->label_sum49->setText(leftnames.at(3));
 
-                    if(leftids.size() >= 5){
+                    if(leftids.size() >= 5 && leftnames.size() >= 5){
                         ui->label_sum5->setAlignment(Qt::AlignCenter);
                         ui->label_sum5->setPixmap(getImg(leftids.at(4)));
 
@@ -1083,35 +1083,35 @@ void MainWindow::slot_click_allgames()
         }
     }
 
-    if(rightids.size() >= 1)
+    if(rightids.size() >= 1 && rightnames.size() >= 1)
     {
         ui->label_sum6->setAlignment(Qt::AlignCenter);
         ui->label_sum6->setPixmap(getImg(rightids.at(0)));
 
         ui->label_sum16->setText(ui->label_sum16->text() + " / " + rightnames.at(0));
 
-        if(rightids.size() >= 2)
+        if(rightids.size() >= 2 && rightnames.size() >= 2)
         {
             ui->label_sum7->setAlignment(Qt::AlignCenter);
             ui->label_sum7->setPixmap(getImg(rightids.at(1)));
 
             ui->label_sum27->setText(ui->label_sum27->text() + " / " + rightnames.at(1));
 
-            if(rightids.size() >= 3)
+            if(rightids.size() >= 3 && rightnames.size() >= 3)
             {
                 ui->label_sum8->setAlignment(Qt::AlignCenter);
                 ui->label_sum8->setPixmap(getImg(rightids.at(2)));
 
                 ui->label_sum38->setText(ui->label_sum38->text() + " / " + rightnames.at(2));
 
-                if(rightids.size() >= 4)
+                if(rightids.size() >= 4 && rightnames.size() >= 4)
                 {
                     ui->label_sum9->setAlignment(Qt::AlignCenter);
                     ui->label_sum9->setPixmap(getImg(rightids.at(3)));
 
                     ui->label_sum49->setText(ui->label_sum49->text() + " / " + rightnames.at(3));
 
-                    if(rightids.size() >= 5){
+                    if(rightids.size() >= 5 && rightnames.size() >= 5){
                         ui->label_sum10->setAlignment(Qt::AlignCenter);
                         ui->label_sum10->setPixmap(getImg(rightids.at(4)));
 
@@ -1121,11 +1121,9 @@ void MainWindow::slot_click_allgames()
             }
         }
     }
-
-    QPixmapCache::clear();
 }
 
-void MainWindow::refresh_recordedGames()
+void MainWindow::slot_refresh_recordedGames()
 {
     //Find saved replays
 
@@ -1146,9 +1144,8 @@ void MainWindow::refresh_recordedGames()
         ui->tableWidget_yourgames->removeRow(0);
     }
 
-    qDebug() << "Refresh recorded games";
-
     for(int i = 0; i < replayslist.size(); i++){
+
         QFileInfo fileinfo = replayslist.at(i);
 
         if(fileinfo.suffix() == "lor"){
@@ -1204,10 +1201,6 @@ void MainWindow::refresh_recordedGames()
             }
         }
     }
-
-    qDebug() << "End of refresh recorded games";
-
-    QPixmapCache::clear();
 }
 
 void MainWindow::slot_replayserversAdd()
@@ -1451,6 +1444,13 @@ void MainWindow::replay_launch(QString pathfile)
     log(tr("Server: started"));
 
     httpserver->stopListening();
+
+    if(replay->getGameid().isEmpty()){
+        log(tr("Invalid replay file, aborting."));
+        delete replay;
+        replay = NULL;
+        return;
+    }
 
     httpserver->listen(QHostAddress::Any, 8088, [this](QHttpRequest* req, QHttpResponse* res) {
         QString url = req->url().toString();
@@ -1834,8 +1834,6 @@ void MainWindow::slot_searchsummoner()
                 }
             }
         }
-
-        QPixmapCache::clear();
     }
 }
 
