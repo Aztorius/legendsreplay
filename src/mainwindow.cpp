@@ -1534,10 +1534,10 @@ void MainWindow::replay_launch(QString pathfile)
             if(serverKeyframeCount == replay->getKeyFrames().first().getId()){
                 nextavailablechunk = 1000;
             }
-            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 3){
-                nextavailablechunk = 10000;
+            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 4){
+                nextavailablechunk = 30000;
             }
-            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 9){
+            else if(serverKeyframeCount < replay->getKeyFrames().first().getId() + 10){
                 nextavailablechunk = 2000;
             }
             else{
@@ -1546,7 +1546,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             QString data = "{";
             data.append("\"chunkId\":" + QString::number(currentChunkid));
-            data.append(",\"availableSince\":" + QString::number(32000));
+            data.append(",\"availableSince\":" + QString::number(30000 - nextavailablechunk));
             data.append(",\"nextAvailableChunk\":" + QString::number(nextavailablechunk));
             data.append(",\"keyFrameId\":" + QString::number(currentKeyframe.getId()));
             data.append(",\"nextChunkId\":" + QString::number(currentKeyframe.getNextchunkid()));
