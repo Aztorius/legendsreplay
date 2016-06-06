@@ -118,17 +118,17 @@ void Recorder::launch(){
     QList<int> list_retrievedChunks;
     QList<int> list_retrievedKeyframes;
 
-    for(int i = 0; i < array_currentChunks.size(); i++){
-        int currentchunk = array_currentChunks.at(i).toObject().value("id").toInt();
-        if(currentchunk > endstartupchunkid && !list_remainingChunks.contains(currentchunk)){
-            list_remainingChunks.append(currentchunk);
+    int firstchunk = array_currentChunks.first().toObject().value("id").toInt();
+    for(int i = firstchunk; i <= json_lastChunkInfo.object().value("chunkId").toInt(); i++){
+        if(i > endstartupchunkid && !list_remainingChunks.contains(i)){
+            list_remainingChunks.append(i);
         }
     }
 
-    for(int i = 0; i < array_currentKeyframes.size(); i++){
-        int currentkeyframe = array_currentKeyframes.at(i).toObject().value("id").toInt();
-        if(!list_remainingKeyframes.contains(currentkeyframe)){
-            list_remainingKeyframes.append(currentkeyframe);
+    int firstkeyframe = array_currentKeyframes.first().toObject().value("id").toInt();
+    for(int i = firstkeyframe; i <= json_lastChunkInfo.object().value("keyFrameId").toInt(); i++){
+        if(!list_remainingKeyframes.contains(i)){
+            list_remainingKeyframes.append(i);
         }
     }
 
@@ -190,7 +190,7 @@ void Recorder::launch(){
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " " + QString::number(nextchunkid) + " Size: " + QString::number(bytearray_keyframe.size()/1024) + " ko");
 
-                timer.start(1000);
+                timer.start(500);
                 loop.exec();
             }
             else{
@@ -236,7 +236,7 @@ void Recorder::launch(){
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(list_remainingChunks.at(i)) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
 
-                timer.start(1000);
+                timer.start(500);
                 loop.exec();
             }
             else
@@ -249,8 +249,7 @@ void Recorder::launch(){
 
         list_remainingChunks = list_remainingChunks_temp;
 
-        //Retry every 14 seconds
-        timer.start(14000);
+        timer.start(json_lastChunkInfo.object().value("nextAvailableChunk").toInt() + 2000);
         loop.exec();
     }
 
