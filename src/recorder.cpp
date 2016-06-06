@@ -161,8 +161,13 @@ void Recorder::launch(){
         int currentkeyframeid = json_lastChunkInfo.object().value("keyFrameId").toInt();
         int currentchunkid = json_lastChunkInfo.object().value("chunkId").toInt();
 
-        if(!list_retrievedKeyframes.contains(currentkeyframeid) && !list_remainingKeyframes.contains(currentkeyframeid)){
-            list_remainingKeyframes.append(currentkeyframeid);
+        if(!list_retrievedKeyframes.contains(currentkeyframeid) && !list_remainingKeyframes.contains(currentkeyframeid))
+        {
+            for(int i = lastsavedkeyframeid + 1; i <= currentkeyframeid; i++){
+                if(list_remainingKeyframes.indexOf(i) == -1){
+                    list_remainingKeyframes.append(i);
+                }
+            }
         }
 
         QList<int> list_remainingKeyframes_temp;
@@ -185,6 +190,8 @@ void Recorder::launch(){
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " " + QString::number(nextchunkid) + " Size: " + QString::number(bytearray_keyframe.size()/1024) + " ko");
 
+                timer.start(1000);
+                loop.exec();
             }
             else{
                 list_remainingKeyframes_temp.append(list_remainingKeyframes.at(i));
@@ -198,8 +205,13 @@ void Recorder::launch(){
         timer.start(2000);
         loop.exec();
 
-        if(!list_retrievedChunks.contains(currentchunkid) && !list_remainingChunks.contains(currentchunkid)){
-            list_remainingChunks.append(currentchunkid);
+        if(!list_retrievedChunks.contains(currentchunkid) && !list_remainingChunks.contains(currentchunkid))
+        {
+            for(int i = lastsavedchunkid + 1; i <= currentchunkid; i++){
+                if(list_remainingChunks.indexOf(i) == -1){
+                    list_remainingChunks.append(i);
+                }
+            }
         }
 
         QList<int> list_remainingChunks_temp;
@@ -223,6 +235,9 @@ void Recorder::launch(){
                 lastsavedchunkid = list_retrievedChunks.last();
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(list_remainingChunks.at(i)) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " ko");
+
+                timer.start(1000);
+                loop.exec();
             }
             else
             {
