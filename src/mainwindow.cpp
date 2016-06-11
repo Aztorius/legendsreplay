@@ -1175,7 +1175,7 @@ void MainWindow::slot_refresh_recordedGames()
 
             if(!local_platformid.isEmpty() && game.getServerid() == local_platformid)
             {
-                if(!m_summonerid.isEmpty() && !game.getGameinfos().object().value("participants").toArray().isEmpty())
+                if(!m_summonerid.isEmpty() && !game.getGameinfos().isEmpty() && !game.getGameinfos().object().value("participants").toArray().isEmpty())
                 {
                     for(int j = 0; j < game.getGameinfos().object().value("participants").toArray().size(); j++)
                     {

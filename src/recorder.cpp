@@ -16,9 +16,6 @@ Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QStr
     else if(!m_gameinfo.isEmpty()){
         m_encryptionkey = m_gameinfo.object().value("observers").toObject().value("encryptionKey").toString();
     }
-    else{
-        m_encryptionkey = "";
-    }
 }
 
 Recorder::~Recorder()
@@ -119,14 +116,14 @@ void Recorder::launch(){
     QList<int> list_retrievedKeyframes;
 
     int firstchunk = array_currentChunks.first().toObject().value("id").toInt();
-    for(int i = firstchunk; i <= json_lastChunkInfo.object().value("chunkId").toInt(); i++){
+    for(int i = firstchunk + 1; i <= json_lastChunkInfo.object().value("chunkId").toInt(); i++){
         if(i > endstartupchunkid && !list_remainingChunks.contains(i)){
             list_remainingChunks.append(i);
         }
     }
 
     int firstkeyframe = array_currentKeyframes.first().toObject().value("id").toInt();
-    for(int i = firstkeyframe; i <= json_lastChunkInfo.object().value("keyFrameId").toInt(); i++){
+    for(int i = firstkeyframe + 1; i <= json_lastChunkInfo.object().value("keyFrameId").toInt(); i++){
         if(!list_remainingKeyframes.contains(i)){
             list_remainingKeyframes.append(i);
         }
