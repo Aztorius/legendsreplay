@@ -146,8 +146,8 @@ void Recorder::launch(){
         }
     }
 
-    int lastsavedchunkid = -1;
-    int lastsavedkeyframeid = -1;
+    int lastsavedchunkid = firstchunk;
+    int lastsavedkeyframeid = firstkeyframe;
 
     while(lastsavedchunkid != json_lastChunkInfo.object().value("endGameChunkId").toInt() || lastsavedkeyframeid != json_lastChunkInfo.object().value("keyFrameId").toInt() || json_lastChunkInfo.object().value("endGameChunkId").toInt() == -1)
     {
