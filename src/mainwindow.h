@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QSystemTrayIcon>
 #include <QPixmapCache>
+#include <QMutex>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -50,6 +51,8 @@ private:
     Ui::MainWindow *ui;
 
     QSettings *orsettings;
+
+    QMutex mutex_endrecording, mutex_refreshrecordedgames;
 
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;

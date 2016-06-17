@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.3";
+QString GLOBAL_VERSION = "1.2.4";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -954,6 +954,8 @@ void MainWindow::slot_featuredRecord()
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
 {
+    mutex_endrecording.lock();
+
     for(int i = 0; i < recording.size(); i++)
     {
         if(recording.at(i).size() == 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
@@ -969,6 +971,8 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
     else{
         ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
     }
+
+    mutex_endrecording.unlock();
 
     emit refresh_recordedGames();
 }
@@ -1126,6 +1130,7 @@ void MainWindow::slot_click_allgames()
 void MainWindow::slot_refresh_recordedGames()
 {
     //Find saved replays
+    mutex_refreshrecordedgames.lock();
 
     recordedgames_filename.clear();
     yourgames_filename.clear();
@@ -1201,6 +1206,8 @@ void MainWindow::slot_refresh_recordedGames()
             }
         }
     }
+
+    mutex_refreshrecordedgames.unlock();
 }
 
 void MainWindow::slot_replayserversAdd()
