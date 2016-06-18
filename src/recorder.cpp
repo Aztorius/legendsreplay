@@ -190,10 +190,13 @@ void Recorder::launch(){
                 timer.start(500);
                 loop.exec();
             }
-            else{
+            else if(list_remainingKeyframes.at(i) + 5 >= currentkeyframeid){
                 list_remainingKeyframes_temp.append(list_remainingKeyframes.at(i));
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " not found");
+            }
+            else{
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " skiped");
             }
         }
 
@@ -236,11 +239,14 @@ void Recorder::launch(){
                 timer.start(500);
                 loop.exec();
             }
-            else
+            else if(list_remainingChunks.at(i) + 10 >= currentchunkid)
             {
                 list_remainingChunks_temp.append(list_remainingChunks.at(i));
 
                 emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk not found " + QString::number(list_remainingChunks.at(i)));
+            }
+            else{
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(list_remainingChunks.at(i)) + " skiped");
             }
         }
 

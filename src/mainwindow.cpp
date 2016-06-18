@@ -207,12 +207,15 @@ MainWindow::MainWindow(QWidget *parent) :
     slot_statusRefresh();
     connect(ui->pushButton_statusRefresh, SIGNAL(pressed()), this, SLOT(slot_statusRefresh()));
 
-    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()), Qt::QueuedConnection);
+    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()));
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
 
     connect(ui->tableWidget_recordedgames, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_allgames()));
+
+    ui->tableWidget_recordedgames->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
@@ -955,8 +958,6 @@ void MainWindow::slot_featuredRecord()
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
 {
-    mutex_endrecording.lock();
-
     for(int i = 0; i < recording.size(); i++)
     {
         if(recording.at(i).size() == 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
@@ -972,8 +973,6 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
     else{
         ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
     }
-
-    mutex_endrecording.unlock();
 
     emit refresh_recordedGames();
 }
@@ -1131,7 +1130,6 @@ void MainWindow::slot_click_allgames()
 void MainWindow::slot_refresh_recordedGames()
 {
     //Find saved replays
-    mutex_refreshrecordedgames.lock();
 
     recordedgames_filename.clear();
     yourgames_filename.clear();
@@ -1142,9 +1140,13 @@ void MainWindow::slot_refresh_recordedGames()
 
     QFileInfoList replayslist = dirreplays.entryInfoList();
 
+    ui->tableWidget_recordedgames->clearContents();
+
     while(ui->tableWidget_recordedgames->rowCount() > 0){
         ui->tableWidget_recordedgames->removeRow(0);
     }
+
+    ui->tableWidget_yourgames->clearContents();
 
     while(ui->tableWidget_yourgames->rowCount() > 0){
         ui->tableWidget_yourgames->removeRow(0);
@@ -1207,8 +1209,6 @@ void MainWindow::slot_refresh_recordedGames()
             }
         }
     }
-
-    mutex_refreshrecordedgames.unlock();
 }
 
 void MainWindow::slot_replayserversAdd()
@@ -1923,7 +1923,39 @@ void MainWindow::slot_click_replayservers()
         return;
     }
 
-    m_currentLegendsReplayServer = ui->tableWidget_replayservers->itemAt(ui->tableWidget_replayservers->selectedItems().first()->row(),0)->text();
+    m_currentLegendsReplayServer = ui->tableWidget_replayservers->itemAt(ui->tableWidget_replayservers->selectedItems().first()->row(), 0)->text();
 
     log("LegendsReplay server switch to " + m_currentLegendsReplayServer);
+}
+
+void MainWindow::slot_customcontextmenu(QPoint point)
+{
+    Q_UNUSED(point);
+
+    QMenu *menu = new QMenu("Options", this);
+    menu->addAction(tr("Delete"));
+    menu->move(QCursor::pos());
+    menu->show();
+    connect(menu, SIGNAL(triggered(QAction*)), this,  SLOT(slot_custommenutriggered(QAction*)));
+}
+
+void MainWindow::slot_custommenutriggered(QAction *action)
+{
+    if(ui->tabWidget->currentIndex() == 0){
+        if(ui->tabWidget_2->currentIndex() == 0){
+            if(!ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+                QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
+                if(action->text() == tr("Delete")){
+                    if(!QFile::exists(path)){
+                        log("Unable to find the file : " + path);
+                    }
+                    else if(!QFile::remove(path)){
+                        log("Unable to remove the file : " + path);
+                    }
+                }
+            }
+        }
+    }
+
+    emit refresh_recordedGames();
 }

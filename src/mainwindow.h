@@ -12,6 +12,8 @@
 #include <QPixmapCache>
 #include <QMutex>
 #include <QDesktopServices>
+#include <QMenu>
+#include <QAction>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -52,8 +54,6 @@ private:
     Ui::MainWindow *ui;
 
     QSettings *orsettings;
-
-    QMutex mutex_endrecording, mutex_refreshrecordedgames;
 
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;
@@ -135,6 +135,9 @@ private slots:
     void showmessage(QString message);
     void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);
     void slot_messageclicked();
+
+    void slot_customcontextmenu(QPoint point);
+    void slot_custommenutriggered(QAction* action);
 
 signals:
 
