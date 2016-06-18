@@ -324,6 +324,7 @@ void Recorder::launch(){
         {
             emit toLog("[WARN] Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
         }
+
     }
     else
     {

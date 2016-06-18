@@ -216,6 +216,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->tableWidget_recordedgames->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
+    ui->tableWidget_yourgames->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->tableWidget_yourgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
@@ -240,7 +242,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
     {
         showmessage(tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
-        log("<a href='http://aztorius.github.io/legendsreplay/'>New version "+ updatejson.object().value("version").toString() + " available !</a>");
+        ui->statusBar->showMessage(QTime::currentTime().toString() + " | New version " + updatejson.object().value("version").toString() + " available !");
+        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>New version "+ updatejson.object().value("version").toString() + " available !</a>");
     }
 
     ui->lineEdit_status->setText("Idle");
@@ -1933,6 +1936,8 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     Q_UNUSED(point);
 
     QMenu *menu = new QMenu("Options", this);
+    menu->addAction(tr("Replay"));
+    menu->addSeparator();
     menu->addAction(tr("Delete"));
     menu->move(QCursor::pos());
     menu->show();
@@ -1952,6 +1957,25 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     else if(!QFile::remove(path)){
                         log("Unable to remove the file : " + path);
                     }
+                }
+                else if(action->text() == tr("Replay")){
+                    replay_launch(path);
+                }
+            }
+        }
+        else if(ui->tabWidget_2->currentIndex() == 1){
+            if(!ui->tableWidget_yourgames->selectedItems().isEmpty()){
+                QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
+                if(action->text() == tr("Delete")){
+                    if(!QFile::exists(path)){
+                        log("Unable to find the file : " + path);
+                    }
+                    else if(!QFile::remove(path)){
+                        log("Unable to remove the file : " + path);
+                    }
+                }
+                else if(action->text() == tr("Replay")){
+                    replay_launch(path);
                 }
             }
         }
