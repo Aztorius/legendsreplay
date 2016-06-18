@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.5";
+QString GLOBAL_VERSION = "1.3.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1937,6 +1937,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
 
     QMenu *menu = new QMenu("Options", this);
     menu->addAction(tr("Replay"));
+    menu->addAction(tr("Stats"));
     menu->addSeparator();
     menu->addAction(tr("Delete"));
     menu->move(QCursor::pos());
@@ -1961,6 +1962,27 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 else if(action->text() == tr("Replay")){
                     replay_launch(path);
                 }
+                else if(action->text() == tr("Stats")){
+                    Replay local_replay(path, true);
+
+                    if(local_replay.getGameid().isEmpty()){
+                        return;
+                    }
+
+                    QString servername;
+                    for(int i = 0; i < servers.size(); i++){
+                        if(servers.at(i).at(1) == local_replay.getServerid()){
+                            servername = servers.at(i).at(3);
+                            break;
+                        }
+                    }
+
+                    if(servername.isEmpty()){
+                        return;
+                    }
+
+                    QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                }
             }
         }
         else if(ui->tabWidget_2->currentIndex() == 1){
@@ -1976,6 +1998,27 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 }
                 else if(action->text() == tr("Replay")){
                     replay_launch(path);
+                }
+                else if(action->text() == tr("Stats")){
+                    Replay local_replay(path, true);
+
+                    if(local_replay.getGameid().isEmpty()){
+                        return;
+                    }
+
+                    QString servername;
+                    for(int i = 0; i < servers.size(); i++){
+                        if(servers.at(i).at(1) == local_replay.getServerid()){
+                            servername = servers.at(i).at(3);
+                            break;
+                        }
+                    }
+
+                    if(servername.isEmpty()){
+                        return;
+                    }
+
+                    QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
                 }
             }
         }
