@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.2.4";
+QString GLOBAL_VERSION = "1.2.5";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -229,6 +229,7 @@ MainWindow::MainWindow(QWidget *parent) :
         systemtrayicon->setIcon(QIcon(":/logo.png"));
         systemtrayicon->show();
         connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
+        connect(systemtrayicon, SIGNAL(messageClicked()), this, SLOT(slot_messageclicked()));
     }
 
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
@@ -1678,6 +1679,16 @@ void MainWindow::showmessage(QString message)
     if(systemtrayavailable)
     {
         systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
+        m_currentsystemtraymessage = message;
+    }
+}
+
+void MainWindow::slot_messageclicked()
+{
+    if(systemtrayavailable){
+        if(m_currentsystemtraymessage.left(12) == tr("New version ")){
+            QDesktopServices::openUrl(QUrl("http://aztorius.github.io/legendsreplay/"));
+        }
     }
 }
 

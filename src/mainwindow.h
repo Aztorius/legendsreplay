@@ -11,6 +11,7 @@
 #include <QSystemTrayIcon>
 #include <QPixmapCache>
 #include <QMutex>
+#include <QDesktopServices>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -93,6 +94,8 @@ private:
     int serverChunkCount;
     int serverKeyframeCount;
 
+    QString m_currentsystemtraymessage;
+
 private slots:
     void slot_networkResult_status(QNetworkReply *reply);
     void slot_networkResult_featured(QNetworkReply *reply);
@@ -131,6 +134,7 @@ private slots:
     void log(QString);
     void showmessage(QString message);
     void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);
+    void slot_messageclicked();
 
 signals:
 
