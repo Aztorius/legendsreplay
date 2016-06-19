@@ -26,8 +26,9 @@ Recorder::~Recorder()
 QByteArray Recorder::getFileFromUrl(QString url){
     QNetworkAccessManager local_networkResult;
     QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
+    reply->setReadBufferSize(quint64(30000));
 
-    QEventLoop loop;
+    /*QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
@@ -39,6 +40,21 @@ QByteArray Recorder::getFileFromUrl(QString url){
 
     QByteArray data = reply->readAll();
     reply->deleteLater();
+    return data;*/
+
+    QByteArray data;
+    QTimer timer;
+    timer.setInterval(1000);
+    timer.start();
+    QEventLoop loop;
+    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+
+    while(!reply->isFinished()){
+        loop.exec();
+        data.append(reply->read(reply->bytesAvailable()));
+        timer.start();
+    }
+
     return data;
 }
 

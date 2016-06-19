@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.3.0";
+QString GLOBAL_VERSION = "1.3.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1981,7 +1981,12 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         return;
                     }
 
-                    QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                    if(servername.toLower() == "kr"){
+                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
+                    }
+                    else{
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                    }
                 }
             }
         }
@@ -2018,7 +2023,12 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         return;
                     }
 
-                    QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                    if(servername.toLower() == "kr"){
+                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
+                    }
+                    else{
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                    }
                 }
             }
         }
