@@ -26,7 +26,9 @@ Recorder::~Recorder()
 QByteArray Recorder::getFileFromUrl(QString url){
     QNetworkAccessManager local_networkResult;
     QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
-    reply->setReadBufferSize(quint64(30000));
+    reply->setReadBufferSize(qint64(32 * 1024));
+
+    connect(reply, &QNetworkReply::metaDataChanged, [reply]() { reply->setReadBufferSize(qint64(32 * 1024)); qDebug() << "set speed to" << 32 * 1024; });
 
     /*QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -44,15 +46,15 @@ QByteArray Recorder::getFileFromUrl(QString url){
 
     QByteArray data;
     QTimer timer;
-    timer.setInterval(1000);
-    timer.start();
+    timer.start(1000);
     QEventLoop loop;
     connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
 
-    while(!reply->isFinished()){
+    while(!reply->isFinished() && reply->error() == QNetworkReply::NoError){
         loop.exec();
+        qDebug() << reply->bytesAvailable() << "/" << reply->readBufferSize();
         data.append(reply->read(reply->bytesAvailable()));
-        timer.start();
+        timer.start(500);
     }
 
     return data;
