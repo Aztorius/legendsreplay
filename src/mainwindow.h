@@ -20,6 +20,7 @@
 #include "qhttpserverrequest.hpp"
 
 #include "replay.h"
+#include "server.h"
 
 using namespace qhttp::server;
 
@@ -67,7 +68,8 @@ private:
     QList <QJsonObject> json_status;
     QList <QJsonObject> json_featured;
 
-    QList <QStringList> servers;
+    //QList <QStringList> servers;
+    QList <Server> servers;
     QList <QString> lrservers;
 
     QString loldirectory;

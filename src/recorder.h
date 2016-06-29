@@ -2,6 +2,7 @@
 #define RECORDER_H
 
 #include <QNetworkAccessManager>
+#include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QEventLoop>
 #include <QTimer>

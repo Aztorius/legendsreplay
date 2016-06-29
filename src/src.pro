@@ -17,15 +17,20 @@ SOURCES += main.cpp\
     recorder.cpp \
     replay.cpp \
     chunk.cpp \
-    keyframe.cpp
+    keyframe.cpp \
+    gameinfoswidget.cpp \
+    server.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
     replay.h \
     chunk.h \
-    keyframe.h
+    keyframe.h \
+    gameinfoswidget.h \
+    server.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    gameinfoswidget.ui
 
 unix: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp

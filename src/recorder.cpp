@@ -25,12 +25,16 @@ Recorder::~Recorder()
 
 QByteArray Recorder::getFileFromUrl(QString url){
     QNetworkAccessManager local_networkResult;
-    QNetworkReply *reply = local_networkResult.get(QNetworkRequest(QUrl(url)));
-    reply->setReadBufferSize(qint64(32 * 1024));
+    QNetworkRequest request;
+    request.setUrl(QUrl(url));
+    request.setPriority(QNetworkRequest::LowPriority);
 
-    connect(reply, &QNetworkReply::metaDataChanged, [reply]() { reply->setReadBufferSize(qint64(32 * 1024)); qDebug() << "set speed to" << 32 * 1024; });
+    QNetworkReply *reply = local_networkResult.get(request);
+    //reply->setReadBufferSize(qint64(32 * 1024));
 
-    /*QEventLoop loop;
+    //connect(reply, &QNetworkReply::metaDataChanged, [reply]() { reply->setReadBufferSize(qint64(32 * 1024)); qDebug() << "set speed to" << 32 * 1024; });
+
+    QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     loop.exec();
 
@@ -42,9 +46,9 @@ QByteArray Recorder::getFileFromUrl(QString url){
 
     QByteArray data = reply->readAll();
     reply->deleteLater();
-    return data;*/
+    return data;
 
-    QByteArray data;
+    /*QByteArray data;
     QTimer timer;
     timer.start(1000);
     QEventLoop loop;
@@ -57,7 +61,7 @@ QByteArray Recorder::getFileFromUrl(QString url){
         timer.start(500);
     }
 
-    return data;
+    return data;*/
 }
 
 QJsonDocument Recorder::getJsonFromUrl(QString url){

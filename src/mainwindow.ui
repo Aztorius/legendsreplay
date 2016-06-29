@@ -660,6 +660,12 @@
              <property name="text">
               <string>Record</string>
              </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
            <item row="4" column="0">

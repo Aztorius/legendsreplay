@@ -172,18 +172,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Add servers
 
-    servers.append(QStringList() << "EU West" << "EUW1" << "spectator.euw1.lol.riotgames.com:80" << "EUW");
-    servers.append(QStringList() << "EU Nordic & East" << "EUN1" << "spectator.eu.lol.riotgames.com:8088" << "EUNE");
-    servers.append(QStringList() << "North America" << "NA1" << "spectator.na.lol.riotgames.com:80" << "NA");
-    servers.append(QStringList() << "Japan" << "JP1" << "spectator.jp1.lol.riotgames.com:80" << "JP");
-    servers.append(QStringList() << "Republic of Korea" << "KR" << "spectator.kr.lol.riotgames.com:80" << "KR");
-    servers.append(QStringList() << "Oceania" << "OC1" << "spectator.oc1.lol.riotgames.com:80" << "OCE");
-    servers.append(QStringList() << "Brazil" << "BR1" << "spectator.br.lol.riotgames.com:80" << "BR");
-    servers.append(QStringList() << "Latin America North" << "LA1" << "spectator.la1.lol.riotgames.com:80" << "LAN");
-    servers.append(QStringList() << "Latin America South" << "LA2" << "spectator.la2.lol.riotgames.com:80" << "LAS");
-    servers.append(QStringList() << "Russia" << "RU" << "spectator.ru.lol.riotgames.com:80" << "RU");
-    servers.append(QStringList() << "Turkey" << "TR1" << "spectator.tr.lol.riotgames.com:80" << "TR");
-    servers.append(QStringList() << "PBE" << "PBE1" << "spectator.pbe1.lol.riotgames.com:8088" << "PBE");
+    servers.append(Server("EU West", "EUW", "EUW1", "spectator.euw1.lol.riotgames.com", 80));
+    servers.append(Server("EU Nordic & East", "EUNE", "EUN1", "spectator.eu.lol.riotgames.com", 8088));
+    servers.append(Server("North America", "NA", "NA1", "spectator.na.lol.riotgames.com", 80));
+    servers.append(Server("Japan", "JP", "JP1", "spectator.jp1.lol.riotgames.com", 80));
+    servers.append(Server("Republic of Korea", "KR", "KR", "spectator.kr.lol.riotgames.com", 80));
+    servers.append(Server("Oceania", "OCE", "OC1", "spectator.oc1.lol.riotgames.com", 80));
+    servers.append(Server("Brazil", "BR", "BR1", "spectator.br.lol.riotgames.com", 80));
+    servers.append(Server("Latin America North", "LAN", "LA1", "spectator.la1.lol.riotgames.com", 80));
+    servers.append(Server("Latin America South", "LAS", "LA2", "spectator.la2.lol.riotgames.com", 80));
+    servers.append(Server("Russia", "RU", "RU", "spectator.ru.lol.riotgames.com", 80));
+    servers.append(Server("Turkey", "TR", "TR1", "spectator.tr.lol.riotgames.com", 80));
+    servers.append(Server("PBE", "PBE", "PBE1", "spectator.pbe1.lol.riotgames.com", 8088));
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -307,7 +307,7 @@ void MainWindow::slot_statusRefresh()
     networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.pbe.leagueoflegends.com/shards/pbe"))));  // GET PBE SERVERS STATUS
 
     for(int i = 0; i < servers.size(); i++){
-        networkManager_status->get(QNetworkRequest(QUrl(tr("http://") + servers.at(i).at(2) + tr("/observer-mode/rest/consumer/version"))));
+        networkManager_status->get(QNetworkRequest(QUrl("http://" + servers.at(i).getUrl() + "/observer-mode/rest/consumer/version")));
     }
 }
 
@@ -394,8 +394,8 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
     }
     else{
         for(int i = 0; i < servers.size(); i++){
-            if(servers.at(i).at(1) == serverid){
-                address = servers.at(i).at(2);
+            if(servers.at(i).getPlatformId() == serverid){
+                address = servers.at(i).getUrl();
                 break;
             }
         }
@@ -435,13 +435,12 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     {
         QString host = reply->request().url().host();
         QString port = QString::number(reply->request().url().port());
-        QString domain = host + ":" + port;
         QString platformid;
         int row = -1;
 
         for(int i = 0; i < servers.size(); i++){
-            if(servers.at(i).at(2) == domain){
-                platformid = servers.at(i).at(3);
+            if(servers.at(i).getDomain() == host){
+                platformid = servers.at(i).getPlatformId();
                 row = i;
                 break;
             }
@@ -478,13 +477,12 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             QString host = reply->request().url().host();
             QString port = QString::number(reply->request().url().port());
-            QString domain = host + ":" + port;
             QString platformid;
             int row = -1;
 
             for(int i = 0; i < servers.size(); i++){
-                if(servers.at(i).at(2) == domain){
-                    platformid = servers.at(i).at(3);
+                if(servers.at(i).getDomain() == host){
+                    platformid = servers.at(i).getPlatformId();
                     row = i;
                     break;
                 }
@@ -524,7 +522,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
 
     for(int i = 0; i < servers.size(); i++)
     {
-        if(jsonObject.value("name").toString() == servers.at(i).at(0)){
+        if(jsonObject.value("name").toString() == servers.at(i).getName()){
             for(int j = 0; j < 4; j++){
                 ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(services[j].toObject().value("status").toString()));
                 if(services[j].toObject().value("status").toString() == "offline"){
@@ -847,8 +845,8 @@ bool MainWindow::game_ended(QString serverid, QString gameid)
     //Get serverID
     QString serveraddress;
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).at(1) == serverid){
-            serveraddress = servers.at(i).at(2);
+        if(servers.at(i).getRegion() == serverid){
+            serveraddress = servers.at(i).getUrl();
         }
     }
     if(serveraddress.isEmpty()){
@@ -911,8 +909,8 @@ void MainWindow::slot_featuredRecord()
     //Get server address
     QString serveraddress;
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).at(1) == serverid){
-            serveraddress = servers.at(i).at(2);
+        if(servers.at(i).getRegion() == serverid){
+            serveraddress = servers.at(i).getUrl();
             break;
         }
     }
@@ -1178,8 +1176,8 @@ void MainWindow::slot_refresh_recordedGames()
             QString local_platformid;
 
             for(int k = 0; k < servers.size(); k++){
-                if(servers.at(k).at(3) == m_summonerserver){
-                    local_platformid = servers.at(k).at(1);
+                if(servers.at(k).getRegion() == m_summonerserver){
+                    local_platformid = servers.at(k).getPlatformId();
                     break;
                 }
             }
@@ -1354,9 +1352,9 @@ void MainWindow::slot_refreshPlayingStatus()
             QString gameid = QString::number(gameinfos.object().value("gameId").toVariant().toLongLong());
 
             for(int i = 0; i < servers.size(); i++){
-                if(servers.at(i).at(3) == m_summonerserver){
-                    serverid = servers.at(i).at(1);
-                    serveraddress = servers.at(i).at(2);
+                if(servers.at(i).getRegion() == m_summonerserver){
+                    serverid = servers.at(i).getPlatformId();
+                    serveraddress = servers.at(i).getUrl();
                     break;
                 }
             }
@@ -1393,8 +1391,8 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
     QString servertag;
 
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).at(3) == server){
-            servertag = servers.at(i).at(1);
+        if(servers.at(i).getRegion() == server){
+            servertag = servers.at(i).getPlatformId();
             break;
         }
     }
@@ -1878,8 +1876,8 @@ void MainWindow::slot_click_searchsummoner_record()
     QString gameid = QString::number(m_searchsummoner_game.object().value("gameId").toVariant().toULongLong());
 
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).at(1) == serverid){
-            serveraddress = servers.at(i).at(2);
+        if(servers.at(i).getPlatformId() == serverid){
+            serveraddress = servers.at(i).getUrl();
             break;
         }
     }
@@ -1971,8 +1969,8 @@ void MainWindow::slot_custommenutriggered(QAction *action)
 
                     QString servername;
                     for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).at(1) == local_replay.getServerid()){
-                            servername = servers.at(i).at(3);
+                        if(servers.at(i).getPlatformId() == local_replay.getServerid()){
+                            servername = servers.at(i).getRegion();
                             break;
                         }
                     }
@@ -2013,8 +2011,8 @@ void MainWindow::slot_custommenutriggered(QAction *action)
 
                     QString servername;
                     for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).at(1) == local_replay.getServerid()){
-                            servername = servers.at(i).at(3);
+                        if(servers.at(i).getPlatformId() == local_replay.getServerid()){
+                            servername = servers.at(i).getRegion();
                             break;
                         }
                     }
