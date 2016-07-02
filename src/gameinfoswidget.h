@@ -3,6 +3,11 @@
 
 #include <QWidget>
 #include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFileInfo>
+#include <QLabel>
+#include <QHBoxLayout>
 
 namespace Ui {
 class GameInfosWidget;
@@ -17,6 +22,10 @@ public:
     ~GameInfosWidget();
     void setGameInfos(QJsonDocument gameinfos);
     void setGameHeader(QString serverid, QString gameid, QString encryptionkey);
+    QString getServerId();
+    QString getGameId();
+    QString getEncryptionkey();
+    QPixmap getImg(int id);
 
 private:
     Ui::GameInfosWidget *ui;

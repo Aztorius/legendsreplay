@@ -187,8 +187,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
-    connect(ui->tableWidget_featured, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_featured()));
-    connect(ui->tableWidget_featured, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_featured(int,int)));
+    connect(ui->listWidget_featured, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_featured()));
+    connect(ui->listWidget_featured, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(slot_doubleclick_featured(QListWidgetItem*)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
     connect(ui->toolButton_pbefolder, SIGNAL(released()), this, SLOT(slot_setpbedirectory()));
@@ -311,13 +311,13 @@ void MainWindow::slot_statusRefresh()
     }
 }
 
-void MainWindow::slot_doubleclick_featured(int row,int column)
+void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
 {
-    Q_UNUSED(column);
+    GameInfosWidget *widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(item));
 
-    QString serverid = ui->tableWidget_featured->item(row,0)->text();
-    QString key = ui->tableWidget_featured->item(row,2)->text();
-    QString gameid = ui->tableWidget_featured->item(row,1)->text();
+    QString serverid = widget->getServerId();
+    QString key = widget->getEncryptionkey();
+    QString gameid = widget->getGameId();
 
     if(game_ended(serverid, gameid)){
         log(tr("Game ") + serverid + "/" + gameid + tr(" has already ended"));
@@ -569,7 +569,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
     log(gamelist[0].toObject().value("platformId").toString() + tr(" : Featured games infos"));
 
     for(int i = 0; i < gamelist.size(); i++){
-        ui->tableWidget_featured->insertRow(ui->tableWidget_featured->rowCount());
+        /*ui->tableWidget_featured->insertRow(ui->tableWidget_featured->rowCount());
 
         QTableWidgetItem* item = new QTableWidgetItem();
         item->setText(gamelist[i].toObject().value("platformId").toString());
@@ -586,17 +586,22 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
 
         item3->setText(gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
 
-        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 2, item3);
+        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 2, item3);*/
 
+        GameInfosWidget *widget = new GameInfosWidget(this);
+        widget->setGameHeader(gamelist[i].toObject().value("platformId").toString(), QString::number(gamelist[i].toObject().value("gameId").toVariant().toULongLong()), gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
+        widget->setGameInfos(QJsonDocument(gamelist.at(i).toObject()));
+
+        ui->listWidget_featured->addItem("");
+        ui->listWidget_featured->item(ui->listWidget_featured->count()-1)->setSizeHint(QSize(600, 120));
+        ui->listWidget_featured->setItemWidget(ui->listWidget_featured->item(ui->listWidget_featured->count()-1), widget);
     }
 
 }
 
 void MainWindow::slot_featuredRefresh()
 {
-    while(ui->tableWidget_featured->rowCount() > 0){
-        ui->tableWidget_featured->removeRow(0);
-    }
+    ui->listWidget_featured->clear();
     json_featured.clear();
 
     networkManager_featured->get(QNetworkRequest(QUrl("http://spectator.euw1.lol.riotgames.com/observer-mode/rest/featured")));  // GET EUW FEATURED GAMES
@@ -634,11 +639,13 @@ QPixmap MainWindow::getImg(int id)
 
 void MainWindow::slot_click_featured()
 {
-    if(ui->tableWidget_featured->selectedItems().isEmpty()){
+    if(ui->listWidget_featured->selectedItems().isEmpty()){
         return;
     }
 
-    QString gameid = ui->tableWidget_featured->item(ui->tableWidget_featured->currentRow(),1)->text();
+    GameInfosWidget* widget(dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first())));
+
+    QString gameid = widget->getGameId();
 
     QJsonObject game;
     for(int i = 0; i < json_featured.size(); i++){
@@ -810,10 +817,10 @@ void MainWindow::slot_setreplaydirectory()
 
 void MainWindow::slot_featuredLaunch()
 {
-    if(ui->tableWidget_featured->selectedItems().isEmpty()){
+    if(ui->listWidget_featured->selectedItems().isEmpty()){
         return;
     }
-    int row = ui->tableWidget_featured->currentRow();
+    int row = ui->listWidget_featured->currentRow();
 
     slot_refreshPlayingStatus();
 
@@ -822,7 +829,7 @@ void MainWindow::slot_featuredLaunch()
         return;
     }
 
-    lol_launch(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,2)->text(),ui->tableWidget_featured->item(row,1)->text());
+    //lol_launch(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,2)->text(),ui->tableWidget_featured->item(row,1)->text());
 
     replaying = true;
 }
@@ -898,12 +905,12 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url)
 
 void MainWindow::slot_featuredRecord()
 {
-    if(ui->tableWidget_featured->selectedItems().isEmpty()){
+    if(ui->listWidget_featured->selectedItems().isEmpty()){
         return;
     }
-    int row = ui->tableWidget_featured->currentRow();
+    int row = ui->listWidget_featured->currentRow();
 
-    QString serverid = ui->tableWidget_featured->item(row,0)->text();
+    /*QString serverid = ui->tableWidget_featured->item(row,0)->text();
     QString gameid = ui->tableWidget_featured->item(row,1)->text();
 
     //Get server address
@@ -954,7 +961,7 @@ void MainWindow::slot_featuredRecord()
     connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
-    recorderThread->start();
+    recorderThread->start();*/
 }
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
