@@ -1,7 +1,10 @@
 # LegendsReplay
 A League of Legends replay software.
 
-[![Build Status](https://travis-ci.org/Aztorius/legendsreplay.svg?branch=master)](https://travis-ci.org/Aztorius/legendsreplay)
+| Platforms | Build status |
+|-----------|--------------|
+| Linux     | [![Build Status](https://travis-ci.org/Aztorius/legendsreplay.svg?branch=master)](https://travis-ci.org/Aztorius/legendsreplay) |
+| Windows   | [![Build status](https://ci.appveyor.com/api/projects/status/bbbh5654c5uif049?svg=true)](https://ci.appveyor.com/project/Aztorius/legendsreplay) |
 
 Available for **Windows** and **Linux**
 
