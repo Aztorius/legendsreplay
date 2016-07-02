@@ -5,7 +5,7 @@ build_script:
   - git submodule init
   - git submodule update
   - cd qhttp
-  - ./update-dependencies.sh
+  - update-dependencies.sh
   - cd ..
   - qmake LegendsReplay.pro
   - mingw32-make
