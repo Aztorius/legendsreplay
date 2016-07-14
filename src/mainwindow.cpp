@@ -820,7 +820,7 @@ void MainWindow::slot_featuredLaunch()
     if(ui->listWidget_featured->selectedItems().isEmpty()){
         return;
     }
-    int row = ui->listWidget_featured->currentRow();
+    //int row = ui->listWidget_featured->currentRow();
 
     slot_refreshPlayingStatus();
 
@@ -905,13 +905,15 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url)
 
 void MainWindow::slot_featuredRecord()
 {
-    if(ui->listWidget_featured->selectedItems().isEmpty()){
+    if(ui->listWidget_featured->currentItem() == NULL){
+        log(tr("Empty selected featured games"));
         return;
     }
-    int row = ui->listWidget_featured->currentRow();
 
-    /*QString serverid = ui->tableWidget_featured->item(row,0)->text();
-    QString gameid = ui->tableWidget_featured->item(row,1)->text();
+    GameInfosWidget* widget(dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->currentItem())));
+
+    QString serverid = widget->getServerId();
+    QString gameid = widget->getGameId();
 
     //Get server address
     QString serveraddress;
@@ -951,7 +953,7 @@ void MainWindow::slot_featuredRecord()
     }
 
     QThread *recorderThread = new QThread;
-    Recorder *recorder = new Recorder(serverid, serveraddress, gameid, ui->tableWidget_featured->item(row,2)->text(), gameinfo, replaydirectory);
+    Recorder *recorder = new Recorder(widget->getServerId(), serveraddress, gameid, widget->getEncryptionkey(), gameinfo, replaydirectory);
     recorder->moveToThread(recorderThread);
     connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
     connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
@@ -961,7 +963,7 @@ void MainWindow::slot_featuredRecord()
     connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
-    recorderThread->start();*/
+    recorderThread->start();
 }
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
