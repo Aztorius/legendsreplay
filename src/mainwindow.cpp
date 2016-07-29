@@ -187,7 +187,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
-    connect(ui->listWidget_featured, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_featured()));
     connect(ui->listWidget_featured, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(slot_doubleclick_featured(QListWidgetItem*)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
@@ -652,151 +651,6 @@ QPixmap MainWindow::getImg(int id)
     return img.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-void MainWindow::slot_click_featured()
-{
-    if(ui->listWidget_featured->selectedItems().isEmpty()){
-        return;
-    }
-
-    GameInfosWidget* widget(dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first())));
-
-    QString gameid = widget->getGameId();
-
-    QJsonObject game;
-    for(int i = 0; i < json_featured.size(); i++){
-        QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
-        for(int j = 0; j < gamelist.size(); j++){
-            if(QString::number(gamelist.at(j).toObject().value("gameId").toVariant().toULongLong()) == gameid){
-                game = gamelist.at(j).toObject();
-            }
-        }
-    }
-
-    if(game.isEmpty()){
-        log(tr("[ERROR] Game selected "));
-        return;
-    }
-
-    ui->label_featuredgames_gamemode->setText(game.value("gameMode").toString());
-
-    ui->label_sumf1->clear();
-    ui->label_sumf2->clear();
-    ui->label_sumf3->clear();
-    ui->label_sumf4->clear();
-    ui->label_sumf5->clear();
-    ui->label_sumf6->clear();
-    ui->label_sumf7->clear();
-    ui->label_sumf8->clear();
-    ui->label_sumf9->clear();
-    ui->label_sumf10->clear();
-
-    ui->label_sumf16->clear();
-    ui->label_sumf27->clear();
-    ui->label_sumf38->clear();
-    ui->label_sumf49->clear();
-    ui->label_sumf510->clear();
-
-    QJsonArray array = game.value("participants").toArray();
-    QList<int> leftids;
-    QList<QString> leftnames;
-    QList<int> rightids;
-    QList<QString> rightnames;
-
-    if(array.isEmpty()){
-        return;
-    }
-
-    for(int i = 0; i < array.size(); i++){
-        if(array.at(i).toObject().value("teamId").toInt() == 200)
-        {
-            rightids.append(array.at(i).toObject().value("championId").toInt());
-            rightnames.append(array.at(i).toObject().value("summonerName").toString());
-        }
-        else{
-            leftids.append(array.at(i).toObject().value("championId").toInt());
-            leftnames.append(array.at(i).toObject().value("summonerName").toString());
-        }
-    }
-
-    if(leftids.size() >= 1 && leftnames.size() >= 1)
-    {
-        ui->label_sumf1->setAlignment(Qt::AlignCenter);
-        ui->label_sumf1->setPixmap(getImg(leftids.at(0)));
-
-        ui->label_sumf16->setText(leftnames.at(0));
-
-        if(leftids.size() >= 2 && leftnames.size() >= 2)
-        {
-            ui->label_sumf2->setAlignment(Qt::AlignCenter);
-            ui->label_sumf2->setPixmap(getImg(leftids.at(1)));
-
-            ui->label_sumf27->setText(leftnames.at(1));
-
-            if(leftids.size() >= 3 && leftnames.size() >= 3)
-            {
-                ui->label_sumf3->setAlignment(Qt::AlignCenter);
-                ui->label_sumf3->setPixmap(getImg(leftids.at(2)));
-
-                ui->label_sumf38->setText(leftnames.at(2));
-
-                if(leftids.size() >= 4 && leftnames.size() >= 4)
-                {
-                    ui->label_sumf4->setAlignment(Qt::AlignCenter);
-                    ui->label_sumf4->setPixmap(getImg(leftids.at(3)));
-
-                    ui->label_sumf49->setText(leftnames.at(3));
-
-                    if(leftids.size() >= 5 && leftnames.size() >= 5){
-                        ui->label_sumf5->setAlignment(Qt::AlignCenter);
-                        ui->label_sumf5->setPixmap(getImg(leftids.at(4)));
-
-                        ui->label_sumf510->setText(leftnames.at(4));
-                    }
-                }
-            }
-        }
-    }
-
-    if(rightids.size() >= 1 && rightnames.size() >= 1)
-    {
-        ui->label_sumf6->setAlignment(Qt::AlignCenter);
-        ui->label_sumf6->setPixmap(getImg(rightids.at(0)));
-
-        ui->label_sumf16->setText(ui->label_sumf16->text() + " / " + rightnames.at(0));
-
-        if(rightids.size() >= 2 && rightnames.size() >= 2)
-        {
-            ui->label_sumf7->setAlignment(Qt::AlignCenter);
-            ui->label_sumf7->setPixmap(getImg(rightids.at(1)));
-
-            ui->label_sumf27->setText(ui->label_sumf27->text() + " / " + rightnames.at(1));
-
-            if(rightids.size() >= 3 && rightnames.size() >= 3)
-            {
-                ui->label_sumf8->setAlignment(Qt::AlignCenter);
-                ui->label_sumf8->setPixmap(getImg(rightids.at(2)));
-
-                ui->label_sumf38->setText(ui->label_sumf38->text() + " / " + rightnames.at(2));
-
-                if(rightids.size() >= 4 && rightnames.size() >= 4)
-                {
-                    ui->label_sumf9->setAlignment(Qt::AlignCenter);
-                    ui->label_sumf9->setPixmap(getImg(rightids.at(3)));
-
-                    ui->label_sumf49->setText(ui->label_sumf49->text() + " / " + rightnames.at(3));
-
-                    if(rightids.size() >= 5 && rightnames.size() >= 5){
-                        ui->label_sumf10->setAlignment(Qt::AlignCenter);
-                        ui->label_sumf10->setPixmap(getImg(rightids.at(4)));
-
-                        ui->label_sumf510->setText(ui->label_sumf510->text() + " / " + rightnames.at(4));
-                    }
-                }
-            }
-        }
-    }
-}
-
 void MainWindow::slot_setdirectory()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -944,7 +798,7 @@ void MainWindow::slot_featuredRecord()
     //Get server address
     QString serveraddress;
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getRegion() == serverid){
+        if(servers.at(i).getPlatformId() == serverid){
             serveraddress = servers.at(i).getUrl();
             break;
         }

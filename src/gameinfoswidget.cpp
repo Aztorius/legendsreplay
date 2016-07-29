@@ -30,6 +30,7 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
 
             label->setPixmap(getImg(participants.at(i).toObject().value("championId").toInt()));
             label->setAlignment(Qt::AlignCenter);
+            label->setStyleSheet("QLabel { background-color : #44BBFF; }");
 
             label2->setText(participants.at(i).toObject().value("summonerName").toString());
             label2->setAlignment(Qt::AlignCenter);
@@ -45,17 +46,21 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
 
             label->setPixmap(getImg(participants.at(i).toObject().value("championId").toInt()));
             label->setAlignment(Qt::AlignCenter);
+            label->setStyleSheet("QLabel { background-color : #B33AD8; }");
 
             label2->setText(participants.at(i).toObject().value("summonerName").toString());
             label2->setAlignment(Qt::AlignCenter);
 
-            layout->addWidget(label, 3, i - last100teamindex);
-            layout->addWidget(label2, 2, i - last100teamindex);
+            layout->addWidget(label, 2, i - last100teamindex);
+            layout->addWidget(label2, 3, i - last100teamindex);
         }
     }
 
     QLabel *label_serverregion = new QLabel(m_serverid, this);
+    QLabel *label_gamemode = new QLabel(gameinfos.object().value("gameMode").toString(), this);
+
     layout->addWidget(label_serverregion, 0, 0);
+    layout->addWidget(label_gamemode, 1, 0);
 
     setLayout(layout);
 
