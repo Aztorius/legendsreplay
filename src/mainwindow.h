@@ -53,6 +53,8 @@ public:
     bool islolRunning();
     bool islolclientRunning();
 
+    Server getServerByPlatformId(QString platformid);
+
 private:
     Ui::MainWindow *ui;
 

@@ -1,5 +1,15 @@
 #include "server.h"
 
+Server::Server()
+{
+    m_name = "";
+    m_region = "";
+    m_platformid = "";
+    m_domain = "";
+    m_port = 0;
+    m_url = "";
+}
+
 Server::Server(QString name, QString region, QString platformid, QString domain, unsigned int port)
 {
     m_name = name;

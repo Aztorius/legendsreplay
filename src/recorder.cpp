@@ -1,6 +1,6 @@
 #include "recorder.h"
 
-Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory)
+Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory, bool forceCompleteDownload)
 {
     m_serverid = serverid;
     m_serveraddress = serveraddress;
@@ -9,6 +9,7 @@ Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QStr
     m_replaydirectory = replaydirectory;
     m_startgamechunkid = "0";
     m_endstartupchunkid = "0";
+    m_forceCompleteDownload = forceCompleteDownload;
 
     if(!encryptionkey.isEmpty()){
         m_encryptionkey = encryptionkey;
@@ -92,8 +93,10 @@ void Recorder::launch(){
     QString version;
     version = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/version"));
 
+    emit toLog("Server version : " + version + " of " + m_serveraddress);
+
     QJsonDocument json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
-    QJsonDocument json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
+    QJsonDocument json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/30000/token"));
 
     QTimer timer;
     QEventLoop loop;
@@ -113,7 +116,9 @@ void Recorder::launch(){
             return;
         }
         json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
-        json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
+        json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/30000/token"));
+
+        emit toLog("[WARN] Getting infos of : " + m_serverid + "/" + m_gameid);
 
         //Retry every 20 seconds
         timer.start(20000);
@@ -137,14 +142,20 @@ void Recorder::launch(){
     QList<int> list_retrievedChunks;
     QList<int> list_retrievedKeyframes;
 
-    int firstchunk = array_currentChunks.first().toObject().value("id").toInt();
+    int firstchunk = 0;
+    if(!m_forceCompleteDownload){
+        firstchunk = array_currentChunks.first().toObject().value("id").toInt();
+    }
     for(int i = firstchunk + 1; i <= json_lastChunkInfo.object().value("chunkId").toInt(); i++){
         if(i > endstartupchunkid && !list_remainingChunks.contains(i)){
             list_remainingChunks.append(i);
         }
     }
 
-    int firstkeyframe = array_currentKeyframes.first().toObject().value("id").toInt();
+    int firstkeyframe = 0;
+    if(!m_forceCompleteDownload){
+        firstkeyframe = array_currentKeyframes.first().toObject().value("id").toInt();
+    }
     for(int i = firstkeyframe + 1; i <= json_lastChunkInfo.object().value("keyFrameId").toInt(); i++){
         if(!list_remainingKeyframes.contains(i)){
             list_remainingKeyframes.append(i);
@@ -281,11 +292,14 @@ void Recorder::launch(){
     m_startgamechunkid = QString::number(json_gameMetaData.object().value("startGameChunkId").toInt());
     m_endstartupchunkid = QString::number(json_gameMetaData.object().value("endStartupChunkId").toInt());
 
-    QByteArray gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
-
     emit toLog("End of recording " + m_serverid + "/" + m_gameid);
 
     emit toShowmessage("End of recording " + m_serverid + "/" + m_gameid);
+
+    QByteArray gamestats;
+    if(!m_forceCompleteDownload){
+        gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
+    }
 
     //Save all chunks, infos and keyframes in a file
 

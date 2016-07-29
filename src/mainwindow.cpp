@@ -281,6 +281,21 @@ void MainWindow::setArgs(int argc, char *argv[])
             return;
         }
 
+        if(std::string(argv[1]) == "record" && argc > 5){ //record serverid serveraddress gameid encryptionkey
+            Recorder *recorder = new Recorder(QString(argv[2]), QString(argv[3]), QString(argv[4]), QString(argv[5]), QJsonDocument(), replaydirectory, true);
+            QThread *recorderThread = new QThread;
+            recorder->moveToThread(recorderThread);
+            connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+            connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
+            connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+            connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+            connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+            connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+            recorderThread->start();
+        }
+
         Replay replay(argv[1]);
         if(!replay.getGameid().isEmpty()){
             replay_launch(argv[1]);
@@ -903,6 +918,17 @@ QJsonDocument MainWindow::getJsonFromUrl(QString url)
     return jsonResponse;
 }
 
+Server MainWindow::getServerByPlatformId(QString platformid)
+{
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).getPlatformId() == platformid){
+            return servers.at(i);
+        }
+    }
+
+    return Server();
+}
+
 void MainWindow::slot_featuredRecord()
 {
     if(ui->listWidget_featured->currentItem() == NULL){
@@ -924,6 +950,7 @@ void MainWindow::slot_featuredRecord()
         }
     }
     if(serveraddress.isEmpty()){
+        log(tr("Server address not found"));
         return;
     }
 

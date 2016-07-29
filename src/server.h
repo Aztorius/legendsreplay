@@ -6,6 +6,7 @@
 class Server
 {
 public:
+    Server();
     Server(QString name, QString region, QString platformid, QString domain, unsigned int port = 0);
     QString getName() const;
     QString getRegion() const;
