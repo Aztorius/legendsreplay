@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AdvancedRecorderDialog</class>
+ <widget class="QDialog" name="AdvancedRecorderDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>333</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Advanced Recorder</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="1">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Game Id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Encryption Key :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Server Address :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Platform Id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="lineEdit_serverregion"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="checkBox_forcecompletedownload">
+     <property name="text">
+      <string>Force complete download</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLineEdit" name="lineEdit_serveraddress"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLineEdit" name="lineEdit_gameid"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLineEdit" name="lineEdit_encryptionkey"/>
+   </item>
+   <item row="5" column="1">
+    <widget class="QCheckBox" name="checkBox_downloadstats">
+     <property name="text">
+      <string>Download end of game stats</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="checkBox_downloadGameInfos">
+     <property name="text">
+      <string>Download game infos</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_serveraddress</tabstop>
+  <tabstop>lineEdit_serverregion</tabstop>
+  <tabstop>lineEdit_gameid</tabstop>
+  <tabstop>lineEdit_encryptionkey</tabstop>
+  <tabstop>checkBox_forcecompletedownload</tabstop>
+  <tabstop>checkBox_downloadstats</tabstop>
+  <tabstop>checkBox_downloadGameInfos</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

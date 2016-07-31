@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>LegendsReplayServers.txt</file>
-        <file>logo.png</file>
         <file>img/0.png</file>
         <file>img/1.png</file>
         <file>img/2.png</file>
@@ -134,5 +133,6 @@
         <file>img/421.png</file>
         <file>img/429.png</file>
         <file>img/432.png</file>
+        <file>logo.png</file>
     </qresource>
 </RCC>

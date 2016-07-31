@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.3.1";
+QString GLOBAL_VERSION = "1.3.2";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -101,8 +101,8 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->lineEdit_summonername->setText(m_summonername);
     }
     else{
-        QMessageBox::information(this, tr("LegendsReplay"), tr("Please set your summoner name and then let the software open to record your games."));
-        log(tr("[WARN] Please set your summoner name and then let the software open to record your games."));
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Please set your summoner name and then keep the software open to record your games."));
+        log(tr("[WARN] Please set your summoner name and then keep the software open to record your games."));
 
         ui->tabWidget->setCurrentIndex(6);
     }
@@ -115,6 +115,16 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!orsettings->value("SummonerServer").toString().isEmpty()){
         m_summonerserver = orsettings->value("SummonerServer").toString();
         ui->comboBox_summonerserver->setCurrentText(m_summonerserver);
+    }
+
+    if(!orsettings->value("PBEName").toString().isEmpty()){
+        m_PBEname = orsettings->value("PBEName").toString();
+        ui->lineEdit_pbename->setText(m_PBEname);
+    }
+
+    if(!orsettings->value("PBEId").toString().isEmpty()){
+        m_PBEid = orsettings->value("PBEId").toString();
+        ui->lineEdit_pbeid->setText(m_PBEid);
     }
 
     QSettings lolsettings("Riot Games", "RADS");
@@ -130,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent) :
     else{
         loldirectory = rootfolder;
     }
-    ui->lineEdit_4->setText(loldirectory);
+    ui->lineEdit_lolfolder->setText(loldirectory);
 
     if(!orsettings->value("LoLPBEDirectory").toString().isEmpty()){
         lolpbedirectory = orsettings->value("LoLPBEDirectory").toString();
@@ -194,11 +204,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
     connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
     connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
+    connect(ui->pushButton_pbesave, SIGNAL(released()), this, SLOT(slot_pbeinfos_save()));
     connect(ui->pushButton_summonersave, SIGNAL(released()), this, SLOT(slot_summonerinfos_save()));
     connect(ui->pushButton_searchsummoner, SIGNAL(released()), this, SLOT(slot_searchsummoner()));
     connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
     connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
+    connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -223,6 +235,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_yourgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_mygames(int,int)));
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
+
+    connect(ui->actionAdvanced_Recorder, SIGNAL(triggered()), this, SLOT(slot_openAdvancedRecorder()));
 
     emit refresh_recordedGames();
 
@@ -583,25 +597,6 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
     log(gamelist[0].toObject().value("platformId").toString() + tr(" : Featured games infos"));
 
     for(int i = 0; i < gamelist.size(); i++){
-        /*ui->tableWidget_featured->insertRow(ui->tableWidget_featured->rowCount());
-
-        QTableWidgetItem* item = new QTableWidgetItem();
-        item->setText(gamelist[i].toObject().value("platformId").toString());
-
-        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 0, item);
-
-        QTableWidgetItem* item2 = new QTableWidgetItem();
-
-        item2->setText(QString::number(gamelist[i].toObject().value("gameId").toVariant().toULongLong()));
-
-        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 1, item2);
-
-        QTableWidgetItem* item3 = new QTableWidgetItem();
-
-        item3->setText(gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
-
-        ui->tableWidget_featured->setItem(ui->tableWidget_featured->rowCount()-1, 2, item3);*/
-
         GameInfosWidget *widget = new GameInfosWidget(this);
         widget->setGameHeader(gamelist[i].toObject().value("platformId").toString(), QString::number(gamelist[i].toObject().value("gameId").toVariant().toULongLong()), gamelist[i].toObject().value("observers").toObject().value("encryptionKey").toString());
         widget->setGameInfos(QJsonDocument(gamelist.at(i).toObject()));
@@ -659,7 +654,7 @@ void MainWindow::slot_setdirectory()
     }
     loldirectory = dir;
     orsettings->setValue("LoLDirectory", loldirectory);
-    ui->lineEdit_4->setText(dir);
+    ui->lineEdit_lolfolder->setText(dir);
 }
 
 void MainWindow::slot_setpbedirectory()
@@ -1143,6 +1138,7 @@ void MainWindow::slot_summonerinfos_save()
     if(ui->lineEdit_summonername->text().isEmpty()){
         return;
     }
+
     if(lrservers.isEmpty()){
         QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
         log("Please add a LegendsReplay server.");
@@ -1171,6 +1167,41 @@ void MainWindow::slot_summonerinfos_save()
         orsettings->setValue("SummonerName", m_summonername);
         orsettings->setValue("SummonerId", m_summonerid);
         orsettings->setValue("SummonerServer", m_summonerserver);
+    }
+}
+
+void MainWindow::slot_pbeinfos_save()
+{
+    if(ui->lineEdit_pbename->text().isEmpty()){
+        return;
+    }
+
+    if(lrservers.isEmpty()){
+        QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
+        log("Please add a LegendsReplay server.");
+        return;
+    }
+
+    m_PBEname = ui->lineEdit_pbename->text();
+
+    //Retrieving PBE ID
+
+    log("Retrieving PBE ID");
+
+    QJsonDocument suminfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?region=PBE&summonername=" + m_PBEname);
+
+    if(suminfos.isEmpty()){
+        QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.\nPBE is not supported.");
+        log("Unknown summoner on this server. PBE is not supported.");
+        return;
+    }
+    else{
+        m_PBEid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
+        ui->lineEdit_pbeid->setText(m_PBEid);
+        log("Your PBE ID is " + m_PBEid);
+
+        orsettings->setValue("PBEName", m_PBEname);
+        orsettings->setValue("PBEId", m_PBEid);
     }
 }
 
@@ -1923,4 +1954,27 @@ void MainWindow::slot_custommenutriggered(QAction *action)
     }
 
     emit refresh_recordedGames();
+}
+
+void MainWindow::slot_openAdvancedRecorder()
+{
+    AdvancedRecorderDialog *newAdvancedRecorderDialog = new AdvancedRecorderDialog(this);
+    newAdvancedRecorderDialog->show();
+    connect(newAdvancedRecorderDialog, SIGNAL(recordGame(QString, QString, QString, QString, bool, bool, bool)), this, SLOT(slot_customGameRecord(QString, QString, QString, QString, bool, bool, bool)));
+}
+
+void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload, bool downloadInfos, bool downloadStats)
+{
+    Recorder *recorder = new Recorder(serverRegion, serverAddress, gameId, encryptionKey, QJsonDocument(), replaydirectory, forceCompleteDownload, downloadStats);
+    QThread *recorderThread = new QThread;
+    recorder->moveToThread(recorderThread);
+    connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+    connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
+    connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+    connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+    connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+    connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+    connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+    recorderThread->start();
 }

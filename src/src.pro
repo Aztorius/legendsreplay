@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     chunk.cpp \
     keyframe.cpp \
     gameinfoswidget.cpp \
-    server.cpp
+    server.cpp \
+    advancedrecorderdialog.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
@@ -27,10 +28,12 @@ HEADERS  += mainwindow.h \
     chunk.h \
     keyframe.h \
     gameinfoswidget.h \
-    server.h
+    server.h \
+    advancedrecorderdialog.h
 
 FORMS    += mainwindow.ui \
-    gameinfoswidget.ui
+    gameinfoswidget.ui \
+    advancedrecorderdialog.ui
 
 unix: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp

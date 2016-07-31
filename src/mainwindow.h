@@ -23,6 +23,7 @@
 #include "replay.h"
 #include "server.h"
 #include "gameinfoswidget.h"
+#include "advancedrecorderdialog.h"
 
 using namespace qhttp::server;
 
@@ -87,6 +88,8 @@ private:
     QString m_summonername;
     QString m_summonerid;
     QString m_summonerserver;
+    QString m_PBEname;
+    QString m_PBEid;
 
     QString m_currentLegendsReplayServer;
 
@@ -123,6 +126,7 @@ private slots:
 
     void slot_replayserversAdd();
     void slot_summonerinfos_save();
+    void slot_pbeinfos_save();
 
     void slot_featuredRefresh();
     void slot_statusRefresh();
@@ -140,6 +144,9 @@ private slots:
     void showmessage(QString message);
     void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);
     void slot_messageclicked();
+
+    void slot_openAdvancedRecorder();
+    void slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload = false, bool downloadInfos = false, bool downloadStats = true);
 
     void slot_customcontextmenu(QPoint point);
     void slot_custommenutriggered(QAction* action);

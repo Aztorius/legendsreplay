@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>OpenReplay</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="legendsreplay.qrc">
+    <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+  </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonIconOnly</enum>
   </property>
@@ -909,29 +913,35 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="3">
+        <item row="7" column="3">
          <widget class="QToolButton" name="toolButton_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0">
+        <item row="7" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Replays Folder :</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
            <string>LoL Folder :</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1" colspan="2">
-         <widget class="QLineEdit" name="lineEdit_4">
+        <item row="4" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_lolfolder">
           <property name="text">
            <string/>
           </property>
@@ -940,14 +950,20 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
+        <item row="4" column="3">
          <widget class="QToolButton" name="toolButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>...</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="1" colspan="2">
+        <item row="7" column="1" colspan="2">
          <widget class="QLineEdit" name="lineEdit_replaysFolder">
           <property name="readOnly">
            <bool>true</bool>
@@ -1011,31 +1027,63 @@
             <string>TR</string>
            </property>
           </item>
-          <item>
-           <property name="text">
-            <string>PBE</string>
-           </property>
-          </item>
          </widget>
         </item>
-        <item row="3" column="1" colspan="2">
+        <item row="5" column="1" colspan="2">
          <widget class="QLineEdit" name="lineEdit_pbefolder">
           <property name="readOnly">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>LoL PBE Folder :</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="3">
+        <item row="5" column="3">
          <widget class="QToolButton" name="toolButton_pbefolder">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="text">
            <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Your PBE name :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QLineEdit" name="lineEdit_pbename"/>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Your PBE ID :</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="3">
+         <widget class="QLineEdit" name="lineEdit_pbeid">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="pushButton_pbesave">
+          <property name="text">
+           <string>Save</string>
           </property>
          </widget>
         </item>
@@ -1059,8 +1107,17 @@
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionAdvanced_Recorder"/>
    </widget>
    <addaction name="menuFiles"/>
+   <addaction name="menuTools"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
@@ -1068,8 +1125,20 @@
     <string>Open</string>
    </property>
   </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAdvanced_Recorder">
+   <property name="text">
+    <string>Advanced Recorder</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="legendsreplay.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -25,9 +25,10 @@ class Recorder : public QObject
         QString m_endstartupchunkid;
         QString m_startgamechunkid;
         bool m_forceCompleteDownload;
+        bool m_downloadStats;
 
     public:
-        Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory, bool forceCompleteDownload = false);
+        Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory, bool forceCompleteDownload = false, bool downloadStats = true);
         ~Recorder();
         QByteArray getFileFromUrl(QString url);
         QJsonDocument getJsonFromUrl(QString url);

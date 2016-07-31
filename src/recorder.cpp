@@ -1,6 +1,6 @@
 #include "recorder.h"
 
-Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory, bool forceCompleteDownload)
+Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QString encryptionkey, QJsonDocument gameinfo, QString replaydirectory, bool forceCompleteDownload, bool downloadStats)
 {
     m_serverid = serverid;
     m_serveraddress = serveraddress;
@@ -10,6 +10,7 @@ Recorder::Recorder(QString serverid, QString serveraddress, QString gameid, QStr
     m_startgamechunkid = "0";
     m_endstartupchunkid = "0";
     m_forceCompleteDownload = forceCompleteDownload;
+    m_downloadStats = downloadStats;
 
     if(!encryptionkey.isEmpty()){
         m_encryptionkey = encryptionkey;
@@ -31,9 +32,6 @@ QByteArray Recorder::getFileFromUrl(QString url){
     request.setPriority(QNetworkRequest::LowPriority);
 
     QNetworkReply *reply = local_networkResult.get(request);
-    //reply->setReadBufferSize(qint64(32 * 1024));
-
-    //connect(reply, &QNetworkReply::metaDataChanged, [reply]() { reply->setReadBufferSize(qint64(32 * 1024)); qDebug() << "set speed to" << 32 * 1024; });
 
     QEventLoop loop;
     connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
@@ -48,21 +46,6 @@ QByteArray Recorder::getFileFromUrl(QString url){
     QByteArray data = reply->readAll();
     reply->deleteLater();
     return data;
-
-    /*QByteArray data;
-    QTimer timer;
-    timer.start(1000);
-    QEventLoop loop;
-    connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-
-    while(!reply->isFinished() && reply->error() == QNetworkReply::NoError){
-        loop.exec();
-        qDebug() << reply->bytesAvailable() << "/" << reply->readBufferSize();
-        data.append(reply->read(reply->bytesAvailable()));
-        timer.start(500);
-    }
-
-    return data;*/
 }
 
 QJsonDocument Recorder::getJsonFromUrl(QString url){
@@ -297,7 +280,7 @@ void Recorder::launch(){
     emit toShowmessage("End of recording " + m_serverid + "/" + m_gameid);
 
     QByteArray gamestats;
-    if(!m_forceCompleteDownload){
+    if(m_downloadStats){
         gamestats = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/endOfGameStats/" + m_serverid + "/" + m_gameid + "/null"));
     }
 
