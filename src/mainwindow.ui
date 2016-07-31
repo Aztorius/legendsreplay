@@ -309,6 +309,9 @@
               <property name="selectionBehavior">
                <enum>QAbstractItemView::SelectRows</enum>
               </property>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
               <column>
                <property name="text">
                 <string>Server</string>
@@ -1116,13 +1119,21 @@
     </property>
     <addaction name="actionAdvanced_Recorder"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionReport_an_issue"/>
+    <addaction name="actionAbout_LegendsReplay"/>
+   </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>Open replay</string>
    </property>
   </action>
   <action name="actionExit">
@@ -1133,6 +1144,19 @@
   <action name="actionAdvanced_Recorder">
    <property name="text">
     <string>Advanced Recorder</string>
+   </property>
+  </action>
+  <action name="actionReport_an_issue">
+   <property name="text">
+    <string>Report an issue</string>
+   </property>
+   <property name="toolTip">
+    <string>Report an issue on GitHub</string>
+   </property>
+  </action>
+  <action name="actionAbout_LegendsReplay">
+   <property name="text">
+    <string>About LegendsReplay</string>
    </property>
   </action>
  </widget>

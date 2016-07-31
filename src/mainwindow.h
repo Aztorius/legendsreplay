@@ -151,6 +151,9 @@ private slots:
     void slot_customcontextmenu(QPoint point);
     void slot_custommenutriggered(QAction* action);
 
+    void slot_reportAnIssue();
+    void slot_aboutLegendsReplay();
+
 signals:
 
     void refresh_recordedGames();

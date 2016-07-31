@@ -210,7 +210,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
     connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
+
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->actionReport_an_issue, SIGNAL(triggered()), this, SLOT(slot_reportAnIssue()));
+    connect(ui->actionAbout_LegendsReplay, SIGNAL(triggered()), this, SLOT(slot_aboutLegendsReplay()));
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
@@ -294,19 +297,8 @@ void MainWindow::setArgs(int argc, char *argv[])
             return;
         }
 
-        if(std::string(argv[1]) == "record" && argc > 5){ //record serverid serveraddress gameid encryptionkey
-            Recorder *recorder = new Recorder(QString(argv[2]), QString(argv[3]), QString(argv[4]), QString(argv[5]), QJsonDocument(), replaydirectory, true);
-            QThread *recorderThread = new QThread;
-            recorder->moveToThread(recorderThread);
-            connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
-            connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
-            connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
-            connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
-            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
-            connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
-            connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
-
-            recorderThread->start();
+        if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverid serveraddress gameid encryptionkey forceCompleteDownload
+            slot_customGameRecord(QString(argv[3]), QString(argv[2]), QString(argv[4]), QString(argv[5]), QString(argv[6]) == "true", false, false);
         }
 
         Replay replay(argv[1]);
@@ -1334,7 +1326,9 @@ void MainWindow::slot_open_replay(bool param)
     Q_UNUSED(param);
 
     QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"),replaydirectory);
-    replay_launch(path);
+    if(!path.isEmpty()){
+        replay_launch(path);
+    }
 }
 
 void MainWindow::slot_doubleclick_savedgames(int row, int column)
@@ -1965,6 +1959,8 @@ void MainWindow::slot_openAdvancedRecorder()
 
 void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload, bool downloadInfos, bool downloadStats)
 {
+    Q_UNUSED(downloadInfos);
+
     Recorder *recorder = new Recorder(serverRegion, serverAddress, gameId, encryptionKey, QJsonDocument(), replaydirectory, forceCompleteDownload, downloadStats);
     QThread *recorderThread = new QThread;
     recorder->moveToThread(recorderThread);
@@ -1977,4 +1973,14 @@ void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegi
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
     recorderThread->start();
+}
+
+void MainWindow::slot_reportAnIssue()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/Aztorius/legendsreplay/issues"));
+}
+
+void MainWindow::slot_aboutLegendsReplay()
+{
+    QMessageBox::information(this, "About", "Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
 }
