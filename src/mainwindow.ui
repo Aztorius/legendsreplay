@@ -1132,21 +1132,42 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/open_replay.png</normaloff>:/open_replay.png</iconset>
+   </property>
    <property name="text">
     <string>Open replay</string>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>8</pointsize>
+    </font>
+   </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
   </action>
   <action name="actionAdvanced_Recorder">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/advanced_recorder.png</normaloff>:/advanced_recorder.png</iconset>
+   </property>
    <property name="text">
     <string>Advanced Recorder</string>
    </property>
   </action>
   <action name="actionReport_an_issue">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/tool.png</normaloff>:/tool.png</iconset>
+   </property>
    <property name="text">
     <string>Report an issue</string>
    </property>
@@ -1155,6 +1176,10 @@
    </property>
   </action>
   <action name="actionAbout_LegendsReplay">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/info.png</normaloff>:/info.png</iconset>
+   </property>
    <property name="text">
     <string>About LegendsReplay</string>
    </property>

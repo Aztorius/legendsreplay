@@ -6,7 +6,7 @@ GameInfosWidget::GameInfosWidget(QWidget *parent) :
     ui(new Ui::GameInfosWidget)
 {
     ui->setupUi(this);
-    setFixedSize(600,120);
+    setFixedSize(600, 200);
 }
 
 GameInfosWidget::~GameInfosWidget()
@@ -99,5 +99,5 @@ QPixmap GameInfosWidget::getImg(int id)
     }
 
     QPixmap img(":/img/" + QString::number(finalid) + ".png");
-    return img.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    return img.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }

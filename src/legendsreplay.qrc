@@ -134,5 +134,10 @@
         <file>img/429.png</file>
         <file>img/432.png</file>
         <file>logo.png</file>
+        <file>advanced_recorder.png</file>
+        <file>tool.png</file>
+        <file>exit.png</file>
+        <file>open_replay.png</file>
+        <file>info.png</file>
     </qresource>
 </RCC>

@@ -344,6 +344,15 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
         return;
     }
 
+    slot_refreshPlayingStatus();
+
+    if(playing){
+        log(tr("[WARN] Replay aborted. LoL is currently running."));
+        return;
+    }
+
+    replaying = true;
+
     lol_launch(serverid, key, gameid);
 }
 
@@ -594,7 +603,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
         widget->setGameInfos(QJsonDocument(gamelist.at(i).toObject()));
 
         ui->listWidget_featured->addItem("");
-        ui->listWidget_featured->item(ui->listWidget_featured->count()-1)->setSizeHint(QSize(600, 120));
+        ui->listWidget_featured->item(ui->listWidget_featured->count()-1)->setSizeHint(QSize(600, 200));
         ui->listWidget_featured->setItemWidget(ui->listWidget_featured->item(ui->listWidget_featured->count()-1), widget);
     }
 
@@ -676,7 +685,6 @@ void MainWindow::slot_featuredLaunch()
     if(ui->listWidget_featured->selectedItems().isEmpty()){
         return;
     }
-    //int row = ui->listWidget_featured->currentRow();
 
     slot_refreshPlayingStatus();
 
@@ -685,7 +693,18 @@ void MainWindow::slot_featuredLaunch()
         return;
     }
 
-    //lol_launch(ui->tableWidget_featured->item(row,0)->text(),ui->tableWidget_featured->item(row,2)->text(),ui->tableWidget_featured->item(row,1)->text());
+    GameInfosWidget *widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
+
+    QString serverid = widget->getServerId();
+    QString key = widget->getEncryptionkey();
+    QString gameid = widget->getGameId();
+
+    if(game_ended(serverid, gameid)){
+        log(tr("Game ") + serverid + "/" + gameid + tr(" has already ended"));
+        return;
+    }
+
+    lol_launch(serverid, key, gameid);
 
     replaying = true;
 }
