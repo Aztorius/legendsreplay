@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.3.2";
+QString GLOBAL_VERSION = "1.4.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,8 +15,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowIcon(QIcon(":/logo.png"));
 
     log(QString(tr("LegendsReplay ") + GLOBAL_VERSION + tr(" Started")));
-
-    ui->lineEdit_status->setText("Starting");
 
     qsrand(1);
 
@@ -261,8 +259,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->statusBar->showMessage(QTime::currentTime().toString() + " | New version " + updatejson.object().value("version").toString() + " available !");
         ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>New version "+ updatejson.object().value("version").toString() + " available !</a>");
     }
-
-    ui->lineEdit_status->setText("Idle");
 }
 
 MainWindow::~MainWindow()
@@ -821,10 +817,6 @@ void MainWindow::slot_featuredRecord()
         }
     }
 
-    recording.append(QStringList() << serverid << gameid);
-
-    ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
-
     QJsonDocument gameinfo;
 
     for(int i = 0; i < json_featured.size(); i++){
@@ -838,6 +830,19 @@ void MainWindow::slot_featuredRecord()
             }
         }
     }
+
+    QString dateTime;
+
+    if(gameinfo.isEmpty()){
+        dateTime = QDateTime::currentDateTime().toString();
+    }
+    else{
+        dateTime = QDateTime::fromMSecsSinceEpoch(gameinfo.object().value("gameStartTime").toVariant().toLongLong()).toString();
+    }
+
+    recording.append(QStringList() << serverid << gameid << dateTime);
+
+    refreshRecordingGamesWidget();
 
     QThread *recorderThread = new QThread;
     Recorder *recorder = new Recorder(widget->getServerId(), serveraddress, gameid, widget->getEncryptionkey(), gameinfo, replaydirectory);
@@ -857,21 +862,16 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
 {
     for(int i = 0; i < recording.size(); i++)
     {
-        if(recording.at(i).size() == 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
+        if(recording.at(i).size() >= 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
             break;
         }
     }
 
-    if(recording.isEmpty()){
-        ui->lineEdit_status->setText(tr("Idle"));
-    }
-    else{
-        ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
-    }
-
     emit refresh_recordedGames();
+
+    refreshRecordingGamesWidget();
 }
 
 QByteArray MainWindow::getFileFromUrl(QString url)
@@ -1296,9 +1296,11 @@ void MainWindow::slot_refreshPlayingStatus()
                 return;
             }
 
-            recording.append(QStringList() << serverid << gameid);
+            QString dateTime = QDateTime::fromMSecsSinceEpoch(gameinfos.object().value("gameStartTime").toVariant().toLongLong()).toString();
 
-            ui->lineEdit_status->setText("Recording " + QString::number(recording.size()) + " games");
+            recording.append(QStringList() << serverid << gameid << dateTime);
+
+            refreshRecordingGamesWidget();
 
             Recorder *recorder = new Recorder(serverid, serveraddress, gameid, gameinfos.object().value("observers").toObject().value("encryptionKey").toString(), gameinfos, replaydirectory);
             QThread *recorderThread = new QThread;
@@ -1316,6 +1318,8 @@ void MainWindow::slot_refreshPlayingStatus()
     }
 
     m_timer->start(60000);
+
+    refreshRecordingGamesWidget();
 }
 
 QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString summonerid)
@@ -1828,7 +1832,7 @@ void MainWindow::slot_click_searchsummoner_record()
 
     recording.append(QStringList() << serverid << gameid);
 
-    ui->lineEdit_status->setText(tr("Recording ") + QString::number(recording.size()) + tr(" games"));
+    refreshRecordingGamesWidget();
 
     Recorder *recorder = new Recorder(serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
     QThread *recorderThread = new QThread;
@@ -1980,6 +1984,17 @@ void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegi
 {
     Q_UNUSED(downloadInfos);
 
+    for(int i = 0; i < recording.size(); i++){
+        if(recording.at(i).at(0) == serverRegion && recording.at(i).at(1) == gameId){
+            log(tr("Game is already recording"));
+            return;
+        }
+    }
+
+    recording.append(QStringList() << serverRegion << gameId << QDateTime::currentDateTime().toString());
+
+    refreshRecordingGamesWidget();
+
     Recorder *recorder = new Recorder(serverRegion, serverAddress, gameId, encryptionKey, QJsonDocument(), replaydirectory, forceCompleteDownload, downloadStats);
     QThread *recorderThread = new QThread;
     recorder->moveToThread(recorderThread);
@@ -2002,4 +2017,45 @@ void MainWindow::slot_reportAnIssue()
 void MainWindow::slot_aboutLegendsReplay()
 {
     QMessageBox::information(this, "About", "Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
+}
+
+void MainWindow::refreshRecordingGamesWidget()
+{
+    ui->tableWidget_recordingGames->clearContents();
+
+    while(ui->tableWidget_recordingGames->rowCount() > 0){
+        ui->tableWidget_recordingGames->removeRow(0);
+    }
+
+    qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+
+    for(int i = 0; i < recording.size(); i++){
+        ui->tableWidget_recordingGames->insertRow(i);
+
+        if(recording.at(i).size() >= 3){
+            ui->tableWidget_recordingGames->setItem(i, 0, new QTableWidgetItem(recording.at(i).at(0)));
+            ui->tableWidget_recordingGames->setItem(i, 1, new QTableWidgetItem(recording.at(i).at(1)));
+
+            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(recording.at(i).at(2)));
+
+            QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
+            qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
+            timeProgress /= 1000;
+            timeProgress /= 60;
+            int value = 0;
+
+            if(timeProgress >= 30){
+                value = 90;
+            }
+            else{
+                value = int(timeProgress * 3);
+            }
+
+            QProgressBar* bar = new QProgressBar();
+            bar->setValue(value);
+            bar->setTextVisible(false);
+
+            ui->tableWidget_recordingGames->setCellWidget(i, 3, bar);
+        }
+    }
 }

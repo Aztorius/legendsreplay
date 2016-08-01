@@ -15,6 +15,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QListWidgetItem>
+#include <QProgressBar>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -56,6 +57,8 @@ public:
 
     Server getServerByPlatformId(QString platformid);
 
+    void refreshRecordingGamesWidget();
+
 private:
     Ui::MainWindow *ui;
 
@@ -73,7 +76,6 @@ private:
     QList <QJsonObject> json_status;
     QList <QJsonObject> json_featured;
 
-    //QList <QStringList> servers;
     QList <Server> servers;
     QList <QString> lrservers;
 
