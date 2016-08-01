@@ -1872,7 +1872,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     Q_UNUSED(point);
 
     QMenu *menu = new QMenu("Options", this);
-    menu->addAction(tr("Replay"));
+    menu->addAction(QIcon(":/open_replay.png"), tr("Replay"));
     menu->addAction(tr("Stats"));
     menu->addSeparator();
     menu->addAction(tr("Delete"));
@@ -1884,7 +1884,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
 void MainWindow::slot_custommenutriggered(QAction *action)
 {
     if(ui->tabWidget->currentIndex() == 0){
-        if(ui->tabWidget_2->currentIndex() == 0){
+        if(ui->tabWidget_2->currentIndex() == 1){
             if(!ui->tableWidget_recordedgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
                 if(action->text() == tr("Delete")){
@@ -1892,6 +1892,9 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         log("Unable to find the file : " + path);
                     }
                     else if(!QFile::remove(path)){
+                        log("Unable to remove the file : " + path);
+                    }
+                    else if(QFile::exists(path)){
                         log("Unable to remove the file : " + path);
                     }
                 }
@@ -1926,7 +1929,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 }
             }
         }
-        else if(ui->tabWidget_2->currentIndex() == 1){
+        else if(ui->tabWidget_2->currentIndex() == 0){
             if(!ui->tableWidget_yourgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
                 if(action->text() == tr("Delete")){
@@ -1934,6 +1937,9 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         log("Unable to find the file : " + path);
                     }
                     else if(!QFile::remove(path)){
+                        log("Unable to remove the file : " + path);
+                    }
+                    else if(QFile::exists(path)){
                         log("Unable to remove the file : " + path);
                     }
                 }

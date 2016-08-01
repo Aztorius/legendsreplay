@@ -324,7 +324,7 @@
               </column>
               <column>
                <property name="text">
-                <string>Encryptionkey</string>
+                <string>Datetime</string>
                </property>
               </column>
              </widget>
@@ -1098,10 +1098,10 @@
         <item row="2" column="1" colspan="2">
          <widget class="QLineEdit" name="lineEdit_pbename">
           <property name="text">
-           <string>Not working</string>
+           <string/>
           </property>
           <property name="readOnly">
-           <bool>true</bool>
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -1115,7 +1115,7 @@
         <item row="3" column="1" colspan="3">
          <widget class="QLineEdit" name="lineEdit_pbeid">
           <property name="text">
-           <string>Not working</string>
+           <string/>
           </property>
           <property name="readOnly">
            <bool>true</bool>
