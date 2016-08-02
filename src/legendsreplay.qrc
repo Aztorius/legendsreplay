@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>LegendsReplayServers.txt</file>
         <file>img/0.png</file>
         <file>img/1.png</file>
         <file>img/2.png</file>
@@ -133,11 +132,20 @@
         <file>img/421.png</file>
         <file>img/429.png</file>
         <file>img/432.png</file>
-        <file>logo.png</file>
-        <file>advanced_recorder.png</file>
-        <file>tool.png</file>
-        <file>exit.png</file>
-        <file>open_replay.png</file>
-        <file>info.png</file>
+        <file>translation/legendsreplay_en.qm</file>
+        <file>translation/legendsreplay_fr.qm</file>
+        <file>translation/legendsreplay_pt.qm</file>
+        <file>icons/advanced_recorder.png</file>
+        <file>icons/cancel_download.png</file>
+        <file>icons/delete.png</file>
+        <file>icons/exit.png</file>
+        <file>icons/info.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/logo-win32.ico</file>
+        <file>icons/open_replay.png</file>
+        <file>icons/record.png</file>
+        <file>icons/stats.png</file>
+        <file>icons/tool.png</file>
+        <file>data/LegendsReplayServers.txt</file>
     </qresource>
 </RCC>

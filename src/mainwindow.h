@@ -70,6 +70,7 @@ private:
     QSystemTrayIcon *systemtrayicon;
 
     QList <QStringList> recording;
+    QList <QThread*> recordingThreads;
     QList <QString> recordedgames_filename;
     QList <QString> yourgames_filename;
 
@@ -107,6 +108,8 @@ private:
 
     QString m_currentsystemtraymessage;
 
+    QTranslator translator;
+
 private slots:
     void slot_networkResult_status(QNetworkReply *reply);
     void slot_networkResult_featured(QNetworkReply *reply);
@@ -127,6 +130,7 @@ private slots:
     void slot_open_replay(bool param);
 
     void slot_replayserversAdd();
+
     void slot_summonerinfos_save();
     void slot_pbeinfos_save();
 
@@ -156,8 +160,12 @@ private slots:
     void slot_reportAnIssue();
     void slot_aboutLegendsReplay();
 
-signals:
+    void slot_setLanguage();
 
+protected:
+    void changeEvent(QEvent*);
+
+signals:
     void refresh_recordedGames();
 };
 

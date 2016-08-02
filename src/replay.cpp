@@ -22,7 +22,7 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
                 line.remove(0,11);
 
                 QString serverid = line.left(line.indexOf(":"));
-                m_serverid = serverid;
+                m_platformid = serverid;
 
                 line.remove(0,line.indexOf(":")+1);
 
@@ -118,8 +118,8 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
             m_encryptionkey = m_gameinfos.object().value("observers").toObject().value("encryptionKey").toString();
         }
 
-        if(m_serverid.isEmpty() && !m_gameinfos.isEmpty() && !m_gameinfos.object().value("platformId").toString().isEmpty()){
-            m_serverid = m_gameinfos.object().value("platformId").toString();
+        if(m_platformid.isEmpty() && !m_gameinfos.isEmpty() && !m_gameinfos.object().value("platformId").toString().isEmpty()){
+            m_platformid = m_gameinfos.object().value("platformId").toString();
         }
 
         if(m_gameid.isEmpty() && !m_gameinfos.isEmpty() && m_gameinfos.object().value("gameId").toVariant().toULongLong() != 0){
@@ -142,9 +142,9 @@ QString Replay::getGameid()
     return m_gameid;
 }
 
-QString Replay::getServerid()
+QString Replay::getPlatformId()
 {
-    return m_serverid;
+    return m_platformid;
 }
 
 QString Replay::getEncryptionkey()

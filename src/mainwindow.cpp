@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.4.0";
+QString GLOBAL_VERSION = "1.4.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,11 +12,38 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowTitle(tr("LegendsReplay ") + GLOBAL_VERSION);
-    setWindowIcon(QIcon(":/logo.png"));
+    setWindowIcon(QIcon(":/icons/logo.png"));
 
     log(QString(tr("LegendsReplay ") + GLOBAL_VERSION + tr(" Started")));
 
     qsrand(1);
+
+    // Adding the official local servers
+
+    QFile localserversfile(":/data/LegendsReplayServers.txt");
+
+    if(localserversfile.open(QIODevice::ReadOnly)){
+        QTextStream in(&localserversfile);
+
+        while(!in.atEnd()){
+            QString line = in.readLine();
+            if(!line.isEmpty()){
+                lrservers.append(line);
+                ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+                ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(line));
+            }
+        }
+
+        localserversfile.close();
+    }
+    else{
+        log(tr("[ERROR] Unable to open internal servers file"));
+        lrservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
+        ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
+        ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+    }
+
+    // Adding the unofficial servers
 
     QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
 
@@ -30,53 +57,21 @@ MainWindow::MainWindow(QWidget *parent) :
             filedir.mkpath(".");
         }
 
-        QFile localserversfile(":/LegendsReplayServers.txt");
-
-        if(localserversfile.open(QIODevice::ReadOnly)){
-            QTextStream in(&localserversfile);
-
-            while(!in.atEnd()){
-                QString line = in.readLine();
-                if(!line.isEmpty()){
-                    lrservers.append(line);
-                    ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
-                    ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
-                }
-            }
-
-            localserversfile.close();
-        }
-        else{
-            log(tr("[ERROR] Unable to open internal servers file"));
-            lrservers.append("informaticien77.serveminecraft.net/legendsreplay.php");
-            ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
-            ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+        if(!serversfile.open(QIODevice::WriteOnly | QIODevice::Text)){
+            log(tr("[ERROR] Creating servers file : ") + serversfile.errorString());
         }
 
-        QFile customserversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
-
-        if(customserversfile.open(QIODevice::WriteOnly | QIODevice::Text)){
-            QTextStream out(&customserversfile);
-
-            for(int i = 0; i < lrservers.size(); i++){
-                out << lrservers.at(i) << "\n";
-            }
-
-            customserversfile.close();
-        }
-        else{
-            log(tr("[WARN] Unable to copy LegendsReplayServers.txt file into ") + QStandardPaths::standardLocations(QStandardPaths::DataLocation).first());
-        }
+        serversfile.close();
     }
     else{
         QTextStream in(&serversfile);
 
         while(!in.atEnd()){
             QString line = in.readLine();
-            if(!line.isEmpty()){
+            if(!line.isEmpty() && !lrservers.contains(line)){
                 lrservers.append(line);
                 ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
-                ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1,0,new QTableWidgetItem(line));
+                ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(line));
             }
         }
 
@@ -123,6 +118,12 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!orsettings->value("PBEId").toString().isEmpty()){
         m_PBEid = orsettings->value("PBEId").toString();
         ui->lineEdit_pbeid->setText(m_PBEid);
+    }
+
+    if(!orsettings->value("Language").toString().isEmpty()){
+        if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString())){
+            qApp->installTranslator(&translator);
+        }
     }
 
     QSettings lolsettings("Riot Games", "RADS");
@@ -199,8 +200,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
     connect(ui->toolButton_pbefolder, SIGNAL(released()), this, SLOT(slot_setpbedirectory()));
-    connect(ui->pushButton_featured_spectate, SIGNAL(released()), this, SLOT(slot_featuredLaunch()));
-    connect(ui->pushButton_featured_record, SIGNAL(released()), this, SLOT(slot_featuredRecord()));
     connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
     connect(ui->pushButton_pbesave, SIGNAL(released()), this, SLOT(slot_pbeinfos_save()));
     connect(ui->pushButton_summonersave, SIGNAL(released()), this, SLOT(slot_summonerinfos_save()));
@@ -226,10 +225,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->tableWidget_recordedgames, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_allgames()));
 
-    ui->tableWidget_recordedgames->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
-    ui->tableWidget_yourgames->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->tableWidget_yourgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
+    connect(ui->listWidget_featured, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
+    connect(ui->tableWidget_recordingGames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
@@ -239,13 +238,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionAdvanced_Recorder, SIGNAL(triggered()), this, SLOT(slot_openAdvancedRecorder()));
 
+    connect(ui->pushButton_saveLanguage, SIGNAL(released()), this, SLOT(slot_setLanguage()));
+
     emit refresh_recordedGames();
 
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
     if(systemtrayavailable){
         systemtrayicon = new QSystemTrayIcon;
-        systemtrayicon->setIcon(QIcon(":/logo.png"));
+        systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
         systemtrayicon->show();
         connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
         connect(systemtrayicon, SIGNAL(messageClicked()), this, SLOT(slot_messageclicked()));
@@ -256,8 +257,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
     {
         showmessage(tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
-        ui->statusBar->showMessage(QTime::currentTime().toString() + " | New version " + updatejson.object().value("version").toString() + " available !");
-        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>New version "+ updatejson.object().value("version").toString() + " available !</a>");
+        ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
+        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>" + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !") + "</a>");
     }
 }
 
@@ -309,18 +310,18 @@ void MainWindow::slot_statusRefresh()
 {
     ui->tableWidget_status->clearContents();
 
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/euw"))));  // GET EUW SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/eune"))));  // GET EUNE SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/na"))));  // GET NA SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/jp"))));  // GET JP SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/kr"))));  // GET KR SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/oce"))));  // GET OCE SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/br"))));  // GET BR SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/lan"))));  // GET LAN SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/las"))));  // GET LAS SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/ru"))));  // GET RU SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.leagueoflegends.com/shards/tr"))));  // GET TR SERVERS STATUS
-    networkManager_status->get(QNetworkRequest(QUrl(tr("http://status.pbe.leagueoflegends.com/shards/pbe"))));  // GET PBE SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/euw")));  // GET EUW SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/eune")));  // GET EUNE SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/na")));  // GET NA SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/jp")));  // GET JP SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/kr")));  // GET KR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/oce")));  // GET OCE SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/br")));  // GET BR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/lan")));  // GET LAN SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/las")));  // GET LAS SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/ru")));  // GET RU SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/tr")));  // GET TR SERVERS STATUS
+    networkManager_status->get(QNetworkRequest(QUrl("http://status.pbe.leagueoflegends.com/shards/pbe")));  // GET PBE SERVERS STATUS
 
     for(int i = 0; i < servers.size(); i++){
         networkManager_status->get(QNetworkRequest(QUrl("http://" + servers.at(i).getUrl() + "/observer-mode/rest/consumer/version")));
@@ -479,13 +480,13 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
         log(tr("[ERROR] Status of ") + platformid + ": " + reply->errorString());
 
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
-            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("offline"));
+            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("offline")));
             ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
             ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
         }
         else{
             for(int i = 0; i < 4; i++){
-                ui->tableWidget_status->setItem(row,i,new QTableWidgetItem("offline"));
+                ui->tableWidget_status->setItem(row,i,new QTableWidgetItem(tr("offline")));
                 ui->tableWidget_status->item(row,i)->setBackgroundColor(Qt::red);
                 ui->tableWidget_status->item(row,i)->setTextColor(Qt::white);
             }
@@ -519,13 +520,13 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
             }
 
             if(data.isEmpty()){
-                ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("offline"));
+                ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("offline")));
                 ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
                 ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
                 return;
             }
 
-            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem("online"));
+            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("online")));
             ui->tableWidget_status->item(row,4)->setBackgroundColor(QColor(0,160,0));
             ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
 
@@ -645,7 +646,7 @@ QPixmap MainWindow::getImg(int id)
 
 void MainWindow::slot_setdirectory()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"), loldirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
     }
@@ -856,6 +857,8 @@ void MainWindow::slot_featuredRecord()
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
     recorderThread->start();
+
+    recordingThreads.append(recorderThread);
 }
 
 void MainWindow::slot_endRecording(QString serverid, QString gameid)
@@ -865,6 +868,7 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
         if(recording.at(i).size() >= 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
+            recordingThreads.removeAt(i);
             break;
         }
     }
@@ -1061,7 +1065,7 @@ void MainWindow::slot_refresh_recordedGames()
             QDateTime datetime;
             datetime.setMSecsSinceEpoch(quint64(game.getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));
 
-            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getServerid()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getPlatformId()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameid()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
@@ -1078,7 +1082,7 @@ void MainWindow::slot_refresh_recordedGames()
                 }
             }
 
-            if(!local_platformid.isEmpty() && game.getServerid() == local_platformid)
+            if(!local_platformid.isEmpty() && game.getPlatformId() == local_platformid)
             {
                 if(!m_summonerid.isEmpty() && !game.getGameinfos().isEmpty() && !game.getGameinfos().object().value("participants").toArray().isEmpty())
                 {
@@ -1092,9 +1096,9 @@ void MainWindow::slot_refresh_recordedGames()
                             label->setPixmap(getImg(game.getGameinfos().object().value("participants").toArray().at(j).toObject().value("championId").toInt()));
 
                             ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
-                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem("Soon"));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem(tr("Soon")));
                             ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString()));
-                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getServerid()));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getPlatformId()));
                             ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
 
                             yourgames_filename.append(fileinfo.fileName());
@@ -1114,26 +1118,42 @@ void MainWindow::slot_replayserversAdd()
         return;
     }
 
-    QFile oldserversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
-
-    oldserversfile.remove();
-
     QFile serversfile(QStandardPaths::standardLocations(QStandardPaths::DataLocation).first() + "/LegendsReplayServers.txt");
+    QFile localserversfile(":/data/LegendsReplayServers.txt");
 
-    if(!serversfile.open(QIODevice::WriteOnly | QIODevice::Text)){
+    if(!serversfile.open(QIODevice::ReadWrite | QIODevice::Text)){
         log(tr("[WARN] Unable to write to LegendsReplayServers.txt file : ") + serversfile.errorString());
         return;
     }
     else{
-        QTextStream out(&serversfile);
-
-        for(int i = 0; i < lrservers.size(); i++)
-        {
-            out << lrservers.at(i) << "\n";
+        if(!localserversfile.open(QIODevice::ReadOnly | QIODevice::Text)){
+            log(tr("[ERROR] Unable to open internal servers file : ") + serversfile.errorString());
+            return;
         }
-        out << ui->lineEdit_replayserver_address->text();
+
+        QTextStream file_stream(&serversfile);
+        QTextStream local_in(&localserversfile);
+
+        lrservers.clear();
+
+        while(!local_in.atEnd()){
+            QString line = local_in.readLine();
+            if(!line.isEmpty()){
+                lrservers.append(line);
+            }
+        }
+
+        while(!file_stream.atEnd()){
+            QString line = file_stream.readLine();
+            if(!line.isEmpty() && !lrservers.contains(line)){
+                lrservers.append(line);
+            }
+        }
+
+        file_stream << "\n" << ui->lineEdit_replayserver_address->text();
 
         serversfile.close();
+        localserversfile.close();
     }
 
     lrservers.append(ui->lineEdit_replayserver_address->text());
@@ -1151,8 +1171,8 @@ void MainWindow::slot_summonerinfos_save()
     }
 
     if(lrservers.isEmpty()){
-        QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
-        log("Please add a LegendsReplay server.");
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Please add a LegendsReplay server."));
+        log(tr("Please add a LegendsReplay server."));
         return;
     }
 
@@ -1166,14 +1186,14 @@ void MainWindow::slot_summonerinfos_save()
     QJsonDocument suminfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
-        QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.");
-        log("Unknown summoner on this server.");
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Unknown summoner on this server."));
+        log(tr("Unknown summoner on this server."));
         return;
     }
     else{
         m_summonerid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
         ui->lineEdit_summonerid->setText(m_summonerid);
-        log("Your summoner ID is " + m_summonerid);
+        log(tr("Your summoner ID is ") + m_summonerid);
 
         orsettings->setValue("SummonerName", m_summonername);
         orsettings->setValue("SummonerId", m_summonerid);
@@ -1188,8 +1208,8 @@ void MainWindow::slot_pbeinfos_save()
     }
 
     if(lrservers.isEmpty()){
-        QMessageBox::information(this,"LegendsReplay","Please add a LegendsReplay server.");
-        log("Please add a LegendsReplay server.");
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Please add a LegendsReplay server."));
+        log(tr("Please add a LegendsReplay server."));
         return;
     }
 
@@ -1197,19 +1217,19 @@ void MainWindow::slot_pbeinfos_save()
 
     //Retrieving PBE ID
 
-    log("Retrieving PBE ID");
+    log(tr("Retrieving PBE ID"));
 
     QJsonDocument suminfos = getJsonFromUrl("http://" + m_currentLegendsReplayServer + "?region=PBE&summonername=" + m_PBEname);
 
     if(suminfos.isEmpty()){
-        QMessageBox::information(this,"LegendsReplay","Unknown summoner on this server.\nPBE is not supported.");
-        log("Unknown summoner on this server. PBE is not supported.");
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Unknown summoner on this server.\nPBE is not supported."));
+        log(tr("Unknown summoner on this server. PBE is not supported."));
         return;
     }
     else{
         m_PBEid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
         ui->lineEdit_pbeid->setText(m_PBEid);
-        log("Your PBE ID is " + m_PBEid);
+        log(tr("Your PBE ID is ") + m_PBEid);
 
         orsettings->setValue("PBEName", m_PBEname);
         orsettings->setValue("PBEId", m_PBEid);
@@ -1249,7 +1269,7 @@ void MainWindow::slot_refreshPlayingStatus()
                 delete replay;
                 replay = NULL;
             }
-            log("Server: stoped due to inactivity");
+            log(tr("Server: stoped due to inactivity"));
         }
     }
 
@@ -1258,7 +1278,7 @@ void MainWindow::slot_refreshPlayingStatus()
             //Start recording the game
             playing = true;
 
-            log("Game detected : start recording");
+            log(tr("Game detected : start recording"));
 
             QJsonDocument gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
 
@@ -1271,8 +1291,8 @@ void MainWindow::slot_refreshPlayingStatus()
             while(gameinfos.isEmpty() || gameinfos.object().value("gameStartTime").toVariant().toLongLong() == 0){
                 loop.exec();
                 if(counter > 5){
-                    log("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly");
-                    log("End of recording");
+                    log(tr("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly"));
+                    log(tr("End of recording"));
                     return;
                 }
                 counter++;
@@ -1292,7 +1312,7 @@ void MainWindow::slot_refreshPlayingStatus()
             }
 
             if(serverid.isEmpty()){
-                log("[ERROR] Server not found");
+                log(tr("[ERROR] Server not found"));
                 return;
             }
 
@@ -1314,6 +1334,8 @@ void MainWindow::slot_refreshPlayingStatus()
             connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
             recorderThread->start();
+
+            recordingThreads.append(recorderThread);
         }
     }
 
@@ -1335,7 +1357,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString sum
 
     if(servertag.isEmpty() || lrservers.isEmpty()){
         QJsonDocument docempty;
-        log("[ERROR] Unknown server");
+        log(tr("[ERROR] Unknown server"));
         return docempty;
     }
 
@@ -1408,7 +1430,7 @@ void MainWindow::replay_launch(QString pathfile)
             res->end(replay->getServerversion().toLocal8Bit());
             log(tr("Server: send server version"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getServerid() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getPlatformId() + "/" + replay->getGameid())){
             int firstchunkid = replay->getChunks().first().getId();
 
             while(replay->findKeyframeByChunkId(firstchunkid).getId() == 0)
@@ -1418,7 +1440,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             QString metadata = "{\"gameKey\":{";
             metadata.append("\"gameId\":" + replay->getGameid());
-            metadata.append(",\"platformId\":\"" + replay->getServerid() + "\"}");
+            metadata.append(",\"platformId\":\"" + replay->getPlatformId() + "\"}");
             metadata.append(",\"gameServerAddress\":\"\"");
             metadata.append(",\"port\":0");
             metadata.append(",\"encryptionKey\":\"\"");
@@ -1446,7 +1468,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: send game metadata"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getServerid() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getPlatformId() + "/" + replay->getGameid()))
         {
             int endstartupchunkid = replay->getEndstartupchunkid().toInt();
             int startgamechunkid = replay->getStartgamechunkid().toInt();
@@ -1509,12 +1531,12 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: send lastChunkInfo"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameid()))
         {
             int chunkid = -1;
 
             //Get and send the chunk
-            url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getServerid() + "/" + replay->getGameid() + "/");
+            url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameid() + "/");
             chunkid = url.left(url.indexOf("/")).toInt();
 
             Chunk chunk = replay->getChunk(chunkid);
@@ -1551,12 +1573,12 @@ void MainWindow::replay_launch(QString pathfile)
                 log(tr("Server: unknown requested chunk ") + QString::number(chunkid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameid()))
         {
             int keyframeid = -1;
 
             //Get and send the keyframe
-            url.remove("/observer-mode/rest/consumer/getKeyFrame/" + replay->getServerid() + "/" + replay->getGameid() + "/");
+            url.remove("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameid() + "/");
             keyframeid = url.left(url.indexOf("/")).toInt();
 
             Keyframe keyframe = replay->getKeyFrame(keyframeid);
@@ -1574,7 +1596,7 @@ void MainWindow::replay_launch(QString pathfile)
                 log(tr("Server: unknown requested keyframe ") + QString::number(keyframeid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getServerid() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getPlatformId() + "/" + replay->getGameid()))
         {
             //End of game stats requested
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -1583,7 +1605,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: End of game stats sent"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getServerid() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getPlatformId() + "/" + replay->getGameid()))
         {
             //End of replay requested : error while replaying
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -1610,14 +1632,14 @@ void MainWindow::replay_launch(QString pathfile)
     });
 
     //Launch lol client
-    lol_launch(replay->getServerid(),replay->getEncryptionkey(),replay->getGameid(),true);
+    lol_launch(replay->getPlatformId(), replay->getEncryptionkey(), replay->getGameid(),true);
 }
 
 void MainWindow::showmessage(QString message)
 {
     if(systemtrayavailable)
     {
-        systemtrayicon->showMessage("LegendsReplay", message, QSystemTrayIcon::Information);
+        systemtrayicon->showMessage(tr("LegendsReplay"), message, QSystemTrayIcon::Information);
         m_currentsystemtraymessage = message;
     }
 }
@@ -1846,6 +1868,8 @@ void MainWindow::slot_click_searchsummoner_record()
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
     recorderThread->start();
+
+    recordingThreads.append(recorderThread);
 }
 
 void MainWindow::systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -1864,18 +1888,29 @@ void MainWindow::slot_click_replayservers()
 
     m_currentLegendsReplayServer = ui->tableWidget_replayservers->itemAt(ui->tableWidget_replayservers->selectedItems().first()->row(), 0)->text();
 
-    log("LegendsReplay server switch to " + m_currentLegendsReplayServer);
+    log(tr("Legends Replay switch to server ") + m_currentLegendsReplayServer);
 }
 
 void MainWindow::slot_customcontextmenu(QPoint point)
 {
     Q_UNUSED(point);
 
-    QMenu *menu = new QMenu("Options", this);
-    menu->addAction(QIcon(":/open_replay.png"), tr("Replay"));
-    menu->addAction(tr("Stats"));
-    menu->addSeparator();
-    menu->addAction(tr("Delete"));
+    QMenu *menu = new QMenu(tr("Options"), this);
+
+    if(ui->tabWidget->currentIndex() == 0){
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"));
+        menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"));
+        menu->addSeparator();
+        menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"));
+    }
+    else if(ui->tabWidget->currentIndex() == 2){
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Spectate"));
+        menu->addAction(QIcon(":/icons/record.png"), tr("Record"));
+    }
+    else if(ui->tabWidget->currentIndex() == 3){
+        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("Cancel"));
+    }
+
     menu->move(QCursor::pos());
     menu->show();
     connect(menu, SIGNAL(triggered(QAction*)), this,  SLOT(slot_custommenutriggered(QAction*)));
@@ -1889,13 +1924,13 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
                 if(action->text() == tr("Delete")){
                     if(!QFile::exists(path)){
-                        log("Unable to find the file : " + path);
+                        log(tr("Unable to find the file : ") + path);
                     }
                     else if(!QFile::remove(path)){
-                        log("Unable to remove the file : " + path);
+                        log(tr("Unable to remove the file : ") + path);
                     }
                     else if(QFile::exists(path)){
-                        log("Unable to remove the file : " + path);
+                        log(tr("Unable to remove the file : ") + path);
                     }
                 }
                 else if(action->text() == tr("Replay")){
@@ -1908,23 +1943,23 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         return;
                     }
 
-                    QString servername;
+                    QString serverRegion;
                     for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).getPlatformId() == local_replay.getServerid()){
-                            servername = servers.at(i).getRegion();
+                        if(servers.at(i).getPlatformId() == local_replay.getPlatformId()){
+                            serverRegion = servers.at(i).getRegion();
                             break;
                         }
                     }
 
-                    if(servername.isEmpty()){
+                    if(serverRegion.isEmpty()){
                         return;
                     }
 
-                    if(servername.toLower() == "kr"){
+                    if(serverRegion.toLower() == "kr"){
                         QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
                     }
                     else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
                     }
                 }
             }
@@ -1934,13 +1969,13 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
                 if(action->text() == tr("Delete")){
                     if(!QFile::exists(path)){
-                        log("Unable to find the file : " + path);
+                        log(tr("Unable to find the file : ") + path);
                     }
                     else if(!QFile::remove(path)){
-                        log("Unable to remove the file : " + path);
+                        log(tr("Unable to remove the file : ") + path);
                     }
                     else if(QFile::exists(path)){
-                        log("Unable to remove the file : " + path);
+                        log(tr("Unable to remove the file : ") + path);
                     }
                 }
                 else if(action->text() == tr("Replay")){
@@ -1955,7 +1990,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
 
                     QString servername;
                     for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).getPlatformId() == local_replay.getServerid()){
+                        if(servers.at(i).getPlatformId() == local_replay.getPlatformId()){
                             servername = servers.at(i).getRegion();
                             break;
                         }
@@ -1969,8 +2004,42 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
                     }
                     else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getServerid() + "/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
                     }
+                }
+            }
+        }
+    }
+    else if(ui->tabWidget->currentIndex() == 2){
+        if(!ui->listWidget_featured->selectedItems().isEmpty()){
+            if(action->text() == tr("Spectate")){
+                GameInfosWidget* widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
+
+                lol_launch(widget->getServerId(), widget->getEncryptionkey(), widget->getGameId());
+            }
+            else if(action->text() == tr("Record")){
+                slot_featuredRecord();
+            }
+        }
+    }
+    else if(ui->tabWidget->currentIndex() == 3){
+        if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
+            if(action->text() == tr("Cancel")){
+                int j = -1;
+                int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+
+                for(int i = 0; i < recording.size(); i++){
+                    if(recording.at(i).at(0) == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
+                        j = i;
+                    }
+                }
+
+                if(j < 0){
+                    return;
+                }
+
+                if(recordingThreads.size() > j){
+                    recordingThreads.at(j)->exit(0);
                 }
             }
         }
@@ -2013,6 +2082,8 @@ void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegi
     connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
 
     recorderThread->start();
+
+    recordingThreads.append(recorderThread);
 }
 
 void MainWindow::slot_reportAnIssue()
@@ -2022,7 +2093,7 @@ void MainWindow::slot_reportAnIssue()
 
 void MainWindow::slot_aboutLegendsReplay()
 {
-    QMessageBox::information(this, "About", "Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
+    QMessageBox::information(this, tr("About"), tr("Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.") + "\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
 }
 
 void MainWindow::refreshRecordingGamesWidget()
@@ -2064,4 +2135,28 @@ void MainWindow::refreshRecordingGamesWidget()
             ui->tableWidget_recordingGames->setCellWidget(i, 3, bar);
         }
     }
+}
+
+void MainWindow::slot_setLanguage()
+{
+    if(orsettings->value("Language").toString() == ui->comboBox_language->currentText()){
+        return;
+    }
+
+    orsettings->setValue("Language", ui->comboBox_language->currentText());
+
+    if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString())){
+        qApp->installTranslator(&translator);
+    }
+}
+
+void MainWindow::changeEvent(QEvent* event)
+{
+    if(event->type() == QEvent::LanguageChange)
+    {
+        ui->retranslateUi(this);
+        ui->comboBox_language->setCurrentText(orsettings->value("Language").toString());
+    }
+
+    QMainWindow::changeEvent(event);
 }

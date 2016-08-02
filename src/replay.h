@@ -16,7 +16,7 @@ public:
     ~Replay();
 
     QString getGameid();
-    QString getServerid();
+    QString getPlatformId();
     QString getEncryptionkey();
 
     QList<Keyframe> getKeyFrames();
@@ -39,7 +39,7 @@ public:
 
 private:
     QString m_gameid;
-    QString m_serverid;
+    QString m_platformid;
     QString m_encryptionkey;
     QString m_filepath;
     QString m_serverversion;
