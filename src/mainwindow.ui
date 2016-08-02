@@ -1163,6 +1163,9 @@
         </item>
         <item row="10" column="1">
          <widget class="QComboBox" name="comboBox_language">
+          <property name="currentText">
+           <string notr="true">en</string>
+          </property>
           <item>
            <property name="text">
             <string>en</string>

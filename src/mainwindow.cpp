@@ -264,6 +264,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    for(int i = 0; i < recordingThreads.size(); i++){
+        recordingThreads.at(i)->exit(0);
+    }
+
     if(systemtrayavailable)
     {
         systemtrayicon->hide();
@@ -456,11 +460,9 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply)
 {
-
     if(reply->error() != QNetworkReply::NoError)
     {
         QString host = reply->request().url().host();
-        QString port = QString::number(reply->request().url().port());
         QString platformid;
         int row = -1;
 
@@ -502,7 +504,6 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     {
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             QString host = reply->request().url().host();
-            QString port = QString::number(reply->request().url().port());
             QString platformid;
             int row = -1;
 
@@ -550,12 +551,13 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     {
         if(jsonObject.value("name").toString() == servers.at(i).getName()){
             for(int j = 0; j < 4; j++){
-                ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(services[j].toObject().value("status").toString()));
                 if(services[j].toObject().value("status").toString() == "offline"){
+                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("offline")));
                     ui->tableWidget_status->item(i,j)->setBackgroundColor(Qt::red);
                     ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
                 }
                 else if(services[j].toObject().value("status").toString() == "online"){
+                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("online")));
                     ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(0,160,0));
                     ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
                 }
@@ -1647,7 +1649,7 @@ void MainWindow::showmessage(QString message)
 void MainWindow::slot_messageclicked()
 {
     if(systemtrayavailable){
-        if(m_currentsystemtraymessage.left(12) == tr("New version ")){
+        if(m_currentsystemtraymessage.contains(tr("New version "))){
             QDesktopServices::openUrl(QUrl("http://aztorius.github.io/legendsreplay/"));
         }
     }
@@ -2113,9 +2115,10 @@ void MainWindow::refreshRecordingGamesWidget()
             ui->tableWidget_recordingGames->setItem(i, 0, new QTableWidgetItem(recording.at(i).at(0)));
             ui->tableWidget_recordingGames->setItem(i, 1, new QTableWidgetItem(recording.at(i).at(1)));
 
-            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(recording.at(i).at(2)));
-
             QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
+
+            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::SystemLocaleLongDate)));
+
             qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
             timeProgress /= 1000;
             timeProgress /= 60;
@@ -2130,7 +2133,6 @@ void MainWindow::refreshRecordingGamesWidget()
 
             QProgressBar* bar = new QProgressBar();
             bar->setValue(value);
-            bar->setTextVisible(false);
 
             ui->tableWidget_recordingGames->setCellWidget(i, 3, bar);
         }
