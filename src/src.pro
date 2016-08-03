@@ -43,7 +43,7 @@ DEPENDPATH += $$PRJDIR/qhttp/src
 
 CONFIG += c++11
 
-RC_ICONS = icons/logo-win32.ico
+RC_ICONS = icons/logo-executable.ico
 RESOURCES = legendsreplay.qrc
 
 TRANSLATIONS = translation/legendsreplay_en.ts \

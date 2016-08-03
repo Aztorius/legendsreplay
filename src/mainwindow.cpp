@@ -1911,6 +1911,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     }
     else if(ui->tabWidget->currentIndex() == 3){
         menu->addAction(QIcon(":/icons/cancel_download.png"), tr("Cancel"));
+        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and delete"));
     }
 
     menu->move(QCursor::pos());
@@ -1925,6 +1926,10 @@ void MainWindow::slot_custommenutriggered(QAction *action)
             if(!ui->tableWidget_recordedgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
                 if(action->text() == tr("Delete")){
+                    if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
+                        return;
+                    }
+
                     if(!QFile::exists(path)){
                         log(tr("Unable to find the file : ") + path);
                     }
@@ -1970,6 +1975,10 @@ void MainWindow::slot_custommenutriggered(QAction *action)
             if(!ui->tableWidget_yourgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
                 if(action->text() == tr("Delete")){
+                    if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
+                        return;
+                    }
+
                     if(!QFile::exists(path)){
                         log(tr("Unable to find the file : ") + path);
                     }
@@ -2027,6 +2036,10 @@ void MainWindow::slot_custommenutriggered(QAction *action)
     else if(ui->tabWidget->currentIndex() == 3){
         if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
             if(action->text() == tr("Cancel")){
+                if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel this record ?")) != QMessageBox::Yes){
+                    return;
+                }
+
                 int j = -1;
                 int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
 
@@ -2042,6 +2055,44 @@ void MainWindow::slot_custommenutriggered(QAction *action)
 
                 if(recordingThreads.size() > j){
                     recordingThreads.at(j)->exit(0);
+                }
+            }
+            else if(action->text() == tr("Cancel and delete")){
+                if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel and delete this record ?")) != QMessageBox::Yes){
+                    return;
+                }
+
+                int j = -1;
+                int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+
+                for(int i = 0; i < recording.size(); i++){
+                    if(recording.at(i).at(0) == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
+                        j = i;
+                    }
+                }
+
+                if(j < 0){
+                    return;
+                }
+
+                QString filepath = replaydirectory + "/" + recording.at(j).at(0) + "-" + recording.at(j).at(1) + ".lor";
+
+                if(recordingThreads.size() > j){
+                    recordingThreads.at(j)->exit(0);
+                    recordingThreads.at(j)->wait(1000);
+                }
+
+                QFile file(filepath);
+
+                if(!file.exists()){
+                    return;
+                }
+
+                if(file.open(QIODevice::WriteOnly) && file.remove()){
+                    log(tr("Removed file : ") + filepath);
+                }
+                else{
+                    log(tr("[ERROR] Unable to remove the file : ") + file.errorString());
                 }
             }
         }

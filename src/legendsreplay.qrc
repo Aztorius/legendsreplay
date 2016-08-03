@@ -141,11 +141,12 @@
         <file>icons/exit.png</file>
         <file>icons/info.png</file>
         <file>icons/logo.png</file>
-        <file>icons/logo-win32.ico</file>
         <file>icons/open_replay.png</file>
         <file>icons/record.png</file>
         <file>icons/stats.png</file>
         <file>icons/tool.png</file>
         <file>data/LegendsReplayServers.txt</file>
+        <file>icons/cancel_delete_download.png</file>
+        <file>icons/logo-executable.ico</file>
     </qresource>
 </RCC>
