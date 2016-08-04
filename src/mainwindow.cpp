@@ -482,15 +482,15 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
         log(tr("[ERROR] Status of ") + platformid + ": " + reply->errorString());
 
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
-            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("offline")));
-            ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
-            ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+            ui->tableWidget_status->setItem(row, ui->tableWidget_status->columnCount()-1, new QTableWidgetItem(tr("offline")));
+            ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setBackgroundColor(Qt::red);
+            ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setTextColor(Qt::white);
         }
         else{
             for(int i = 0; i < 4; i++){
-                ui->tableWidget_status->setItem(row,i,new QTableWidgetItem(tr("offline")));
-                ui->tableWidget_status->item(row,i)->setBackgroundColor(Qt::red);
-                ui->tableWidget_status->item(row,i)->setTextColor(Qt::white);
+                ui->tableWidget_status->setItem(row, i, new QTableWidgetItem(tr("offline")));
+                ui->tableWidget_status->item(row, i)->setBackgroundColor(Qt::red);
+                ui->tableWidget_status->item(row, i)->setTextColor(Qt::white);
             }
         }
         return;
@@ -521,15 +521,15 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
             }
 
             if(data.isEmpty()){
-                ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("offline")));
-                ui->tableWidget_status->item(row,4)->setBackgroundColor(Qt::red);
-                ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+                ui->tableWidget_status->setItem(row, ui->tableWidget_status->columnCount()-1, new QTableWidgetItem(tr("offline")));
+                ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setBackgroundColor(Qt::red);
+                ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setTextColor(Qt::white);
                 return;
             }
 
-            ui->tableWidget_status->setItem(row,4,new QTableWidgetItem(tr("online")));
-            ui->tableWidget_status->item(row,4)->setBackgroundColor(QColor(0,160,0));
-            ui->tableWidget_status->item(row,4)->setTextColor(Qt::white);
+            ui->tableWidget_status->setItem(row, ui->tableWidget_status->columnCount()-1, new QTableWidgetItem(tr("online")));
+            ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setBackgroundColor(QColor(0,160,0));
+            ui->tableWidget_status->item(row, ui->tableWidget_status->columnCount()-1)->setTextColor(Qt::white);
 
             return;
         }
@@ -550,7 +550,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     for(int i = 0; i < servers.size(); i++)
     {
         if(jsonObject.value("name").toString() == servers.at(i).getName()){
-            for(int j = 0; j < 4; j++){
+            for(int j = 0; j < qMin(services.size(), 5); j++){
                 QJsonArray incidentsArray = services[j].toObject().value("incidents").toArray();
 
                 if(services[j].toObject().value("status").toString() == "offline"){ //Service offline
@@ -1848,11 +1848,11 @@ void MainWindow::slot_click_searchsummoner_record()
     }
 
     QString serveraddress;
-    QString serverid = m_searchsummoner_game.object().value("platformId").toString();
+    QString platformid = m_searchsummoner_game.object().value("platformId").toString();
     QString gameid = QString::number(m_searchsummoner_game.object().value("gameId").toVariant().toULongLong());
 
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getPlatformId() == serverid){
+        if(servers.at(i).getPlatformId() == platformid){
             serveraddress = servers.at(i).getUrl();
             break;
         }
@@ -1862,17 +1862,26 @@ void MainWindow::slot_click_searchsummoner_record()
     }
 
     for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+        if(recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid){
             log(tr("Game is already recording"));
             return;
         }
     }
 
-    recording.append(QStringList() << serverid << gameid);
+    QString dateTime;
+
+    if(m_searchsummoner_game.object().value("gameStartTime").toVariant().toULongLong() > 0){
+        dateTime = QDateTime::currentDateTime().toString();
+    }
+    else{
+        dateTime = QDateTime::fromMSecsSinceEpoch(m_searchsummoner_game.object().value("gameStartTime").toVariant().toLongLong()).toString();
+    }
+
+    recording.append(QStringList() << platformid << gameid << dateTime);
 
     refreshRecordingGamesWidget();
 
-    Recorder *recorder = new Recorder(serverid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
+    Recorder *recorder = new Recorder(platformid, serveraddress, gameid, m_searchsummoner_game.object().value("observers").toObject().value("encryptionKey").toString(), m_searchsummoner_game, replaydirectory);
     QThread *recorderThread = new QThread;
     recorder->moveToThread(recorderThread);
     connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
