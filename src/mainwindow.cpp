@@ -3,7 +3,7 @@
 #include "recorder.h"
 #include "replay.h"
 
-QString GLOBAL_VERSION = "1.4.1";
+QString GLOBAL_VERSION = "1.4.2";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -551,15 +551,29 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     {
         if(jsonObject.value("name").toString() == servers.at(i).getName()){
             for(int j = 0; j < 4; j++){
-                if(services[j].toObject().value("status").toString() == "offline"){
+                QJsonArray incidentsArray = services[j].toObject().value("incidents").toArray();
+
+                if(services[j].toObject().value("status").toString() == "offline"){ //Service offline
                     ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("offline")));
                     ui->tableWidget_status->item(i,j)->setBackgroundColor(Qt::red);
                     ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
                 }
-                else if(services[j].toObject().value("status").toString() == "online"){
-                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("online")));
-                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(0,160,0));
+                else if(!incidentsArray.isEmpty()){ //Service online with incidents
+                    QString incidents = incidentsArray.first().toObject().value("updates").toArray().first().toObject().value("content").toString();
+
+                    for(int k = 1; k < incidentsArray.size(); k++){
+                        incidents.append("\n" + incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString());
+                    }
+
+                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(QString::number(incidentsArray.size()) + tr(" incidents")));
+                    ui->tableWidget_status->item(i, j)->setToolTip(incidents);
                     ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
+                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(255,165,0));
+                }
+                else if(services[j].toObject().value("status").toString() == "online"){ //Service online
+                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("online")));
+                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
+                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(0,160,0));
                 }
             }
             break;

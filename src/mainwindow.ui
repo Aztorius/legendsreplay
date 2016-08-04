@@ -741,6 +741,12 @@
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <widget class="QTableWidget" name="tableWidget_status">
+          <property name="toolTip">
+           <string notr="true"/>
+          </property>
+          <property name="toolTipDuration">
+           <number>-1</number>
+          </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
@@ -809,11 +815,6 @@
           </row>
           <column>
            <property name="text">
-            <string>Client</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>Game</string>
            </property>
           </column>
@@ -829,7 +830,12 @@
           </column>
           <column>
            <property name="text">
-            <string>Spectator</string>
+            <string>Client</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Client Alpha</string>
            </property>
           </column>
          </widget>
