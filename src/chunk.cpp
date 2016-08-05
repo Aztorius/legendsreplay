@@ -45,3 +45,8 @@ int Chunk::getSize() const
 {
     return m_data.size();
 }
+
+bool Chunk::isEmpty() const
+{
+    return m_data.isEmpty();
+}

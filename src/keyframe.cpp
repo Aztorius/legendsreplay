@@ -38,3 +38,8 @@ int Keyframe::getSize() const
 {
     return m_data.size();
 }
+
+bool Keyframe::isEmpty() const
+{
+    return m_data.isEmpty();
+}

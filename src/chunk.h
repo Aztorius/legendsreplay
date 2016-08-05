@@ -14,6 +14,7 @@ public:
     QByteArray getData() const;
     int getDuration() const;
     int getSize() const;
+    bool isEmpty() const;
 
 private:
     int m_id;

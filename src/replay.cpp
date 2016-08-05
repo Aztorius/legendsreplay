@@ -1,5 +1,9 @@
 #include "replay.h"
 
+Replay::Replay(){
+
+}
+
 Replay::Replay(QString filepath, bool loadInfosOnly)
 {
     QFile file(filepath);
@@ -135,6 +139,11 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
 Replay::~Replay()
 {
 
+}
+
+QString Replay::getFilepath()
+{
+    return m_filepath;
 }
 
 QString Replay::getGameid()

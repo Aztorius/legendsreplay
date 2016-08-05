@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CheckAndRepairDialog</class>
+ <widget class="QDialog" name="CheckAndRepairDialog">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>586</width>
+    <height>442</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Check and Repair</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_platformid"/>
+   </item>
+   <item row="5" column="1" colspan="3">
+    <widget class="QSpinBox" name="spinBox_endstartupchunkid"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>End startup chunk id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Start game chunk id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="3">
+    <widget class="QPushButton" name="pushButton_repairandsave">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Repair and save</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_filename">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string>Filename :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="3">
+    <widget class="QSpinBox" name="spinBox_startgamechunkid"/>
+   </item>
+   <item row="0" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_filename"/>
+   </item>
+   <item row="10" column="0">
+    <widget class="QListWidget" name="listWidget_chunks"/>
+   </item>
+   <item row="10" column="1" colspan="3">
+    <widget class="QListWidget" name="listWidget_keyframes"/>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Platform Id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Game Id :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1" colspan="3">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Keyframes missing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_gameid"/>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Chunks missing</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Encryption key :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_encryptionkey"/>
+   </item>
+   <item row="8" column="1" colspan="3">
+    <widget class="QCheckBox" name="checkBox_playable">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Playable</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QCheckBox" name="checkBox_primarychunks">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Primary chunks</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QPushButton" name="pushButton_openfile">
+     <property name="text">
+      <string>Open file</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="2">
+    <widget class="QPushButton" name="pushButton_check">
+     <property name="text">
+      <string>Check</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QCheckBox" name="checkBox_gameinfos">
+     <property name="text">
+      <string>Game infos</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" colspan="3">
+    <widget class="QCheckBox" name="checkBox_endofgamestats">
+     <property name="text">
+      <string>End of game stats</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Server version :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_serverversion"/>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEdit_filename</tabstop>
+  <tabstop>lineEdit_serverversion</tabstop>
+  <tabstop>lineEdit_platformid</tabstop>
+  <tabstop>lineEdit_gameid</tabstop>
+  <tabstop>lineEdit_encryptionkey</tabstop>
+  <tabstop>spinBox_endstartupchunkid</tabstop>
+  <tabstop>spinBox_startgamechunkid</tabstop>
+  <tabstop>checkBox_gameinfos</tabstop>
+  <tabstop>checkBox_endofgamestats</tabstop>
+  <tabstop>checkBox_primarychunks</tabstop>
+  <tabstop>checkBox_playable</tabstop>
+  <tabstop>listWidget_chunks</tabstop>
+  <tabstop>listWidget_keyframes</tabstop>
+  <tabstop>pushButton_openfile</tabstop>
+  <tabstop>pushButton_check</tabstop>
+  <tabstop>pushButton_repairandsave</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

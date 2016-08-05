@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     keyframe.cpp \
     gameinfoswidget.cpp \
     server.cpp \
-    advancedrecorderdialog.cpp
+    advancedrecorderdialog.cpp \
+    checkandrepairdialog.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
@@ -29,11 +30,13 @@ HEADERS  += mainwindow.h \
     keyframe.h \
     gameinfoswidget.h \
     server.h \
-    advancedrecorderdialog.h
+    advancedrecorderdialog.h \
+    checkandrepairdialog.h
 
 FORMS    += mainwindow.ui \
     gameinfoswidget.ui \
-    advancedrecorderdialog.ui
+    advancedrecorderdialog.ui \
+    checkandrepairdialog.ui
 
 unix: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
@@ -48,4 +51,6 @@ RESOURCES = legendsreplay.qrc
 
 TRANSLATIONS = translation/legendsreplay_en.ts \
     translation/legendsreplay_fr.ts \
-    translation/legendsreplay_pt.ts
+    translation/legendsreplay_pt.ts \
+    translation/legendsreplay_de.ts \
+    translation/legendsreplay_es.ts

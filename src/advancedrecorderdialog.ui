@@ -43,26 +43,54 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="QLineEdit" name="lineEdit_serverregion"/>
+    <widget class="QLineEdit" name="lineEdit_serverregion">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PlatformId of the server. Ex: EUW1 NA1 ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="4" column="1">
     <widget class="QCheckBox" name="checkBox_forcecompletedownload">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Force complete download of the game, even if the server cannot send the requested chunks and keyframe.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string>Force complete download</string>
      </property>
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLineEdit" name="lineEdit_serveraddress"/>
+    <widget class="QLineEdit" name="lineEdit_serveraddress">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The spectator server address. Ex: spectator.euw1.lol.riotgames.com:80&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="text">
+      <string notr="true"/>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QLineEdit" name="lineEdit_gameid"/>
+    <widget class="QLineEdit" name="lineEdit_gameid">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The game id as a big integer. Ex: 260706552&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QLineEdit" name="lineEdit_encryptionkey"/>
+    <widget class="QLineEdit" name="lineEdit_encryptionkey">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption key in base 64 encoding format.&lt;/p&gt;&lt;p&gt;Ex: nsNODdOBiYbiJjeBg0Hp+3ai7YDYNguW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
    </item>
    <item row="5" column="1">
     <widget class="QCheckBox" name="checkBox_downloadstats">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download end of game stats.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="text">
       <string>Download end of game stats</string>
      </property>
@@ -80,6 +108,9 @@
    </item>
    <item row="6" column="1">
     <widget class="QCheckBox" name="checkBox_downloadGameInfos">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Download game infos</string>
      </property>

@@ -13,6 +13,7 @@ public:
     int getNextchunkid() const;
     QByteArray getData() const;
     int getSize() const;
+    bool isEmpty() const;
 
 private:
     int m_id;

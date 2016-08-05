@@ -22,9 +22,11 @@
 #include "qhttpserverrequest.hpp"
 
 #include "replay.h"
+#include "recorder.h"
 #include "server.h"
 #include "gameinfoswidget.h"
 #include "advancedrecorderdialog.h"
+#include "checkandrepairdialog.h"
 
 using namespace qhttp::server;
 
@@ -159,6 +161,7 @@ private slots:
 
     void slot_reportAnIssue();
     void slot_aboutLegendsReplay();
+    void slot_checkandrepair();
 
     void slot_setLanguage();
 

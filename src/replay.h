@@ -13,7 +13,10 @@ class Replay
 {
 public:
     Replay(QString filepath, bool loadInfosOnly = false);
+    Replay();
     ~Replay();
+
+    QString getFilepath();
 
     QString getGameid();
     QString getPlatformId();

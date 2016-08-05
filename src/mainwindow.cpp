@@ -1,7 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "recorder.h"
-#include "replay.h"
 
 QString GLOBAL_VERSION = "1.4.2";
 
@@ -208,6 +206,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
     connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
 
+    connect(ui->actionCheck_and_repair, SIGNAL(triggered()), this, SLOT(slot_checkandrepair()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionReport_an_issue, SIGNAL(triggered()), this, SLOT(slot_reportAnIssue()));
     connect(ui->actionAbout_LegendsReplay, SIGNAL(triggered()), this, SLOT(slot_aboutLegendsReplay()));
@@ -1926,6 +1925,8 @@ void MainWindow::slot_customcontextmenu(QPoint point)
         menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"));
         menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"));
         menu->addSeparator();
+        menu->addAction(tr("Check and Repair"));
+        menu->addSeparator();
         menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"));
     }
     else if(ui->tabWidget->currentIndex() == 2){
@@ -1992,6 +1993,11 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
                     }
                 }
+                else if(action->text() == tr("Check and Repair")){
+                    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
+                    newCheckAndRepairDialog->show();
+                    newCheckAndRepairDialog->load(Replay(path));
+                }
             }
         }
         else if(ui->tabWidget_2->currentIndex() == 0){
@@ -2040,6 +2046,11 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     else{
                         QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
                     }
+                }
+                else if(action->text() == tr("Check and Repair")){
+                    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
+                    newCheckAndRepairDialog->show();
+                    newCheckAndRepairDialog->load(Replay(path));
                 }
             }
         }
@@ -2235,4 +2246,9 @@ void MainWindow::changeEvent(QEvent* event)
     }
 
     QMainWindow::changeEvent(event);
+}
+
+void MainWindow::slot_checkandrepair(){
+    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
+    newCheckAndRepairDialog->show();
 }
