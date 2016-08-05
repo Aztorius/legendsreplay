@@ -148,5 +148,6 @@
         <file>data/LegendsReplayServers.txt</file>
         <file>icons/cancel_delete_download.png</file>
         <file>icons/logo-executable.ico</file>
+        <file>icons/repair.png</file>
     </qresource>
 </RCC>

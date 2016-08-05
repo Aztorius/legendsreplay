@@ -16,29 +16,44 @@ public:
     Replay();
     ~Replay();
 
-    QString getFilepath();
+    QString getFilepath() const;
 
-    QString getGameid();
-    QString getPlatformId();
-    QString getEncryptionkey();
+    QString getGameId() const;
+    QString getPlatformId() const;
+    QString getEncryptionkey() const;
 
-    QList<Keyframe> getKeyFrames();
-    QList<Chunk> getChunks();
-    QList<Chunk> getPrimaryChunks();
+    QList<Keyframe> getKeyFrames() const;
+    QList<Chunk> getChunks() const;
+    QList<Chunk> getPrimaryChunks() const;
 
-    QJsonDocument getGameinfos();
-    QByteArray getEndOfGameStats();
+    QJsonDocument getGameinfos() const;
+    QByteArray getEndOfGameStats() const;
 
-    QString getServerversion();
-    QString getEndstartupchunkid();
-    QString getStartgamechunkid();
+    QString getServerVersion() const;
+    QString getEndStartupChunkId() const;
+    QString getStartGameChunkId() const;
 
     Chunk getChunk(int id) const;
     Chunk getPrimaryChunk(int id) const;
     Keyframe getKeyFrame(int id) const;
-    Keyframe findKeyframeByChunkId(int chunkid);
+    Keyframe findKeyframeByChunkId(int chunkid) const;
 
     bool repair();
+
+    void setGameId(QString gameId);
+    void setPlatformId(QString platformId);
+    void setEncryptionKey(QString encryptionKey);
+    void setServerVersion(QString serverVersion);
+
+    void setEndStartupChunkId(int id);
+    void setStartGameChunkId(int id);
+
+    void removeKeyFrame(int id);
+    void removeChunk(int id);
+
+    void setKeyFrames(QList<Keyframe> keyframes);
+
+    bool saveAs(QString filepath);
 
 private:
     QString m_gameid;

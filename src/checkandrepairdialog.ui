@@ -20,9 +20,6 @@
    <item row="2" column="1" colspan="3">
     <widget class="QLineEdit" name="lineEdit_platformid"/>
    </item>
-   <item row="5" column="1" colspan="3">
-    <widget class="QSpinBox" name="spinBox_endstartupchunkid"/>
-   </item>
    <item row="5" column="0">
     <widget class="QLabel" name="label_2">
      <property name="sizePolicy">
@@ -86,9 +83,6 @@
       <string>Filename :</string>
      </property>
     </widget>
-   </item>
-   <item row="6" column="1" colspan="3">
-    <widget class="QSpinBox" name="spinBox_startgamechunkid"/>
    </item>
    <item row="0" column="1" colspan="3">
     <widget class="QLineEdit" name="lineEdit_filename"/>
@@ -198,6 +192,22 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Server version :</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3">
+    <widget class="QLineEdit" name="lineEdit_serverversion"/>
+   </item>
    <item row="7" column="0">
     <widget class="QCheckBox" name="checkBox_gameinfos">
      <property name="text">
@@ -219,21 +229,11 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="text">
-      <string>Server version :</string>
-     </property>
-    </widget>
+   <item row="6" column="1">
+    <widget class="QSpinBox" name="spinBox_startgamechunkid"/>
    </item>
-   <item row="1" column="1" colspan="3">
-    <widget class="QLineEdit" name="lineEdit_serverversion"/>
+   <item row="5" column="1">
+    <widget class="QSpinBox" name="spinBox_endstartupchunkid"/>
    </item>
   </layout>
  </widget>

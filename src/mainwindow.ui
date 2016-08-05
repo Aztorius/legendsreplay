@@ -1236,7 +1236,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionAdvanced_Recorder"/>
-    <addaction name="actionCheck_and_repair"/>
+    <addaction name="actionRepair_tool"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1303,9 +1303,13 @@
     <string>About LegendsReplay</string>
    </property>
   </action>
-  <action name="actionCheck_and_repair">
+  <action name="actionRepair_tool">
+   <property name="icon">
+    <iconset resource="legendsreplay.qrc">
+     <normaloff>:/icons/repair.png</normaloff>:/icons/repair.png</iconset>
+   </property>
    <property name="text">
-    <string>Check and repair</string>
+    <string>Repair tool</string>
    </property>
   </action>
  </widget>

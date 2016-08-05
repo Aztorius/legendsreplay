@@ -2,6 +2,8 @@
 #define CHECKANDREPAIRDIALOG_H
 
 #include <QDialog>
+#include <QMessageBox>
+#include <QFileDialog>
 
 #include "replay.h"
 
@@ -22,10 +24,12 @@ private:
     Ui::CheckAndRepairDialog *ui;
 
     Replay m_replay;
+    bool m_checked;
 
 private slots:
     void repair();
     void check();
+    void openFile();
 };
 
 #endif // CHECKANDREPAIRDIALOG_H

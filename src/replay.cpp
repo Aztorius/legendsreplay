@@ -141,57 +141,57 @@ Replay::~Replay()
 
 }
 
-QString Replay::getFilepath()
+QString Replay::getFilepath() const
 {
     return m_filepath;
 }
 
-QString Replay::getGameid()
+QString Replay::getGameId() const
 {
     return m_gameid;
 }
 
-QString Replay::getPlatformId()
+QString Replay::getPlatformId() const
 {
     return m_platformid;
 }
 
-QString Replay::getEncryptionkey()
+QString Replay::getEncryptionkey() const
 {
     return m_encryptionkey;
 }
 
-QList<Keyframe> Replay::getKeyFrames()
+QList<Keyframe> Replay::getKeyFrames() const
 {
     return m_keyframes;
 }
 
-QList<Chunk> Replay::getChunks()
+QList<Chunk> Replay::getChunks() const
 {
     return m_chunks;
 }
 
-QList<Chunk> Replay::getPrimaryChunks()
+QList<Chunk> Replay::getPrimaryChunks() const
 {
     return m_primarychunks;
 }
 
-QJsonDocument Replay::getGameinfos()
+QJsonDocument Replay::getGameinfos() const
 {
     return m_gameinfos;
 }
 
-QString Replay::getServerversion()
+QString Replay::getServerVersion() const
 {
     return m_serverversion;
 }
 
-QString Replay::getEndstartupchunkid()
+QString Replay::getEndStartupChunkId() const
 {
     return m_endstartupchunkid;
 }
 
-QString Replay::getStartgamechunkid()
+QString Replay::getStartGameChunkId() const
 {
     return m_startgamechunkid;
 }
@@ -238,7 +238,7 @@ Keyframe Replay::getKeyFrame(int id) const
     return keyframe;
 }
 
-Keyframe Replay::findKeyframeByChunkId(int chunkid)
+Keyframe Replay::findKeyframeByChunkId(int chunkid) const
 {
     Keyframe keyframe;
     for(int i = 0; i < m_keyframes.size(); i++)
@@ -257,7 +257,7 @@ Keyframe Replay::findKeyframeByChunkId(int chunkid)
     return keyframe;
 }
 
-QByteArray Replay::getEndOfGameStats()
+QByteArray Replay::getEndOfGameStats() const
 {
     return QByteArray::fromBase64(m_endofgamestats);
 }
@@ -266,6 +266,86 @@ bool Replay::repair(){
     while(m_keyframes.size() > 0 && this->getChunk(m_keyframes.first().getNextchunkid()).getId() == 0){
         m_keyframes.removeFirst();
     }
+
+    return true;
+}
+
+void Replay::setGameId(QString gameId){
+    m_gameid = gameId;
+}
+
+void Replay::setPlatformId(QString platformId){
+    m_platformid = platformId;
+}
+
+void Replay::setEncryptionKey(QString encryptionKey){
+    m_encryptionkey = encryptionKey;
+}
+
+void Replay::setServerVersion(QString serverVersion){
+    m_serverversion = serverVersion;
+}
+
+void Replay::setEndStartupChunkId(int id){
+    m_endstartupchunkid = QString::number(id);
+}
+
+void Replay::setStartGameChunkId(int id){
+    m_startgamechunkid = QString::number(id);
+}
+
+void Replay::removeKeyFrame(int id){
+    for(int i = 0; i < m_keyframes.size(); i++){
+        if(m_keyframes.at(i).getId() == id){
+            m_keyframes.removeAt(i);
+            break;
+        }
+    }
+}
+
+void Replay::removeChunk(int id){
+    for(int i = 0; i < m_chunks.size(); i++){
+        if(m_chunks.at(i).getId() == id){
+            m_chunks.removeAt(i);
+            break;
+        }
+    }
+}
+
+void Replay::setKeyFrames(QList<Keyframe> keyframes){
+    m_keyframes = keyframes;
+}
+
+bool Replay::saveAs(QString filepath){
+    QFile file(filepath);
+
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        return false;
+    }
+
+    QTextStream stream(&file);
+
+    stream << "::ORHeader:" << m_platformid << ":" << m_gameid << ":" << m_encryptionkey << ":" << m_serverversion << ":" << m_endstartupchunkid << ":" << m_startgamechunkid << "::" << endl;
+
+    if(!m_gameinfos.isEmpty()){
+        stream << "::ORGameInfos:" << m_gameinfos.toBinaryData().toBase64() << "::" << endl;
+    }
+
+    if(!m_endofgamestats.isEmpty()){
+        stream << "::ORGameStats:" << m_endofgamestats.toBase64() << "::" << endl;
+    }
+
+    foreach(Keyframe currentKF, m_keyframes){
+        stream << "::ORKeyFrame:" << QString::number(currentKF.getId()) << ":" << QString::number(currentKF.getNextchunkid()) << ":" << currentKF.getData().toBase64() << "::" << endl;
+    }
+
+    foreach(Chunk currentCK, m_chunks){
+        stream << "::ORChunk:" << QString::number(currentCK.getId()) << ":" << QString::number(currentCK.getKeyframeId()) << ":" << QString::number(currentCK.getDuration()) << ":" << currentCK.getData().toBase64() << "::" << endl;
+    }
+
+    stream << "::OREnd::" << endl;
+
+    file.close();
 
     return true;
 }

@@ -206,7 +206,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
     connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
 
-    connect(ui->actionCheck_and_repair, SIGNAL(triggered()), this, SLOT(slot_checkandrepair()));
+    connect(ui->actionRepair_tool, SIGNAL(triggered()), this, SLOT(slot_checkandrepair()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionReport_an_issue, SIGNAL(triggered()), this, SLOT(slot_reportAnIssue()));
     connect(ui->actionAbout_LegendsReplay, SIGNAL(triggered()), this, SLOT(slot_aboutLegendsReplay()));
@@ -302,7 +302,7 @@ void MainWindow::setArgs(int argc, char *argv[])
         }
 
         Replay replay(argv[1]);
-        if(!replay.getGameid().isEmpty()){
+        if(!replay.getGameId().isEmpty()){
             replay_launch(argv[1]);
             return;
         }
@@ -672,7 +672,7 @@ void MainWindow::slot_setdirectory()
 
 void MainWindow::slot_setpbedirectory()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"),loldirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"), loldirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
     }
@@ -683,7 +683,7 @@ void MainWindow::slot_setpbedirectory()
 
 void MainWindow::slot_setreplaydirectory()
 {
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),replaydirectory,QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), replaydirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if(dir.isEmpty()){
         return;
     }
@@ -1081,7 +1081,7 @@ void MainWindow::slot_refresh_recordedGames()
             datetime.setMSecsSinceEpoch(quint64(game.getGameinfos().object().value("gameStartTime").toVariant().toLongLong()));
 
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getPlatformId()));
-            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameid()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameId()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
 
@@ -1385,7 +1385,7 @@ void MainWindow::slot_open_replay(bool param)
 {
     Q_UNUSED(param);
 
-    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"),replaydirectory);
+    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"), replaydirectory);
     if(!path.isEmpty()){
         replay_launch(path);
     }
@@ -1429,7 +1429,7 @@ void MainWindow::replay_launch(QString pathfile)
 
     httpserver->stopListening();
 
-    if(replay->getGameid().isEmpty()){
+    if(replay->getGameId().isEmpty()){
         log(tr("Invalid replay file, aborting."));
         delete replay;
         replay = NULL;
@@ -1442,10 +1442,10 @@ void MainWindow::replay_launch(QString pathfile)
         if(url == "/observer-mode/rest/consumer/version"){
             res->setStatusCode(qhttp::ESTATUS_OK);      // http status 200
             res->addHeader("Content-Type", "text/plain");
-            res->end(replay->getServerversion().toLocal8Bit());
+            res->end(replay->getServerVersion().toLocal8Bit());
             log(tr("Server: send server version"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getPlatformId() + "/" + replay->getGameid())){
+        else if(url.contains("/observer-mode/rest/consumer/getGameMetaData/" + replay->getPlatformId() + "/" + replay->getGameId())){
             int firstchunkid = replay->getChunks().first().getId();
 
             while(replay->findKeyframeByChunkId(firstchunkid).getId() == 0)
@@ -1454,7 +1454,7 @@ void MainWindow::replay_launch(QString pathfile)
             }
 
             QString metadata = "{\"gameKey\":{";
-            metadata.append("\"gameId\":" + replay->getGameid());
+            metadata.append("\"gameId\":" + replay->getGameId());
             metadata.append(",\"platformId\":\"" + replay->getPlatformId() + "\"}");
             metadata.append(",\"gameServerAddress\":\"\"");
             metadata.append(",\"port\":0");
@@ -1463,11 +1463,11 @@ void MainWindow::replay_launch(QString pathfile)
             metadata.append(",\"gameEnded\":false");
             metadata.append(",\"lastChunkId\":" + QString::number(firstchunkid));
             metadata.append(",\"lastKeyFrameId\":" + QString::number(replay->findKeyframeByChunkId(firstchunkid).getId()));
-            metadata.append(",\"endStartupChunkId\":" + replay->getEndstartupchunkid());
+            metadata.append(",\"endStartupChunkId\":" + replay->getEndStartupChunkId());
             metadata.append(",\"delayTime\":150000");
             metadata.append(",\"keyFrameTimeInterval\":60000");
             metadata.append(",\"decodedEncryptionKey\":\"\"");
-            metadata.append(",\"startGameChunkId\":" + replay->getStartgamechunkid());
+            metadata.append(",\"startGameChunkId\":" + replay->getStartGameChunkId());
             metadata.append(",\"gameLength\":0");
             metadata.append(",\"clientAddedLag\":30000");
             metadata.append(",\"clientBackFetchingEnabled\":false");
@@ -1483,10 +1483,10 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: send game metadata"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getPlatformId() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getLastChunkInfo/" + replay->getPlatformId() + "/" + replay->getGameId()))
         {
-            int endstartupchunkid = replay->getEndstartupchunkid().toInt();
-            int startgamechunkid = replay->getStartgamechunkid().toInt();
+            int endstartupchunkid = replay->getEndStartupChunkId().toInt();
+            int startgamechunkid = replay->getStartGameChunkId().toInt();
             int endgamechunkid = 0;
             int nextavailablechunk = 6000;
 
@@ -1546,12 +1546,12 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: send lastChunkInfo"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameId()))
         {
             int chunkid = -1;
 
             //Get and send the chunk
-            url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameid() + "/");
+            url.remove("/observer-mode/rest/consumer/getGameDataChunk/" + replay->getPlatformId() + "/" + replay->getGameId() + "/");
             chunkid = url.left(url.indexOf("/")).toInt();
 
             Chunk chunk = replay->getChunk(chunkid);
@@ -1565,7 +1565,7 @@ void MainWindow::replay_launch(QString pathfile)
                 res->addHeader("Content-Length", QString::number(chunk_ba.size()).toLocal8Bit());
                 res->end(chunk_ba);
 
-                if(serverChunkCount >= replay->getEndstartupchunkid().toInt() && chunkid > replay->getEndstartupchunkid().toInt()){
+                if(serverChunkCount >= replay->getEndStartupChunkId().toInt() && chunkid > replay->getEndStartupChunkId().toInt()){
                     serverChunkCount++;
                 }
 
@@ -1588,12 +1588,12 @@ void MainWindow::replay_launch(QString pathfile)
                 log(tr("Server: unknown requested chunk ") + QString::number(chunkid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameId()))
         {
             int keyframeid = -1;
 
             //Get and send the keyframe
-            url.remove("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameid() + "/");
+            url.remove("/observer-mode/rest/consumer/getKeyFrame/" + replay->getPlatformId() + "/" + replay->getGameId() + "/");
             keyframeid = url.left(url.indexOf("/")).toInt();
 
             Keyframe keyframe = replay->getKeyFrame(keyframeid);
@@ -1611,7 +1611,7 @@ void MainWindow::replay_launch(QString pathfile)
                 log(tr("Server: unknown requested keyframe ") + QString::number(keyframeid));
             }
         }
-        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getPlatformId() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/endOfGameStats/" + replay->getPlatformId() + "/" + replay->getGameId()))
         {
             //End of game stats requested
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -1620,7 +1620,7 @@ void MainWindow::replay_launch(QString pathfile)
 
             log(tr("Server: End of game stats sent"));
         }
-        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getPlatformId() + "/" + replay->getGameid()))
+        else if(url.contains("/observer-mode/rest/consumer/end/" + replay->getPlatformId() + "/" + replay->getGameId()))
         {
             //End of replay requested : error while replaying
             res->setStatusCode(qhttp::ESTATUS_OK);
@@ -1647,7 +1647,7 @@ void MainWindow::replay_launch(QString pathfile)
     });
 
     //Launch lol client
-    lol_launch(replay->getPlatformId(), replay->getEncryptionkey(), replay->getGameid(),true);
+    lol_launch(replay->getPlatformId(), replay->getEncryptionkey(), replay->getGameId(),true);
 }
 
 void MainWindow::showmessage(QString message)
@@ -1925,7 +1925,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
         menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"));
         menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"));
         menu->addSeparator();
-        menu->addAction(tr("Check and Repair"));
+        menu->addAction(QIcon(":/icons/repair.png"), tr("Repair tool"));
         menu->addSeparator();
         menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"));
     }
@@ -1970,7 +1970,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 else if(action->text() == tr("Stats")){
                     Replay local_replay(path, true);
 
-                    if(local_replay.getGameid().isEmpty()){
+                    if(local_replay.getGameId().isEmpty()){
                         return;
                     }
 
@@ -1987,13 +1987,13 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     }
 
                     if(serverRegion.toLower() == "kr"){
-                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
                     }
                     else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
                     }
                 }
-                else if(action->text() == tr("Check and Repair")){
+                else if(action->text() == tr("Repair tool")){
                     CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
                     newCheckAndRepairDialog->show();
                     newCheckAndRepairDialog->load(Replay(path));
@@ -2024,7 +2024,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                 else if(action->text() == tr("Stats")){
                     Replay local_replay(path, true);
 
-                    if(local_replay.getGameid().isEmpty()){
+                    if(local_replay.getGameId().isEmpty()){
                         return;
                     }
 
@@ -2041,13 +2041,13 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     }
 
                     if(servername.toLower() == "kr"){
-                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
                     }
                     else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameid() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
                     }
                 }
-                else if(action->text() == tr("Check and Repair")){
+                else if(action->text() == tr("Repair tool")){
                     CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
                     newCheckAndRepairDialog->show();
                     newCheckAndRepairDialog->load(Replay(path));
