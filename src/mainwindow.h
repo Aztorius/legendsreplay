@@ -16,6 +16,7 @@
 #include <QAction>
 #include <QListWidgetItem>
 #include <QProgressBar>
+#include <QFileSystemWatcher>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -112,6 +113,8 @@ private:
 
     QTranslator translator;
 
+    QFileSystemWatcher* m_directory_watcher;
+
 private slots:
     void slot_networkResult_status(QNetworkReply *reply);
     void slot_networkResult_featured(QNetworkReply *reply);
@@ -164,6 +167,7 @@ private slots:
     void slot_checkandrepair();
 
     void slot_setLanguage();
+    void slot_directoryChanged(QString path);
 
 protected:
     void changeEvent(QEvent*);

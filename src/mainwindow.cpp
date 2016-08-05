@@ -205,7 +205,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
     connect(ui->pushButton_searchsummoner_record, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_record()));
     connect(ui->tableWidget_replayservers, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_replayservers()));
-
     connect(ui->actionRepair_tool, SIGNAL(triggered()), this, SLOT(slot_checkandrepair()));
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionReport_an_issue, SIGNAL(triggered()), this, SLOT(slot_reportAnIssue()));
@@ -216,14 +215,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     slot_statusRefresh();
     connect(ui->pushButton_statusRefresh, SIGNAL(pressed()), this, SLOT(slot_statusRefresh()));
-
     connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()));
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
-
     connect(ui->tableWidget_recordedgames, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_allgames()));
-
     connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
     connect(ui->tableWidget_yourgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
     connect(ui->listWidget_featured, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
@@ -234,10 +230,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_yourgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_mygames(int,int)));
 
     connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
-
     connect(ui->actionAdvanced_Recorder, SIGNAL(triggered()), this, SLOT(slot_openAdvancedRecorder()));
-
     connect(ui->pushButton_saveLanguage, SIGNAL(released()), this, SLOT(slot_setLanguage()));
+
+    m_directory_watcher = new QFileSystemWatcher;
+    m_directory_watcher->addPath(replaydirectory);
+    connect(m_directory_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(slot_directoryChanged(QString)));
 
     emit refresh_recordedGames();
 
@@ -273,6 +271,7 @@ MainWindow::~MainWindow()
         systemtrayicon->deleteLater();
     }
 
+    m_directory_watcher->deleteLater();
     httpserver->deleteLater();
     networkManager_featured->deleteLater();
     networkManager_status->deleteLater();
@@ -2251,4 +2250,10 @@ void MainWindow::changeEvent(QEvent* event)
 void MainWindow::slot_checkandrepair(){
     CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
     newCheckAndRepairDialog->show();
+}
+
+void MainWindow::slot_directoryChanged(QString path){
+    Q_UNUSED(path);
+
+    slot_refresh_recordedGames();
 }

@@ -328,7 +328,7 @@ bool Replay::saveAs(QString filepath){
     stream << "::ORHeader:" << m_platformid << ":" << m_gameid << ":" << m_encryptionkey << ":" << m_serverversion << ":" << m_endstartupchunkid << ":" << m_startgamechunkid << "::" << endl;
 
     if(!m_gameinfos.isEmpty()){
-        stream << "::ORGameInfos:" << m_gameinfos.toBinaryData().toBase64() << "::" << endl;
+        stream << "::ORGameInfos:" << m_gameinfos.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
     }
 
     if(!m_endofgamestats.isEmpty()){
@@ -337,6 +337,10 @@ bool Replay::saveAs(QString filepath){
 
     foreach(Keyframe currentKF, m_keyframes){
         stream << "::ORKeyFrame:" << QString::number(currentKF.getId()) << ":" << QString::number(currentKF.getNextchunkid()) << ":" << currentKF.getData().toBase64() << "::" << endl;
+    }
+
+    foreach(Chunk currentCK, m_primarychunks){
+        stream << "::ORChunk:" << QString::number(currentCK.getId()) << ":" << QString::number(currentCK.getKeyframeId()) << ":" << QString::number(currentCK.getDuration()) << ":" << currentCK.getData().toBase64() << "::" << endl;
     }
 
     foreach(Chunk currentCK, m_chunks){

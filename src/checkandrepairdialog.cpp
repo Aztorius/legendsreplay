@@ -217,11 +217,11 @@ void CheckAndRepairDialog::repair(){
     ui->progressBar->setValue(60);
 
     //Remove unused Chunks
-    while(m_replay.getChunks().size() > 0 && m_replay.getKeyFrame(m_replay.getChunks().first().getKeyframeId()).getId() == 0){
+    while(m_replay.getChunks().size() > 0 && m_replay.getChunks().first().getId() >= m_replay.getStartGameChunkId().toInt() && m_replay.getKeyFrame(m_replay.getChunks().first().getKeyframeId()).isEmpty()){
         m_replay.removeChunk(m_replay.getChunks().first().getId());
     }
 
-    while(m_replay.getChunks().size() > 0 && m_replay.getKeyFrame(m_replay.getChunks().last().getKeyframeId()).getId() == 0){
+    while(m_replay.getChunks().size() > 0 && m_replay.getKeyFrame(m_replay.getChunks().last().getKeyframeId()).isEmpty()){
         m_replay.removeChunk(m_replay.getChunks().last().getId());
     }
 
@@ -233,7 +233,7 @@ void CheckAndRepairDialog::repair(){
 
     ui->progressBar->setValue(80);
 
-    QString filepath = QFileDialog::getOpenFileName(this, tr("Save as"), m_replay.getFilepath());
+    QString filepath = QFileDialog::getSaveFileName(this, tr("Save as"), m_replay.getFilepath());
     if(filepath.isEmpty()){
         ui->progressBar->setValue(0);
         return;
