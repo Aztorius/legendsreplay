@@ -1,22 +1,16 @@
 language: cpp
+dist: trusty
 
 compiler:
  - gcc
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: required
-    - os: osx
-
 before_script:
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install --yes qt5-default qttools5-dev-tools ; fi
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y ; fi
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
- - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-5; fi
- - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
+ - sudo apt-get update -qq
+ - sudo apt-get install --yes qt5-default qttools5-dev-tools
+ - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq g++-5
+ - export CXX="g++-5" CC="gcc-5"
 
 script:
  - git submodule init && git submodule update
