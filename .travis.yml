@@ -3,6 +3,7 @@ language: cpp
 matrix:
   include:
     - os: linux
+      sudo: required
       dist: trusty
       addons:
         apt:
@@ -11,10 +12,10 @@ matrix:
           packages:
             - qt5-default qttools5-dev-tools
             - g++-6
-      env: COMPILER=g++-6
+      env: COMPILER=g++-6 CXX="g++-6" CC="gcc-6"
     - os: osx
       dist: xcode7.2
-      env: COMPILER=clang CXX="g++-6" CC="gcc-6"
+      env: COMPILER=clang
 
 before_script:
  - git submodule init && git submodule update
