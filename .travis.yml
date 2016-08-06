@@ -24,10 +24,11 @@ before_script:
  - git submodule init && git submodule update
  - sudo apt-get update -qq
  - sudo apt-get install -qq --yes qt5-default qttools5-dev-tools
+ - qmake --version
 
 script:
  - cd qhttp
  - ./update-dependencies.sh
  - cd ..
  - qmake LegendsReplay.pro
- - make CXX=$COMPILER
+ - make
