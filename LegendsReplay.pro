@@ -6,4 +6,4 @@ SUBDIRS += qhttp
 
 src.depends += qhttp
 
-CONFIG += c++14
+QMAKE_CXXFLAGS += -std=c++14
