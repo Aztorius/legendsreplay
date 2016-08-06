@@ -9,8 +9,10 @@ matrix:
         apt:
           sources:
             - ubuntu-toolchain-r-test
+            - beineri-opt-qt561-trusty
           packages:
             - qt5-default qttools5-dev-tools
+            - qt55base
             - g++-6 gcc-6
       env: COMPILER=g++-6 CXX=g++-6 CC=gcc-6
     - os: osx
@@ -19,11 +21,12 @@ matrix:
 
 before_script:
  - git submodule init && git submodule update
+ - source /opt/qt56/bin/qt56-env.sh
  - qmake -v
 
 script:
  - cd qhttp
  - ./update-dependencies.sh
  - cd ..
- - qmake QMAKE_CXXFLAGS+=-std=c++14 LegendsReplay.pro
+ - qmake LegendsReplay.pro
  - make CXX=$COMPILER
