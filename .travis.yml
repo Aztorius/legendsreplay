@@ -11,8 +11,8 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - qt5-default qttools5-dev-tools
-            - g++-6
-      env: COMPILER=g++-6 CXX="g++-6" CC="gcc-6"
+            - g++-6 gcc-6
+      env: COMPILER=g++-6 CXX=g++-6 CC=gcc-6
     - os: osx
       dist: xcode7.2
       env: COMPILER=clang
@@ -26,4 +26,4 @@ script:
  - ./update-dependencies.sh
  - cd ..
  - qmake LegendsReplay.pro
- - make
+ - make CXX=$COMPILER
