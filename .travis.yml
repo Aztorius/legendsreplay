@@ -13,8 +13,8 @@ matrix:
 before_script:
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install --yes qt5-default qttools5-dev-tools ; fi
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
- - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y ; fi
+ - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-5; fi
  - if [ "$CXX" = "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
 
