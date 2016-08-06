@@ -25,5 +25,5 @@ script:
  - cd qhttp
  - ./update-dependencies.sh
  - cd ..
- - qmake LegendsReplay.pro
+ - qmake QMAKE_CXXFLAGS+=-std=c++14 LegendsReplay.pro
  - make CXX=$COMPILER
