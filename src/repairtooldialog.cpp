@@ -1,9 +1,9 @@
-#include "checkandrepairdialog.h"
-#include "ui_checkandrepairdialog.h"
+#include "repairtooldialog.h"
+#include "ui_repairtooldialog.h"
 
-CheckAndRepairDialog::CheckAndRepairDialog(QWidget *parent) :
+RepairToolDialog::RepairToolDialog(QWidget *parent) :
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-    ui(new Ui::CheckAndRepairDialog)
+    ui(new Ui::RepairToolDialog)
 {
     ui->setupUi(this);
 
@@ -26,17 +26,17 @@ CheckAndRepairDialog::CheckAndRepairDialog(QWidget *parent) :
     connect(ui->pushButton_repairandsave, SIGNAL(clicked()), this, SLOT(repair()));
 }
 
-CheckAndRepairDialog::~CheckAndRepairDialog()
+RepairToolDialog::~RepairToolDialog()
 {
     delete ui;
 }
 
-void CheckAndRepairDialog::load(Replay replay){
+void RepairToolDialog::load(Replay replay){
     m_replay = replay;
     check();
 }
 
-void CheckAndRepairDialog::check(){
+void RepairToolDialog::check(){
     ui->listWidget_chunks->clear();
     ui->listWidget_keyframes->clear();
 
@@ -130,7 +130,7 @@ void CheckAndRepairDialog::check(){
     }
 }
 
-void CheckAndRepairDialog::repair(){
+void RepairToolDialog::repair(){
     if(!m_checked){
         check();
     }
@@ -248,7 +248,7 @@ void CheckAndRepairDialog::repair(){
     ui->progressBar->setValue(100);
 }
 
-void CheckAndRepairDialog::openFile(){
+void RepairToolDialog::openFile(){
     QString filepath = QFileDialog::getOpenFileName(this, tr("Open a replay file"), m_replay.getFilepath());
     if(filepath.isEmpty()){
         return;

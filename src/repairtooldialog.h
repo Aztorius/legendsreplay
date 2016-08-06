@@ -8,20 +8,20 @@
 #include "replay.h"
 
 namespace Ui {
-class CheckAndRepairDialog;
+class RepairToolDialog;
 }
 
-class CheckAndRepairDialog : public QDialog
+class RepairToolDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CheckAndRepairDialog(QWidget *parent = 0);
-    ~CheckAndRepairDialog();
+    explicit RepairToolDialog(QWidget *parent = 0);
+    ~RepairToolDialog();
     void load(Replay replay);
 
 private:
-    Ui::CheckAndRepairDialog *ui;
+    Ui::RepairToolDialog *ui;
 
     Replay m_replay;
     bool m_checked;

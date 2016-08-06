@@ -244,9 +244,15 @@ MainWindow::MainWindow(QWidget *parent) :
     if(systemtrayavailable){
         systemtrayicon = new QSystemTrayIcon;
         systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
+
+        QMenu* menu = new QMenu;
+        menu->addAction(QIcon(":/icons/exit.png"), tr("Exit"));
+        systemtrayicon->setContextMenu(menu);
+
         systemtrayicon->show();
         connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
         connect(systemtrayicon, SIGNAL(messageClicked()), this, SLOT(slot_messageclicked()));
+        connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_customMenuTriggeredSystemTrayIcon(QAction*)));
     }
 
     QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
@@ -563,7 +569,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
                         incidents.append("\n" + incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString());
                     }
 
-                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(QString::number(incidentsArray.size()) + tr(" incidents")));
+                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(QString::number(incidentsArray.size()) + tr(" incident(s)")));
                     ui->tableWidget_status->item(i, j)->setToolTip(incidents);
                     ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
                     ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(255,165,0));
@@ -1993,9 +1999,9 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     }
                 }
                 else if(action->text() == tr("Repair tool")){
-                    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
-                    newCheckAndRepairDialog->show();
-                    newCheckAndRepairDialog->load(Replay(path));
+                    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
+                    newRepairToolDialog->show();
+                    newRepairToolDialog->load(Replay(path));
                 }
             }
         }
@@ -2047,9 +2053,9 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     }
                 }
                 else if(action->text() == tr("Repair tool")){
-                    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
-                    newCheckAndRepairDialog->show();
-                    newCheckAndRepairDialog->load(Replay(path));
+                    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
+                    newRepairToolDialog->show();
+                    newRepairToolDialog->load(Replay(path));
                 }
             }
         }
@@ -2248,12 +2254,18 @@ void MainWindow::changeEvent(QEvent* event)
 }
 
 void MainWindow::slot_checkandrepair(){
-    CheckAndRepairDialog *newCheckAndRepairDialog = new CheckAndRepairDialog(this);
-    newCheckAndRepairDialog->show();
+    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
+    newRepairToolDialog->show();
 }
 
 void MainWindow::slot_directoryChanged(QString path){
     Q_UNUSED(path);
 
     slot_refresh_recordedGames();
+}
+
+void MainWindow::slot_customMenuTriggeredSystemTrayIcon(QAction *action){
+    if(action->text() == tr("Exit")){
+        qApp->exit(0);
+    }
 }

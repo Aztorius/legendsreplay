@@ -27,7 +27,7 @@
 #include "server.h"
 #include "gameinfoswidget.h"
 #include "advancedrecorderdialog.h"
-#include "checkandrepairdialog.h"
+#include "repairtooldialog.h"
 
 using namespace qhttp::server;
 
@@ -161,6 +161,7 @@ private slots:
 
     void slot_customcontextmenu(QPoint point);
     void slot_custommenutriggered(QAction* action);
+    void slot_customMenuTriggeredSystemTrayIcon(QAction* action);
 
     void slot_reportAnIssue();
     void slot_aboutLegendsReplay();

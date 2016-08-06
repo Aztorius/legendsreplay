@@ -21,7 +21,7 @@ SOURCES += main.cpp\
     gameinfoswidget.cpp \
     server.cpp \
     advancedrecorderdialog.cpp \
-    checkandrepairdialog.cpp
+    repairtooldialog.cpp
 
 HEADERS  += mainwindow.h \
     recorder.h \
@@ -31,12 +31,12 @@ HEADERS  += mainwindow.h \
     gameinfoswidget.h \
     server.h \
     advancedrecorderdialog.h \
-    checkandrepairdialog.h
+    repairtooldialog.h
 
 FORMS    += mainwindow.ui \
     gameinfoswidget.ui \
     advancedrecorderdialog.ui \
-    checkandrepairdialog.ui
+    repairtooldialog.ui
 
 unix: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
 win32: LIBS += -L$$OUT_PWD/../qhttp/xbin/ -lqhttp
