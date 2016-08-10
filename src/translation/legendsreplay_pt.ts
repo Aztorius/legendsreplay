@@ -31,12 +31,12 @@
     <message>
         <location filename="../advancedrecorderdialog.ui" line="48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PlatformId of the server. Ex: EUW1 NA1 ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;O PlatformId do server . Ex: EUW1 NA1 ....&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Force complete download of the game, even if the server cannot send the requested chunks and keyframe.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;Html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Força download completo do jogo, mesmo se o servidor não pode enviar os pedaços e quadro chave solicitadas.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="58"/>
@@ -46,22 +46,22 @@
     <message>
         <location filename="../advancedrecorderdialog.ui" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The spectator server address. Ex: spectator.euw1.lol.riotgames.com:80&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;Html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; O endereço do servidor espectador . Ex: spectator.euw1.lol.riotgames.com:80&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="78"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The game id as a big integer. Ex: 260706552&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;O ID de jogo como um grande número inteiro . Ex : 260706552&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="85"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption key in base 64 encoding format.&lt;/p&gt;&lt;p&gt;Ex: nsNODdOBiYbiJjeBg0Hp+3ai7YDYNguW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A chave de criptografia da base de formato de 64 codificação.&lt;/p&gt;&lt;p&gt;Ex: nsNODdOBiYbiJjeBg0Hp+3ai7YDYNguW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="92"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download end of game stats.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download de estatísticas de jogo ..&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="95"/>
@@ -180,89 +180,6 @@
         <translation>Estado</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="518"/>
-        <location filename="../mainwindow.ui" line="758"/>
-        <location filename="../mainwindow.ui" line="1040"/>
-        <source>EUW</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="523"/>
-        <location filename="../mainwindow.ui" line="763"/>
-        <location filename="../mainwindow.ui" line="1045"/>
-        <source>EUNE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="528"/>
-        <location filename="../mainwindow.ui" line="768"/>
-        <location filename="../mainwindow.ui" line="1050"/>
-        <source>NA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="533"/>
-        <location filename="../mainwindow.ui" line="773"/>
-        <location filename="../mainwindow.ui" line="1055"/>
-        <source>JP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="538"/>
-        <location filename="../mainwindow.ui" line="778"/>
-        <location filename="../mainwindow.ui" line="1060"/>
-        <source>KR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="543"/>
-        <location filename="../mainwindow.ui" line="783"/>
-        <location filename="../mainwindow.ui" line="1065"/>
-        <source>OCE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="548"/>
-        <location filename="../mainwindow.ui" line="788"/>
-        <location filename="../mainwindow.ui" line="1070"/>
-        <source>BR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="553"/>
-        <location filename="../mainwindow.ui" line="793"/>
-        <location filename="../mainwindow.ui" line="1075"/>
-        <source>LAN</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="558"/>
-        <location filename="../mainwindow.ui" line="798"/>
-        <location filename="../mainwindow.ui" line="1080"/>
-        <source>LAS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="563"/>
-        <location filename="../mainwindow.ui" line="803"/>
-        <location filename="../mainwindow.ui" line="1085"/>
-        <source>RU</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="568"/>
-        <location filename="../mainwindow.ui" line="808"/>
-        <location filename="../mainwindow.ui" line="1090"/>
-        <source>TR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="573"/>
-        <location filename="../mainwindow.ui" line="813"/>
-        <source>PBE</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="581"/>
         <location filename="../mainwindow.cpp" line="1938"/>
         <location filename="../mainwindow.cpp" line="2065"/>
@@ -308,12 +225,12 @@
         <translation>Cliente</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1312"/>
+        <location filename="../mainwindow.ui" line="1317"/>
         <location filename="../mainwindow.cpp" line="1933"/>
         <location filename="../mainwindow.cpp" line="2001"/>
         <location filename="../mainwindow.cpp" line="2055"/>
         <source>Repair tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramenta de reparo</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="818"/>
@@ -333,7 +250,7 @@
     <message>
         <location filename="../mainwindow.ui" line="838"/>
         <source>Client Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Alpha cliente</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="843"/>
@@ -374,7 +291,7 @@
     <message>
         <location filename="../mainwindow.ui" line="938"/>
         <location filename="../mainwindow.ui" line="1162"/>
-        <location filename="../mainwindow.ui" line="1207"/>
+        <location filename="../mainwindow.ui" line="1212"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
@@ -421,69 +338,54 @@
         <translation>Seu PBE ID :</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1182"/>
-        <source>en</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1187"/>
-        <source>fr</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1192"/>
-        <source>pt</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1200"/>
+        <location filename="../mainwindow.ui" line="1205"/>
         <source>Language :</source>
         <translation>Idioma :</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1228"/>
+        <location filename="../mainwindow.ui" line="1233"/>
         <source>File</source>
         <translation>Ficheiro</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1236"/>
+        <location filename="../mainwindow.ui" line="1241"/>
         <source>Tools</source>
         <translation>Ferramentas</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1243"/>
+        <location filename="../mainwindow.ui" line="1248"/>
         <source>Help</source>
         <translation>Ajuda</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1259"/>
+        <location filename="../mainwindow.ui" line="1264"/>
         <source>Open replay</source>
         <translation>Abrir um replay</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1273"/>
+        <location filename="../mainwindow.ui" line="1278"/>
         <location filename="../mainwindow.cpp" line="249"/>
         <location filename="../mainwindow.cpp" line="2268"/>
         <source>Exit</source>
         <translation>Saída</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1282"/>
+        <location filename="../mainwindow.ui" line="1287"/>
         <source>Advanced Recorder</source>
         <translation>Gravador específico</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1291"/>
+        <location filename="../mainwindow.ui" line="1296"/>
         <source>Report an issue</source>
         <translation>Comunicar um problema</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1294"/>
+        <location filename="../mainwindow.ui" line="1299"/>
         <source>Report an issue on GitHub</source>
         <translation>Comunicar um problema no GitHub</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1303"/>
+        <location filename="../mainwindow.ui" line="1308"/>
         <source>About LegendsReplay</source>
         <translation>Concernente LegendsReplay</translation>
     </message>
@@ -641,7 +543,7 @@ Please set a valid one.</source>
     <message>
         <location filename="../mainwindow.cpp" line="572"/>
         <source> incident(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>incidente(s)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="591"/>
@@ -1157,99 +1059,99 @@ This software use Qt and qHttp.</source>
     <message>
         <location filename="../repairtooldialog.ui" line="17"/>
         <source>Repair Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de reparação</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="38"/>
         <source>End startup chunk id :</source>
-        <translation type="unfinished"></translation>
+        <translation>Terminar a inicialização ID pedaço :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="57"/>
         <source>Start game chunk id :</source>
-        <translation type="unfinished"></translation>
+        <translation>Comece o jogo chunk id:</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="70"/>
         <source>Repair and save</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparar e salvar</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="83"/>
         <source>File :</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="105"/>
         <source>Platform Id :</source>
-        <translation type="unfinished">Id da plataforma :</translation>
+        <translation>Id da plataforma :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="118"/>
         <source>Game Id :</source>
-        <translation type="unfinished">Id do jogo :</translation>
+        <translation>Id do jogo :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="125"/>
         <source>Keyframes missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Keyframes em falta</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="135"/>
         <source>Chunks missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Chunks em falta</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="148"/>
         <source>Encryption key :</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="164"/>
         <source>Playable</source>
-        <translation type="unfinished"></translation>
+        <translation>jogável</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="177"/>
         <source>Primary chunks</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="184"/>
         <source>Open file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir arquivo</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="191"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifica</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="204"/>
         <source>Server version :</source>
-        <translation type="unfinished"></translation>
+        <translation>versão do server :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="214"/>
         <source>Game infos</source>
-        <translation type="unfinished"></translation>
+        <translation>informações do jogo</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="228"/>
         <source>End of game stats</source>
-        <translation type="unfinished"></translation>
+        <translation>Estatísticas de jogos</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="105"/>
         <location filename="../repairtooldialog.cpp" line="109"/>
         <source>Chunk </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="116"/>
         <location filename="../repairtooldialog.cpp" line="117"/>
         <source>Keyframe </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="129"/>
@@ -1265,83 +1167,91 @@ This software use Qt and qHttp.</source>
         <location filename="../repairtooldialog.cpp" line="229"/>
         <location filename="../repairtooldialog.cpp" line="243"/>
         <source>LegendsReplay</source>
-        <translation type="unfinished">LegendsReplay</translation>
+        <translation>LegendsReplay</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="129"/>
         <source>The game is not currently playable.
 A repair is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>O jogo não está neste momento jogável.
+A reparação é necessária.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="138"/>
         <source>This replay is detected as readable.
 Do you really want to repair it ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta replay é detectado como legível.
+Você realmente quer para repará-lo ?</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="145"/>
         <source>This replay cannot be repaired.
 Repair is impossible without all PrimaryChunks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Esta replay não pode ser reparado .
+Reparação é impossível sem todas PrimaryChunks.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="150"/>
         <source>This replay cannot be repaired.
 Repair is impossible without at least some Chunks and Keyframes.</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Esta replay não pode ser reparado .
+Reparação é impossível sem , pelo menos, alguns pedaços e quadros-chave .</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="155"/>
         <source>A valid game id number is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um número de identificação do jogo válido é necessário.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="160"/>
         <source>A valid encryption key is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>A chave de criptografia válido é necessário.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="165"/>
         <source>A valid platform id is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>A ID de plataforma válido é necessário.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="170"/>
         <source>A valid endStartupChunkId number is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um número endStartupChunkId válido é necessário.
+</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="175"/>
         <source>A valid startGameChunkId number is needed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um número startGameChunkId válido é necessário.</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="212"/>
         <source>Repair failed.
 No valid keyframes left after repairing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparação falhou.
+Não keyframes válidos esquerda após a reparação .</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="229"/>
         <source>Repair failed.
 No valid chunks left after repairing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Reparação falhou.
+Não há pedaços válidos esquerda após a reparação .</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="236"/>
         <source>Save as</source>
-        <translation type="unfinished"></translation>
+        <translation>Salvar como</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="243"/>
         <source>Cannot open the output file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo de saída .</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="252"/>
         <source>Open a replay file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra um arquivo de Replay</translation>
     </message>
 </context>
 </TS>

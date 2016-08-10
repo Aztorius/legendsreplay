@@ -515,62 +515,62 @@
           </property>
           <item>
            <property name="text">
-            <string>EUW</string>
+            <string notr="true">EUW</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>EUNE</string>
+            <string notr="true">EUNE</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>NA</string>
+            <string notr="true">NA</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>JP</string>
+            <string notr="true">JP</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>KR</string>
+            <string notr="true">KR</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>OCE</string>
+            <string notr="true">OCE</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>BR</string>
+            <string notr="true">BR</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>LAN</string>
+            <string notr="true">LAN</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>LAS</string>
+            <string notr="true">LAS</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>RU</string>
+            <string notr="true">RU</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>TR</string>
+            <string notr="true">TR</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>PBE</string>
+            <string notr="true">PBE</string>
            </property>
           </item>
          </widget>
@@ -755,62 +755,62 @@
           </property>
           <row>
            <property name="text">
-            <string>EUW</string>
+            <string notr="true">EUW</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>EUNE</string>
+            <string notr="true">EUNE</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>NA</string>
+            <string notr="true">NA</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>JP</string>
+            <string notr="true">JP</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>KR</string>
+            <string notr="true">KR</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>OCE</string>
+            <string notr="true">OCE</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>BR</string>
+            <string notr="true">BR</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>LAN</string>
+            <string notr="true">LAN</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>LAS</string>
+            <string notr="true">LAS</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>RU</string>
+            <string notr="true">RU</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>TR</string>
+            <string notr="true">TR</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>PBE</string>
+            <string notr="true">PBE</string>
            </property>
           </row>
           <column>
@@ -1037,57 +1037,57 @@
           </property>
           <item>
            <property name="text">
-            <string>EUW</string>
+            <string notr="true">EUW</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>EUNE</string>
+            <string notr="true">EUNE</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>NA</string>
+            <string notr="true">NA</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>JP</string>
+            <string notr="true">JP</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>KR</string>
+            <string notr="true">KR</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>OCE</string>
+            <string notr="true">OCE</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>BR</string>
+            <string notr="true">BR</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>LAN</string>
+            <string notr="true">LAN</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>LAS</string>
+            <string notr="true">LAS</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>RU</string>
+            <string notr="true">RU</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>TR</string>
+            <string notr="true">TR</string>
            </property>
           </item>
          </widget>
@@ -1179,17 +1179,22 @@
           </property>
           <item>
            <property name="text">
-            <string>en</string>
+            <string notr="true">en</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>fr</string>
+            <string notr="true">fr</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>pt</string>
+            <string notr="true">pt</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">de</string>
            </property>
           </item>
          </widget>

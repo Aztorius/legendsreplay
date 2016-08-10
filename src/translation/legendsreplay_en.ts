@@ -180,89 +180,6 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="518"/>
-        <location filename="../mainwindow.ui" line="758"/>
-        <location filename="../mainwindow.ui" line="1040"/>
-        <source>EUW</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="523"/>
-        <location filename="../mainwindow.ui" line="763"/>
-        <location filename="../mainwindow.ui" line="1045"/>
-        <source>EUNE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="528"/>
-        <location filename="../mainwindow.ui" line="768"/>
-        <location filename="../mainwindow.ui" line="1050"/>
-        <source>NA</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="533"/>
-        <location filename="../mainwindow.ui" line="773"/>
-        <location filename="../mainwindow.ui" line="1055"/>
-        <source>JP</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="538"/>
-        <location filename="../mainwindow.ui" line="778"/>
-        <location filename="../mainwindow.ui" line="1060"/>
-        <source>KR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="543"/>
-        <location filename="../mainwindow.ui" line="783"/>
-        <location filename="../mainwindow.ui" line="1065"/>
-        <source>OCE</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="548"/>
-        <location filename="../mainwindow.ui" line="788"/>
-        <location filename="../mainwindow.ui" line="1070"/>
-        <source>BR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="553"/>
-        <location filename="../mainwindow.ui" line="793"/>
-        <location filename="../mainwindow.ui" line="1075"/>
-        <source>LAN</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="558"/>
-        <location filename="../mainwindow.ui" line="798"/>
-        <location filename="../mainwindow.ui" line="1080"/>
-        <source>LAS</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="563"/>
-        <location filename="../mainwindow.ui" line="803"/>
-        <location filename="../mainwindow.ui" line="1085"/>
-        <source>RU</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="568"/>
-        <location filename="../mainwindow.ui" line="808"/>
-        <location filename="../mainwindow.ui" line="1090"/>
-        <source>TR</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="573"/>
-        <location filename="../mainwindow.ui" line="813"/>
-        <source>PBE</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="581"/>
         <location filename="../mainwindow.cpp" line="1938"/>
         <location filename="../mainwindow.cpp" line="2065"/>
@@ -308,7 +225,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1312"/>
+        <location filename="../mainwindow.ui" line="1317"/>
         <location filename="../mainwindow.cpp" line="1933"/>
         <location filename="../mainwindow.cpp" line="2001"/>
         <location filename="../mainwindow.cpp" line="2055"/>
@@ -374,7 +291,7 @@
     <message>
         <location filename="../mainwindow.ui" line="938"/>
         <location filename="../mainwindow.ui" line="1162"/>
-        <location filename="../mainwindow.ui" line="1207"/>
+        <location filename="../mainwindow.ui" line="1212"/>
         <source>Save</source>
         <translation></translation>
     </message>
@@ -421,69 +338,54 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1182"/>
-        <source>en</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1187"/>
-        <source>fr</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1192"/>
-        <source>pt</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1200"/>
+        <location filename="../mainwindow.ui" line="1205"/>
         <source>Language :</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1228"/>
+        <location filename="../mainwindow.ui" line="1233"/>
         <source>File</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1236"/>
+        <location filename="../mainwindow.ui" line="1241"/>
         <source>Tools</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1243"/>
+        <location filename="../mainwindow.ui" line="1248"/>
         <source>Help</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1259"/>
+        <location filename="../mainwindow.ui" line="1264"/>
         <source>Open replay</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1273"/>
+        <location filename="../mainwindow.ui" line="1278"/>
         <location filename="../mainwindow.cpp" line="249"/>
         <location filename="../mainwindow.cpp" line="2268"/>
         <source>Exit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1282"/>
+        <location filename="../mainwindow.ui" line="1287"/>
         <source>Advanced Recorder</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1291"/>
+        <location filename="../mainwindow.ui" line="1296"/>
         <source>Report an issue</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1294"/>
+        <location filename="../mainwindow.ui" line="1299"/>
         <source>Report an issue on GitHub</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1303"/>
+        <location filename="../mainwindow.ui" line="1308"/>
         <source>About LegendsReplay</source>
         <translation></translation>
     </message>

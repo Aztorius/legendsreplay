@@ -6,72 +6,72 @@
     <message>
         <location filename="../advancedrecorderdialog.ui" line="14"/>
         <source>Advanced Recorder</source>
-        <translation type="unfinished"></translation>
+        <translation>Registrador Avanzado</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="20"/>
         <source>Game Id :</source>
-        <translation type="unfinished"></translation>
+        <translation>Juego Id :</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="27"/>
         <source>Encryption Key :</source>
-        <translation type="unfinished"></translation>
+        <translation>Clave de cifrado :</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="34"/>
         <source>Server Address :</source>
-        <translation type="unfinished"></translation>
+        <translation>Dirección del servidor :</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="41"/>
         <source>Platform Id :</source>
-        <translation type="unfinished"></translation>
+        <translation>Plataforma Id :</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The PlatformId of the server. Ex: EUW1 NA1 ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La Plataforma Id del servidor. Ejemplo: EUW1 NA1 ...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="55"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Force complete download of the game, even if the server cannot send the requested chunks and keyframe.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fuerza el descargado completo del juego, incluso si el servidor no puede enviar los chunks solicitados y keyframes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="58"/>
         <source>Force complete download</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuerza el descargado completo del juego</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The spectator server address. Ex: spectator.euw1.lol.riotgames.com:80&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La dirección de servidor de espectador. Ejemplo: spectator.euw1.lol.riotgames.com:80&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="78"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The game id as a big integer. Ex: 260706552&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;El juego id como un número entero grande. Ejemplo: 260706552&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="85"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The encryption key in base 64 encoding format.&lt;/p&gt;&lt;p&gt;Ex: nsNODdOBiYbiJjeBg0Hp+3ai7YDYNguW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;La llave de cifrado en base 64 formato de codificación.&lt;/p&gt;&lt;p&gt;Ejemplo: nsNODdOBiYbiJjeBg0Hp+3ai7YDYNguW&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="92"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download end of game stats.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Descargado estadística de partida.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="95"/>
         <source>Download end of game stats</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargado estadística de partida</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="115"/>
         <source>Download game infos</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargue informaciones sobre la partida</translation>
     </message>
 </context>
 <context>
@@ -79,12 +79,12 @@
     <message>
         <location filename="../mainwindow.ui" line="32"/>
         <source>Recorded Games</source>
-        <translation type="unfinished"></translation>
+        <translation>Juegos Registrados</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="42"/>
         <source>Your Games</source>
-        <translation type="unfinished"></translation>
+        <translation>Tus juegos</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="85"/>
@@ -163,89 +163,6 @@
         <location filename="../mainwindow.ui" line="504"/>
         <location filename="../mainwindow.ui" line="665"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="518"/>
-        <location filename="../mainwindow.ui" line="758"/>
-        <location filename="../mainwindow.ui" line="1040"/>
-        <source>EUW</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="523"/>
-        <location filename="../mainwindow.ui" line="763"/>
-        <location filename="../mainwindow.ui" line="1045"/>
-        <source>EUNE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="528"/>
-        <location filename="../mainwindow.ui" line="768"/>
-        <location filename="../mainwindow.ui" line="1050"/>
-        <source>NA</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="533"/>
-        <location filename="../mainwindow.ui" line="773"/>
-        <location filename="../mainwindow.ui" line="1055"/>
-        <source>JP</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="538"/>
-        <location filename="../mainwindow.ui" line="778"/>
-        <location filename="../mainwindow.ui" line="1060"/>
-        <source>KR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="543"/>
-        <location filename="../mainwindow.ui" line="783"/>
-        <location filename="../mainwindow.ui" line="1065"/>
-        <source>OCE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="548"/>
-        <location filename="../mainwindow.ui" line="788"/>
-        <location filename="../mainwindow.ui" line="1070"/>
-        <source>BR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="553"/>
-        <location filename="../mainwindow.ui" line="793"/>
-        <location filename="../mainwindow.ui" line="1075"/>
-        <source>LAN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="558"/>
-        <location filename="../mainwindow.ui" line="798"/>
-        <location filename="../mainwindow.ui" line="1080"/>
-        <source>LAS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="563"/>
-        <location filename="../mainwindow.ui" line="803"/>
-        <location filename="../mainwindow.ui" line="1085"/>
-        <source>RU</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="568"/>
-        <location filename="../mainwindow.ui" line="808"/>
-        <location filename="../mainwindow.ui" line="1090"/>
-        <source>TR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="573"/>
-        <location filename="../mainwindow.ui" line="813"/>
-        <source>PBE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -352,7 +269,7 @@
     <message>
         <location filename="../mainwindow.ui" line="938"/>
         <location filename="../mainwindow.ui" line="1162"/>
-        <location filename="../mainwindow.ui" line="1207"/>
+        <location filename="../mainwindow.ui" line="1212"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
@@ -399,74 +316,59 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1182"/>
-        <source>en</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1187"/>
-        <source>fr</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1192"/>
-        <source>pt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="1200"/>
+        <location filename="../mainwindow.ui" line="1205"/>
         <source>Language :</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1228"/>
+        <location filename="../mainwindow.ui" line="1233"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1236"/>
+        <location filename="../mainwindow.ui" line="1241"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1243"/>
+        <location filename="../mainwindow.ui" line="1248"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1259"/>
+        <location filename="../mainwindow.ui" line="1264"/>
         <source>Open replay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1273"/>
+        <location filename="../mainwindow.ui" line="1278"/>
         <location filename="../mainwindow.cpp" line="249"/>
         <location filename="../mainwindow.cpp" line="2268"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1282"/>
+        <location filename="../mainwindow.ui" line="1287"/>
         <source>Advanced Recorder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Registrador Avanzado</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1291"/>
+        <location filename="../mainwindow.ui" line="1296"/>
         <source>Report an issue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1294"/>
+        <location filename="../mainwindow.ui" line="1299"/>
         <source>Report an issue on GitHub</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1303"/>
+        <location filename="../mainwindow.ui" line="1308"/>
         <source>About LegendsReplay</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1312"/>
+        <location filename="../mainwindow.ui" line="1317"/>
         <location filename="../mainwindow.cpp" line="1933"/>
         <location filename="../mainwindow.cpp" line="2001"/>
         <location filename="../mainwindow.cpp" line="2055"/>
@@ -1180,12 +1082,12 @@ This software use Qt and qHttp.</source>
     <message>
         <location filename="../repairtooldialog.ui" line="105"/>
         <source>Platform Id :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plataforma Id :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="118"/>
         <source>Game Id :</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Juego Id :</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.ui" line="125"/>
