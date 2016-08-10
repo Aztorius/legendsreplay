@@ -72,7 +72,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QLabel" name="label_filename">
+    <widget class="QLabel" name="label_file">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Filename :</string>
+      <string>File :</string>
      </property>
     </widget>
    </item>
