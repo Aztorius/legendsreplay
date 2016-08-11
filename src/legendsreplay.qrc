@@ -149,5 +149,7 @@
         <file>icons/cancel_delete_download.png</file>
         <file>icons/logo-executable.ico</file>
         <file>icons/repair.png</file>
+        <file>translation/legendsreplay_de.qm</file>
+        <file>img/240.png</file>
     </qresource>
 </RCC>
