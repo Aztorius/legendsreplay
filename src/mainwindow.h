@@ -116,6 +116,8 @@ private:
     QFileSystemWatcher* m_directory_watcher;
 
 private slots:
+    void slot_checkSoftwareVersion();
+
     void slot_networkResult_status(QNetworkReply *reply);
     void slot_networkResult_featured(QNetworkReply *reply);
 
@@ -175,6 +177,7 @@ protected:
 
 signals:
     void refresh_recordedGames();
+    void checkSoftwareVersion();
 };
 
 #endif // MAINWINDOW_H

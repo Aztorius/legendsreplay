@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString GLOBAL_VERSION = "1.4.2";
+QString GLOBAL_VERSION = "1.4.3";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -215,7 +215,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     slot_statusRefresh();
     connect(ui->pushButton_statusRefresh, SIGNAL(pressed()), this, SLOT(slot_statusRefresh()));
-    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()));
+    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()), Qt::QueuedConnection);
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
@@ -255,14 +255,9 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_customMenuTriggeredSystemTrayIcon(QAction*)));
     }
 
-    QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
+    connect(this, SIGNAL(checkSoftwareVersion()), this, SLOT(slot_checkSoftwareVersion()), Qt::QueuedConnection);
 
-    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
-    {
-        showmessage(tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
-        ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
-        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>" + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !") + "</a>");
-    }
+    emit checkSoftwareVersion();
 }
 
 MainWindow::~MainWindow()
@@ -286,6 +281,17 @@ MainWindow::~MainWindow()
 
     delete replay;
     delete ui;
+}
+
+void MainWindow::slot_checkSoftwareVersion(){
+    QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
+
+    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
+    {
+        showmessage(tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
+        ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !"));
+        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>" + tr("New version ") + updatejson.object().value("version").toString() + tr(" available !") + "</a>");
+    }
 }
 
 void MainWindow::log(QString s)
@@ -558,26 +564,32 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
                 QJsonArray incidentsArray = services[j].toObject().value("incidents").toArray();
 
                 if(services[j].toObject().value("status").toString() == "offline"){ //Service offline
-                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("offline")));
-                    ui->tableWidget_status->item(i,j)->setBackgroundColor(Qt::red);
-                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
+                    ui->tableWidget_status->setItem(i, j, new QTableWidgetItem(tr("offline")));
+                    ui->tableWidget_status->item(i, j)->setBackgroundColor(Qt::red);
+                    ui->tableWidget_status->item(i, j)->setTextColor(Qt::white);
                 }
                 else if(!incidentsArray.isEmpty()){ //Service online with incidents
                     QString incidents = incidentsArray.first().toObject().value("updates").toArray().first().toObject().value("content").toString();
 
                     for(int k = 1; k < incidentsArray.size(); k++){
-                        incidents.append("\n" + incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString());
+                        if(!incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString().isEmpty()){
+                            if(!incidents.isEmpty()){
+                                incidents.append("\n");
+                            }
+
+                            incidents.append(incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString());
+                        }
                     }
 
-                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(QString::number(incidentsArray.size()) + tr(" incident(s)")));
+                    ui->tableWidget_status->setItem(i, j, new QTableWidgetItem(QString::number(incidentsArray.size()) + tr(" incident(s)")));
                     ui->tableWidget_status->item(i, j)->setToolTip(incidents);
-                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
-                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(255,165,0));
+                    ui->tableWidget_status->item(i, j)->setTextColor(Qt::white);
+                    ui->tableWidget_status->item(i, j)->setBackgroundColor(QColor(255,165,0));
                 }
                 else if(services[j].toObject().value("status").toString() == "online"){ //Service online
-                    ui->tableWidget_status->setItem(i,j,new QTableWidgetItem(tr("online")));
-                    ui->tableWidget_status->item(i,j)->setTextColor(Qt::white);
-                    ui->tableWidget_status->item(i,j)->setBackgroundColor(QColor(0,160,0));
+                    ui->tableWidget_status->setItem(i, j, new QTableWidgetItem(tr("online")));
+                    ui->tableWidget_status->item(i, j)->setTextColor(Qt::white);
+                    ui->tableWidget_status->item(i, j)->setBackgroundColor(QColor(0,160,0));
                 }
             }
             break;
@@ -1117,7 +1129,7 @@ void MainWindow::slot_refresh_recordedGames()
 
                             ui->tableWidget_yourgames->setCellWidget(ui->tableWidget_yourgames->rowCount()-1, 0, label);
                             ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 1, new QTableWidgetItem(tr("Soon")));
-                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString()));
+                            ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 2, new QTableWidgetItem(datetime.toString(Qt::SystemLocaleLongDate)));
                             ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 3, new QTableWidgetItem(game.getPlatformId()));
                             ui->tableWidget_yourgames->setItem(ui->tableWidget_yourgames->rowCount()-1, 4, new QTableWidgetItem(fileinfo.fileName()));
 
