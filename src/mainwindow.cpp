@@ -119,24 +119,26 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     if(!orsettings->value("Language").toString().isEmpty()){
-        if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString())){
+        if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString().toLower())){
             qApp->installTranslator(&translator);
         }
     }
 
-    QSettings lolsettings("Riot Games", "RADS");
-
-    QString rootfolder = lolsettings.value("LocalRootFolder").toString();
-
     if(!orsettings->value("LoLDirectory").toString().isEmpty()){
         loldirectory = orsettings->value("LoLDirectory").toString();
     }
-    else if(rootfolder.isEmpty()){
-        loldirectory = "C:/Program Files/Riot Games/League of Legends/RADS";
-    }
     else{
-        loldirectory = rootfolder;
+        QSettings lolsettings("Riot Games", "RADS");
+        QString rootfolder = lolsettings.value("LocalRootFolder").toString();
+
+        if(rootfolder.isEmpty()){
+            loldirectory = "C:/Program Files/Riot Games/League of Legends/RADS";
+        }
+        else{
+            loldirectory = rootfolder;
+        }
     }
+
     ui->lineEdit_lolfolder->setText(loldirectory);
 
     if(!orsettings->value("LoLPBEDirectory").toString().isEmpty()){
@@ -212,10 +214,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     networkManager_status = new QNetworkAccessManager(this);
     connect(networkManager_status, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_status(QNetworkReply*)));
-
-    slot_statusRefresh();
     connect(ui->pushButton_statusRefresh, SIGNAL(pressed()), this, SLOT(slot_statusRefresh()));
-    connect(this, SIGNAL(refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()), Qt::QueuedConnection);
+    connect(this, SIGNAL(signal_refreshStatusServers()), this, SLOT(slot_statusRefresh()), Qt::QueuedConnection);
+
+    emit signal_refreshStatusServers();
+
+    connect(this, SIGNAL(signal_refresh_recordedGames()), this, SLOT(slot_refresh_recordedGames()), Qt::QueuedConnection);
 
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
@@ -237,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent) :
     m_directory_watcher->addPath(replaydirectory);
     connect(m_directory_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(slot_directoryChanged(QString)));
 
-    emit refresh_recordedGames();
+    emit signal_refresh_recordedGames();
 
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
@@ -248,16 +252,16 @@ MainWindow::MainWindow(QWidget *parent) :
         QMenu* menu = new QMenu;
         menu->addAction(QIcon(":/icons/exit.png"), tr("Exit"));
         systemtrayicon->setContextMenu(menu);
-
         systemtrayicon->show();
+
         connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
         connect(systemtrayicon, SIGNAL(messageClicked()), this, SLOT(slot_messageclicked()));
         connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_customMenuTriggeredSystemTrayIcon(QAction*)));
     }
 
-    connect(this, SIGNAL(checkSoftwareVersion()), this, SLOT(slot_checkSoftwareVersion()), Qt::QueuedConnection);
+    connect(this, SIGNAL(signal_checkSoftwareVersion()), this, SLOT(slot_checkSoftwareVersion()), Qt::QueuedConnection);
 
-    emit checkSoftwareVersion();
+    emit signal_checkSoftwareVersion();
 }
 
 MainWindow::~MainWindow()
@@ -905,7 +909,7 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
         }
     }
 
-    emit refresh_recordedGames();
+    emit signal_refresh_recordedGames();
 
     refreshRecordingGamesWidget();
 }
@@ -2149,7 +2153,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
         }
     }
 
-    emit refresh_recordedGames();
+    emit signal_refresh_recordedGames();
 }
 
 void MainWindow::slot_openAdvancedRecorder()
@@ -2249,7 +2253,7 @@ void MainWindow::slot_setLanguage()
 
     orsettings->setValue("Language", ui->comboBox_language->currentText());
 
-    if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString())){
+    if(translator.load(QString(":/translation/legendsreplay_") + orsettings->value("Language").toString().toLower())){
         qApp->installTranslator(&translator);
     }
 }

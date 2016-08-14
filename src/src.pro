@@ -49,8 +49,8 @@ CONFIG += c++11
 RC_ICONS = icons/logo-executable.ico
 RESOURCES = legendsreplay.qrc
 
-TRANSLATIONS = translation/legendsreplay_en.ts \
-    translation/legendsreplay_fr.ts \
-    translation/legendsreplay_pt.ts \
-    translation/legendsreplay_de.ts \
-    translation/legendsreplay_es.ts
+TRANSLATIONS = translation/legendsreplay_english.ts \
+    translation/legendsreplay_french.ts \
+    translation/legendsreplay_portuguese.ts \
+    translation/legendsreplay_deutch.ts \
+    translation/legendsreplay_spanish.ts

@@ -1172,33 +1172,6 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="1">
-         <widget class="QComboBox" name="comboBox_language">
-          <property name="currentText">
-           <string notr="true">en</string>
-          </property>
-          <item>
-           <property name="text">
-            <string notr="true">en</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">fr</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">pt</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string notr="true">de</string>
-           </property>
-          </item>
-         </widget>
-        </item>
         <item row="10" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
@@ -1211,6 +1184,45 @@
           <property name="text">
            <string>Save</string>
           </property>
+         </widget>
+        </item>
+        <item row="10" column="1" colspan="2">
+         <widget class="QComboBox" name="comboBox_language">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="currentText">
+           <string notr="true">English</string>
+          </property>
+          <item>
+           <property name="text">
+            <string notr="true">English</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">French</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Portuguese</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string notr="true">Deutch</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>

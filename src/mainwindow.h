@@ -176,8 +176,9 @@ protected:
     void changeEvent(QEvent*);
 
 signals:
-    void refresh_recordedGames();
-    void checkSoftwareVersion();
+    void signal_refresh_recordedGames();
+    void signal_checkSoftwareVersion();
+    void signal_refreshStatusServers();
 };
 
 #endif // MAINWINDOW_H

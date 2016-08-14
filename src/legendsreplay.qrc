@@ -132,9 +132,6 @@
         <file>img/421.png</file>
         <file>img/429.png</file>
         <file>img/432.png</file>
-        <file>translation/legendsreplay_en.qm</file>
-        <file>translation/legendsreplay_fr.qm</file>
-        <file>translation/legendsreplay_pt.qm</file>
         <file>icons/advanced_recorder.png</file>
         <file>icons/cancel_download.png</file>
         <file>icons/delete.png</file>
@@ -149,7 +146,10 @@
         <file>icons/cancel_delete_download.png</file>
         <file>icons/logo-executable.ico</file>
         <file>icons/repair.png</file>
-        <file>translation/legendsreplay_de.qm</file>
         <file>img/240.png</file>
+        <file>translation/legendsreplay_deutch.qm</file>
+        <file>translation/legendsreplay_english.qm</file>
+        <file>translation/legendsreplay_french.qm</file>
+        <file>translation/legendsreplay_portuguese.qm</file>
     </qresource>
 </RCC>
