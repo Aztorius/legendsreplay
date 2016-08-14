@@ -945,11 +945,6 @@ void MainWindow::slot_click_allgames()
 
     ui->label_allgames_gamemode->setText(game.getGameinfos().object().value("gameMode").toString());
 
-    if(game.getGameinfos().isEmpty()){
-        log(tr("[ERROR] No game infos found. Aborting."));
-        return;
-    }
-
     ui->label_sum1->clear();
     ui->label_sum2->clear();
     ui->label_sum3->clear();
@@ -966,6 +961,11 @@ void MainWindow::slot_click_allgames()
     ui->label_sum38->clear();
     ui->label_sum49->clear();
     ui->label_sum510->clear();
+
+    if(game.getGameinfos().isEmpty()){
+        log(tr("[ERROR] No game infos found. Aborting."));
+        return;
+    }
 
     QJsonArray array = game.getGameinfos().object().value("participants").toArray();
     QList<int> leftids;

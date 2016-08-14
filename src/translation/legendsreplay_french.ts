@@ -377,12 +377,12 @@
     <message>
         <location filename="../mainwindow.ui" line="1308"/>
         <source>Report an issue</source>
-        <translation>Reporter un problème</translation>
+        <translation>Signaler un problème</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1311"/>
         <source>Report an issue on GitHub</source>
-        <translation>Reporter un problème sur GitHub</translation>
+        <translation>Signaler un problème sur GitHub</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1320"/>

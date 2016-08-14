@@ -21,6 +21,8 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
     QJsonArray participants = gameinfos.object().value("participants").toArray();
 
     QGridLayout *layout = new QGridLayout();
+    layout->setSpacing(0);
+
     int last100teamindex = 0;
 
     for(int i = 0; i < participants.size(); i++){
