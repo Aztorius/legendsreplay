@@ -470,6 +470,8 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 #endif
 
     }
+
+    this->showMinimized();
 }
 
 void MainWindow::slot_networkResult_status(QNetworkReply *reply)
@@ -909,8 +911,6 @@ void MainWindow::slot_endRecording(QString serverid, QString gameid)
         }
     }
 
-    emit signal_refresh_recordedGames();
-
     refreshRecordingGamesWidget();
 }
 
@@ -1306,6 +1306,8 @@ void MainWindow::slot_refreshPlayingStatus()
                 replay = NULL;
             }
             log(tr("Server: stoped due to inactivity"));
+
+            this->showNormal();
         }
     }
 
@@ -1375,7 +1377,15 @@ void MainWindow::slot_refreshPlayingStatus()
         }
     }
 
-    m_timer->start(60000);
+    if(replaying && islolRunning()){
+        m_timer->start(10000);
+    }
+    else if(islolclientRunning()){
+        m_timer->start(30000);
+    }
+    else{
+        m_timer->start(60000);
+    }
 
     refreshRecordingGamesWidget();
 }
@@ -2152,8 +2162,6 @@ void MainWindow::slot_custommenutriggered(QAction *action)
             }
         }
     }
-
-    emit signal_refresh_recordedGames();
 }
 
 void MainWindow::slot_openAdvancedRecorder()
