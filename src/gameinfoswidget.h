@@ -8,6 +8,7 @@
 #include <QFileInfo>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QDateTime>
 
 namespace Ui {
 class GameInfosWidget;

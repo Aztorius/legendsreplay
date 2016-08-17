@@ -61,8 +61,17 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
     QLabel *label_serverregion = new QLabel(m_serverid, this);
     QLabel *label_gamemode = new QLabel(gameinfos.object().value("gameMode").toString(), this);
 
+    QDateTime starttime = QDateTime::fromMSecsSinceEpoch(qint64(gameinfos.object().value("gameStartTime").toVariant().toLongLong()));
+    QLabel *label_startTime = new QLabel(starttime.toString(Qt::DefaultLocaleShortDate));
+
+    QTime gameLength(0, 0);
+    gameLength = gameLength.addSecs(gameinfos.object().value("gameLength").toVariant().toLongLong());
+    QLabel *label_gameLength = new QLabel(gameLength.toString(Qt::TextDate));
+
     layout->addWidget(label_serverregion, 0, 0);
     layout->addWidget(label_gamemode, 1, 0);
+    layout->addWidget(label_startTime, 2, 0);
+    layout->addWidget(label_gameLength, 3, 0);
 
     setLayout(layout);
 

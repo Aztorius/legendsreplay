@@ -69,6 +69,7 @@ private:
 
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;
+    QNetworkAccessManager *networkManager_replayServers;
 
     QSystemTrayIcon *systemtrayicon;
 
@@ -120,6 +121,7 @@ private slots:
 
     void slot_networkResult_status(QNetworkReply *reply);
     void slot_networkResult_featured(QNetworkReply *reply);
+    void slot_networkResult_replayServers(QNetworkReply *reply);
 
     void slot_refreshPlayingStatus();
     void slot_refresh_recordedGames();
