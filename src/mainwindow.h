@@ -6,11 +6,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFile>
-#include <QtConcurrent/QtConcurrent>
-#include <QPainter>
 #include <QSystemTrayIcon>
-#include <QPixmapCache>
-#include <QMutex>
 #include <QDesktopServices>
 #include <QMenu>
 #include <QAction>
