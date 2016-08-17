@@ -7,6 +7,7 @@
 #include <QEventLoop>
 #include <QTimer>
 #include <QJsonArray>
+#include <math.h>
 
 #include "replay.h"
 
