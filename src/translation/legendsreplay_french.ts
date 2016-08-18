@@ -81,11 +81,11 @@
         <location filename="../mainwindow.cpp" line="57"/>
         <location filename="../mainwindow.cpp" line="363"/>
         <location filename="../mainwindow.cpp" line="376"/>
-        <location filename="../mainwindow.cpp" line="1195"/>
-        <location filename="../mainwindow.cpp" line="1210"/>
+        <location filename="../mainwindow.cpp" line="1181"/>
+        <location filename="../mainwindow.cpp" line="1196"/>
+        <location filename="../mainwindow.cpp" line="1218"/>
         <location filename="../mainwindow.cpp" line="1232"/>
-        <location filename="../mainwindow.cpp" line="1246"/>
-        <location filename="../mainwindow.cpp" line="1673"/>
+        <location filename="../mainwindow.cpp" line="1659"/>
         <source>LegendsReplay</source>
         <oldsource>OpenReplay</oldsource>
         <translation>LegendsReplay</translation>
@@ -107,9 +107,9 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="108"/>
-        <location filename="../mainwindow.cpp" line="1942"/>
-        <location filename="../mainwindow.cpp" line="1986"/>
-        <location filename="../mainwindow.cpp" line="2040"/>
+        <location filename="../mainwindow.cpp" line="1928"/>
+        <location filename="../mainwindow.cpp" line="1972"/>
+        <location filename="../mainwindow.cpp" line="2026"/>
         <source>Stats</source>
         <translation>Stats</translation>
     </message>
@@ -143,7 +143,7 @@
     <message>
         <location filename="../mainwindow.ui" line="306"/>
         <location filename="../mainwindow.ui" line="609"/>
-        <location filename="../mainwindow.cpp" line="1737"/>
+        <location filename="../mainwindow.cpp" line="1723"/>
         <source>Game Mode</source>
         <translation>Mode de jeu</translation>
     </message>
@@ -181,15 +181,15 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="596"/>
-        <location filename="../mainwindow.cpp" line="1949"/>
-        <location filename="../mainwindow.cpp" line="2076"/>
+        <location filename="../mainwindow.cpp" line="1935"/>
+        <location filename="../mainwindow.cpp" line="2062"/>
         <source>Spectate</source>
         <translation>Regarder</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="619"/>
-        <location filename="../mainwindow.cpp" line="1950"/>
-        <location filename="../mainwindow.cpp" line="2081"/>
+        <location filename="../mainwindow.cpp" line="1936"/>
+        <location filename="../mainwindow.cpp" line="2067"/>
         <source>Record</source>
         <translation>Enregistrer</translation>
     </message>
@@ -226,9 +226,9 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1358"/>
-        <location filename="../mainwindow.cpp" line="1944"/>
-        <location filename="../mainwindow.cpp" line="2012"/>
-        <location filename="../mainwindow.cpp" line="2066"/>
+        <location filename="../mainwindow.cpp" line="1930"/>
+        <location filename="../mainwindow.cpp" line="1998"/>
+        <location filename="../mainwindow.cpp" line="2052"/>
         <source>Repair tool</source>
         <translation>Outil de réparation</translation>
     </message>
@@ -284,7 +284,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="956"/>
-        <location filename="../mainwindow.cpp" line="1938"/>
+        <location filename="../mainwindow.cpp" line="1924"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
@@ -365,7 +365,7 @@
     <message>
         <location filename="../mainwindow.ui" line="1319"/>
         <location filename="../mainwindow.cpp" line="219"/>
-        <location filename="../mainwindow.cpp" line="2277"/>
+        <location filename="../mainwindow.cpp" line="2263"/>
         <source>Exit</source>
         <translation>Fermer</translation>
     </message>
@@ -424,7 +424,7 @@
         <location filename="../mainwindow.cpp" line="261"/>
         <location filename="../mainwindow.cpp" line="262"/>
         <location filename="../mainwindow.cpp" line="263"/>
-        <location filename="../mainwindow.cpp" line="1681"/>
+        <location filename="../mainwindow.cpp" line="1667"/>
         <source>New version </source>
         <translation>Nouvelle version </translation>
     </message>
@@ -596,8 +596,8 @@ Aucun dossier releases trouvé.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="846"/>
-        <location filename="../mainwindow.cpp" line="1881"/>
-        <location filename="../mainwindow.cpp" line="2165"/>
+        <location filename="../mainwindow.cpp" line="1867"/>
+        <location filename="../mainwindow.cpp" line="2151"/>
         <source>Game is already recording</source>
         <translation>La partie est déjà en cours d&apos;enregistrement</translation>
     </message>
@@ -617,270 +617,265 @@ Aucun dossier releases trouvé.</translation>
         <translation>Bientôt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1163"/>
-        <source>[ERROR] Unable to open internal servers file : </source>
-        <translation>[ERREUR] Impossible d&apos;ouvrir le fichier interne des serveurs : </translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1195"/>
-        <location filename="../mainwindow.cpp" line="1196"/>
-        <location filename="../mainwindow.cpp" line="1232"/>
-        <location filename="../mainwindow.cpp" line="1233"/>
+        <location filename="../mainwindow.cpp" line="1181"/>
+        <location filename="../mainwindow.cpp" line="1182"/>
+        <location filename="../mainwindow.cpp" line="1218"/>
+        <location filename="../mainwindow.cpp" line="1219"/>
         <source>Please add a LegendsReplay server.</source>
         <translation>Merci d&apos;ajouter un serveur LegendsReplay.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1210"/>
-        <location filename="../mainwindow.cpp" line="1211"/>
+        <location filename="../mainwindow.cpp" line="1196"/>
+        <location filename="../mainwindow.cpp" line="1197"/>
         <source>Unknown summoner on this server.</source>
         <translation>Nom d&apos;invocateur inconnu sur ce serveur.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1217"/>
+        <location filename="../mainwindow.cpp" line="1203"/>
         <source>Your summoner ID is </source>
         <translation>Votre ID d&apos;invocateur est </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1241"/>
+        <location filename="../mainwindow.cpp" line="1227"/>
         <source>Retrieving PBE ID</source>
         <translation>Récupération de l&apos;ID PBE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1246"/>
+        <location filename="../mainwindow.cpp" line="1232"/>
         <source>Unknown summoner on this server.
 PBE is not supported.</source>
         <translation>Nom d&apos;invocateur inconnu sur ce serveur.
 Le PBE n&apos;est pas supporté.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1247"/>
+        <location filename="../mainwindow.cpp" line="1233"/>
         <source>Unknown summoner on this server. PBE is not supported.</source>
         <translation>Nom d&apos;invocateur inconnu sur ce serveur. Le PBE n&apos;est pas supporté.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1253"/>
+        <location filename="../mainwindow.cpp" line="1239"/>
         <source>Your PBE ID is </source>
         <translation>Votre ID PBE est </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1293"/>
+        <location filename="../mainwindow.cpp" line="1279"/>
         <source>Server: stoped due to inactivity</source>
         <translation>Serveur: arrêté pour cause d&apos;inactivité</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1304"/>
+        <location filename="../mainwindow.cpp" line="1290"/>
         <source>Game detected : start recording</source>
         <translation>Partie détectée : démarrage de l&apos;enregistrement</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1317"/>
+        <location filename="../mainwindow.cpp" line="1303"/>
         <source>[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly</source>
         <translation>[WARN] Partie introuvable : L&apos;API ou les serveurs LegendsReplay peuvent être hors ligne ou ne pas fonctionner correctement</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1318"/>
+        <location filename="../mainwindow.cpp" line="1304"/>
         <source>End of recording</source>
         <translation>Fin de l&apos;enregistrement</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1338"/>
+        <location filename="../mainwindow.cpp" line="1324"/>
         <source>[ERROR] Server not found</source>
         <translation>[ERREUR] Serveur introuvable</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1391"/>
+        <location filename="../mainwindow.cpp" line="1377"/>
         <source>[ERROR] Unknown server</source>
         <translation>[ERREUR] Serveur inconnu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1404"/>
+        <location filename="../mainwindow.cpp" line="1390"/>
         <source>Select a Replay</source>
         <translation>Choisissez un Replay</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1442"/>
+        <location filename="../mainwindow.cpp" line="1428"/>
         <source>Opening : </source>
         <translation>Ouverture : </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1444"/>
+        <location filename="../mainwindow.cpp" line="1430"/>
         <source>Server: started</source>
         <translation>Serveur: démarré</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1449"/>
+        <location filename="../mainwindow.cpp" line="1435"/>
         <source>Invalid replay file, aborting.</source>
         <translation>Fichier replay invalide, arrêt.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1462"/>
+        <location filename="../mainwindow.cpp" line="1448"/>
         <source>Server: send server version</source>
         <translation>Serveur: envoi de la version du serveur</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1500"/>
+        <location filename="../mainwindow.cpp" line="1486"/>
         <source>Server: send game metadata</source>
         <translation>Serveur: envoi des métadonnées de la partie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1563"/>
+        <location filename="../mainwindow.cpp" line="1549"/>
         <source>Server: send lastChunkInfo</source>
         <translation>Serveur: envoi du lastChunkInfo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1588"/>
+        <location filename="../mainwindow.cpp" line="1574"/>
         <source>Server: send chunk </source>
         <translation>Serveur: envoi du chunk </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1598"/>
+        <location filename="../mainwindow.cpp" line="1584"/>
         <source>Server: send primary chunk </source>
         <translation>Serveur: envoi du chunk primaire </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1604"/>
+        <location filename="../mainwindow.cpp" line="1590"/>
         <source>Server: unknown requested chunk </source>
         <translation>Serveur: chunk demandé inconnu </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1624"/>
+        <location filename="../mainwindow.cpp" line="1610"/>
         <source>Server: send keyframe </source>
         <translation>Serveur: envoi de la keyframe </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1627"/>
+        <location filename="../mainwindow.cpp" line="1613"/>
         <source>Server: unknown requested keyframe </source>
         <translation>Serveur: keyframe demandé inconnu </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1637"/>
+        <location filename="../mainwindow.cpp" line="1623"/>
         <source>Server: End of game stats sent</source>
         <translation>Serveur: Stats de fin de partie envoyées</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1646"/>
+        <location filename="../mainwindow.cpp" line="1632"/>
         <source>Server: End of replay requested</source>
         <translation>Serveur: Requête de fin du replay</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1661"/>
+        <location filename="../mainwindow.cpp" line="1647"/>
         <source>Server: Unknown requested link </source>
         <translation>Serveur: Requête inconnue du lien </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1698"/>
+        <location filename="../mainwindow.cpp" line="1684"/>
         <source>Summoner name not found on this server</source>
         <translation>Nom d&apos;invocateur introuvable sur ce serveur</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1706"/>
+        <location filename="../mainwindow.cpp" line="1692"/>
         <source>[ERROR] Summoner id not valid</source>
         <translation>[ERREUR] Id d&apos;invocateur invalide</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1733"/>
-        <location filename="../mainwindow.cpp" line="1741"/>
+        <location filename="../mainwindow.cpp" line="1719"/>
+        <location filename="../mainwindow.cpp" line="1727"/>
         <source>Summoner </source>
         <translation>Invocateur </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1733"/>
+        <location filename="../mainwindow.cpp" line="1719"/>
         <source> is not in a game</source>
         <translation> n&apos;est pas dans une partie</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1735"/>
+        <location filename="../mainwindow.cpp" line="1721"/>
         <source>not playing</source>
         <translation>ne joue pas</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1741"/>
+        <location filename="../mainwindow.cpp" line="1727"/>
         <source> is in a game</source>
         <translation> est en jeu</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1743"/>
+        <location filename="../mainwindow.cpp" line="1729"/>
         <source>playing</source>
         <translation>en train de jouer</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="595"/>
-        <location filename="../mainwindow.cpp" line="1931"/>
+        <location filename="../mainwindow.cpp" line="1917"/>
         <source>Legends Replay switch to server </source>
         <translation>Legends Replay a basculé sur le serveur </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1941"/>
-        <location filename="../mainwindow.cpp" line="1983"/>
-        <location filename="../mainwindow.cpp" line="2037"/>
+        <location filename="../mainwindow.cpp" line="1927"/>
+        <location filename="../mainwindow.cpp" line="1969"/>
+        <location filename="../mainwindow.cpp" line="2023"/>
         <source>Replay</source>
         <translation>Replay</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1946"/>
-        <location filename="../mainwindow.cpp" line="1968"/>
-        <location filename="../mainwindow.cpp" line="1969"/>
-        <location filename="../mainwindow.cpp" line="2022"/>
-        <location filename="../mainwindow.cpp" line="2023"/>
+        <location filename="../mainwindow.cpp" line="1932"/>
+        <location filename="../mainwindow.cpp" line="1954"/>
+        <location filename="../mainwindow.cpp" line="1955"/>
+        <location filename="../mainwindow.cpp" line="2008"/>
+        <location filename="../mainwindow.cpp" line="2009"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1953"/>
-        <location filename="../mainwindow.cpp" line="2088"/>
-        <location filename="../mainwindow.cpp" line="2089"/>
-        <location filename="../mainwindow.cpp" line="2111"/>
+        <location filename="../mainwindow.cpp" line="1939"/>
+        <location filename="../mainwindow.cpp" line="2074"/>
+        <location filename="../mainwindow.cpp" line="2075"/>
+        <location filename="../mainwindow.cpp" line="2097"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1954"/>
-        <location filename="../mainwindow.cpp" line="2110"/>
+        <location filename="../mainwindow.cpp" line="1940"/>
+        <location filename="../mainwindow.cpp" line="2096"/>
         <source>Cancel and delete</source>
         <translation>Annuler et supprimer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1969"/>
-        <location filename="../mainwindow.cpp" line="2023"/>
+        <location filename="../mainwindow.cpp" line="1955"/>
+        <location filename="../mainwindow.cpp" line="2009"/>
         <source>Do you really want to delete this replay ?</source>
         <translation>Voulez-vous vraiment supprimer ce replay ?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1974"/>
-        <location filename="../mainwindow.cpp" line="2028"/>
+        <location filename="../mainwindow.cpp" line="1960"/>
+        <location filename="../mainwindow.cpp" line="2014"/>
         <source>Unable to find the file : </source>
         <translation>Impossible de trouver le fichier : </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1977"/>
-        <location filename="../mainwindow.cpp" line="1980"/>
-        <location filename="../mainwindow.cpp" line="2031"/>
-        <location filename="../mainwindow.cpp" line="2034"/>
+        <location filename="../mainwindow.cpp" line="1963"/>
+        <location filename="../mainwindow.cpp" line="1966"/>
+        <location filename="../mainwindow.cpp" line="2017"/>
+        <location filename="../mainwindow.cpp" line="2020"/>
         <source>Unable to remove the file : </source>
         <translation>Impossible de supprimer le fichier : </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2089"/>
+        <location filename="../mainwindow.cpp" line="2075"/>
         <source>Do you really want to cancel this record ?</source>
         <translation>Voulez-vous vraiment annuler cet enregistrement ?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2111"/>
+        <location filename="../mainwindow.cpp" line="2097"/>
         <source>Do you really want to cancel and delete this record ?</source>
         <translation>Voulez-vous vraiment annuler et supprimer cet enregistrement ?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2142"/>
+        <location filename="../mainwindow.cpp" line="2128"/>
         <source>Removed file : </source>
         <translation>Fichier supprimé : </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2145"/>
+        <location filename="../mainwindow.cpp" line="2131"/>
         <source>[ERROR] Unable to remove the file : </source>
         <translation>[ERREUR] Impossible de supprimer le fichier : </translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="2197"/>
+        <location filename="../mainwindow.cpp" line="2183"/>
         <source>About</source>
         <translation>À propos</translation>
     </message>

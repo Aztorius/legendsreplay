@@ -1157,25 +1157,9 @@ void MainWindow::slot_replayserversAdd()
         return;
     }
 
-    QFile localserversfile(":/data/LegendsReplayServers.txt");
-
-    if(!localserversfile.open(QIODevice::ReadOnly | QIODevice::Text)){
-        log(tr("[ERROR] Unable to open internal servers file : ") + localserversfile.errorString());
+    if(lrservers.contains(ui->lineEdit_replayserver_address->text())){
         return;
     }
-
-    QTextStream local_in(&localserversfile);
-
-    lrservers.clear();
-
-    while(!local_in.atEnd()){
-        QString line = local_in.readLine();
-        if(!line.isEmpty()){
-            lrservers.append(line);
-        }
-    }
-
-    localserversfile.close();
 
     lrservers.append(ui->lineEdit_replayserver_address->text());
 
@@ -1183,6 +1167,8 @@ void MainWindow::slot_replayserversAdd()
     ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(ui->lineEdit_replayserver_address->text()));
 
     ui->lineEdit_replayserver_address->clear();
+
+    networkManager_replayServers->get(QNetworkRequest(QUrl(lrservers.first())));
 }
 
 void MainWindow::slot_summonerinfos_save()
@@ -1926,7 +1912,7 @@ void MainWindow::slot_click_replayservers()
         return;
     }
 
-    m_currentLegendsReplayServer = ui->tableWidget_replayservers->itemAt(ui->tableWidget_replayservers->selectedItems().first()->row(), 0)->text();
+    m_currentLegendsReplayServer = ui->tableWidget_replayservers->item(ui->tableWidget_replayservers->selectedItems().first()->row(), 0)->text();
 
     log(tr("Legends Replay switch to server ") + m_currentLegendsReplayServer);
 }
