@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr("LegendsReplay ") + GLOBAL_VERSION);
     setWindowIcon(QIcon(":/icons/logo.png"));
 
-    log(QString(tr("LegendsReplay ") + GLOBAL_VERSION + tr(" Started")));
+    log(QString(tr("LegendsReplay ") + GLOBAL_VERSION));
 
     // Adding the official local servers
     QFile localserversfile(":/data/LegendsReplayServers.txt");
@@ -1095,7 +1095,7 @@ void MainWindow::slot_refresh_recordedGames()
 
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 0, new QTableWidgetItem(game.getPlatformId()));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 1, new QTableWidgetItem(game.getGameId()));
-            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString()));
+            ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 2, new QTableWidgetItem(datetime.date().toString(Qt::DefaultLocaleShortDate)));
             ui->tableWidget_recordedgames->setItem(ui->tableWidget_recordedgames->rowCount()-1, 3, new QTableWidgetItem(fileinfo.fileName()));
 
             recordedgames_filename.append(fileinfo.fileName());
@@ -2194,7 +2194,7 @@ void MainWindow::slot_reportAnIssue()
 
 void MainWindow::slot_aboutLegendsReplay()
 {
-    QMessageBox::information(this, tr("About"), tr("Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.") + "\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
+    QMessageBox::information(this, tr("About"), "Legends Replay is an open source software (GNU GPL v3).\nThis software use Qt and qHttp.\n\nLegendsReplay isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.");
 }
 
 void MainWindow::refreshRecordingGamesWidget()

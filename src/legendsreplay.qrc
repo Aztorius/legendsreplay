@@ -151,5 +151,6 @@
         <file>translation/legendsreplay_english.qm</file>
         <file>translation/legendsreplay_french.qm</file>
         <file>translation/legendsreplay_portuguese.qm</file>
+        <file>translation/legendsreplay_spanish.qm</file>
     </qresource>
 </RCC>
