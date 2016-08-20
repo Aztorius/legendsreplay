@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString GLOBAL_VERSION = "1.4.3";
+QString GLOBAL_VERSION = "1.4.4";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -66,8 +66,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     if(!orsettings->value("SummonerServer").toString().isEmpty()){
-        m_summonerserver = orsettings->value("SummonerServer").toString();
-        ui->comboBox_summonerserver->setCurrentText(m_summonerserver);
+        m_summonerServerRegion = orsettings->value("SummonerServer").toString();
+        ui->comboBox_summonerserver->setCurrentText(m_summonerServerRegion);
     }
 
     if(!orsettings->value("PBEName").toString().isEmpty()){
@@ -1104,7 +1104,7 @@ void MainWindow::slot_refresh_recordedGames()
             QString local_platformid;
 
             for(int k = 0; k < servers.size(); k++){
-                if(servers.at(k).getRegion() == m_summonerserver){
+                if(servers.at(k).getRegion() == m_summonerServerRegion){
                     local_platformid = servers.at(k).getPlatformId();
                     break;
                 }
@@ -1184,13 +1184,13 @@ void MainWindow::slot_summonerinfos_save()
     }
 
     m_summonername = ui->lineEdit_summonername->text();
-    m_summonerserver = ui->comboBox_summonerserver->currentText();
+    m_summonerServerRegion = ui->comboBox_summonerserver->currentText();
 
     //Retrieving summoner ID
 
     log("Retrieving summoner ID");
 
-    QJsonDocument suminfos = getJsonFromUrl(m_currentLegendsReplayServer + "?region=" + m_summonerserver + "&summonername=" + m_summonername);
+    QJsonDocument suminfos = getJsonFromUrl(m_currentLegendsReplayServer + "?region=" + m_summonerServerRegion + "&summonername=" + m_summonername);
 
     if(suminfos.isEmpty()){
         QMessageBox::information(this, tr("LegendsReplay"), tr("Unknown summoner on this server."));
@@ -1204,7 +1204,7 @@ void MainWindow::slot_summonerinfos_save()
 
         orsettings->setValue("SummonerName", m_summonername);
         orsettings->setValue("SummonerId", m_summonerid);
-        orsettings->setValue("SummonerServer", m_summonerserver);
+        orsettings->setValue("SummonerServer", m_summonerServerRegion);
     }
 }
 
@@ -1282,70 +1282,73 @@ void MainWindow::slot_refreshPlayingStatus()
         }
     }
 
-    if(!replaying && islolclientRunning() && islolRunning()){
-        if(!playing){
-            //Start recording the game
-            playing = true;
+    if(!replaying && !playing && islolclientRunning() && islolRunning()){
+        //Start recording the game
+        playing = true;
 
-            log(tr("Game detected : start recording"));
+        log(tr("Game detected : start recording"));
 
-            QJsonDocument gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
+        QJsonDocument gameInfo, gameMetaData;
 
-            QTimer timer;
-            QEventLoop loop;
-            connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-            unsigned int counter = 0;
-            timer.start(150000);
+        QTimer timer;
+        QEventLoop loop;
+        connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
+        unsigned int counter = 0;
+        timer.start(150000);
 
-            while(gameinfos.isEmpty() || gameinfos.object().value("gameStartTime").toVariant().toLongLong() == 0){
-                loop.exec();
-                if(counter > 5){
-                    log(tr("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly"));
-                    log(tr("End of recording"));
-                    return;
-                }
-                counter++;
-                gameinfos = getCurrentPlayingGameInfos(m_summonerserver, m_summonerid);
-                timer.start(45000);
-            }
+        while(gameInfo.isEmpty() || gameInfo.object().value("gameId").toVariant().toLongLong() == 0 || gameInfo.object().value("gameStartTime").toVariant().toLongLong() == 0){
+            loop.exec();
 
-            QString serverid, serveraddress;
-            QString gameid = QString::number(gameinfos.object().value("gameId").toVariant().toLongLong());
-
-            for(int i = 0; i < servers.size(); i++){
-                if(servers.at(i).getRegion() == m_summonerserver){
-                    serverid = servers.at(i).getPlatformId();
-                    serveraddress = servers.at(i).getUrl();
-                    break;
-                }
-            }
-
-            if(serverid.isEmpty()){
-                log(tr("[ERROR] Server not found"));
+            if(counter > 5){
+                log(tr("[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly"));
+                log(tr("End of recording"));
                 return;
             }
 
-            QString dateTime = QDateTime::fromMSecsSinceEpoch(gameinfos.object().value("gameStartTime").toVariant().toLongLong()).toString();
+            counter++;
 
-            recording.append(QStringList() << serverid << gameid << dateTime);
+            gameInfo = getCurrentPlayingGameInfos(m_summonerServerRegion, m_summonerid);
 
-            refreshRecordingGamesWidget();
-
-            Recorder *recorder = new Recorder(serverid, serveraddress, gameid, gameinfos.object().value("observers").toObject().value("encryptionKey").toString(), gameinfos, replaydirectory);
-            QThread *recorderThread = new QThread;
-            recorder->moveToThread(recorderThread);
-            connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
-            connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
-            connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
-            connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
-            connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
-            connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
-            connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
-
-            recorderThread->start();
-
-            recordingThreads.append(recorderThread);
+            timer.start(45000);
         }
+
+        QString gameId = QString::number(gameInfo.object().value("gameId").toVariant().toLongLong());
+
+        QString platformId, serverAddress;
+
+        for(int i = 0; i < servers.size(); i++){
+            if(servers.at(i).getRegion() == m_summonerServerRegion){
+                platformId = servers.at(i).getPlatformId();
+                serverAddress = servers.at(i).getUrl();
+                break;
+            }
+        }
+
+        if(platformId.isEmpty()){
+            log(tr("[ERROR] Server not found"));
+            return;
+        }
+
+        QString dateTime = QDateTime::fromMSecsSinceEpoch(gameInfo.object().value("gameStartTime").toVariant().toLongLong()).toString();
+
+        recording.append(QStringList() << platformId << gameId << dateTime);
+
+        refreshRecordingGamesWidget();
+
+        Recorder *recorder = new Recorder(platformId, serverAddress, gameId, gameInfo.object().value("observers").toObject().value("encryptionKey").toString(), gameInfo, replaydirectory);
+        QThread *recorderThread = new QThread;
+        recorder->moveToThread(recorderThread);
+        connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
+        connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
+        connect(recorder, SIGNAL(finished()), recorder, SLOT(deleteLater()));
+        connect(recorderThread, SIGNAL(finished()), recorderThread, SLOT(deleteLater()));
+        connect(recorder, SIGNAL(end(QString,QString)), this, SLOT(slot_endRecording(QString,QString)));
+        connect(recorder, SIGNAL(toLog(QString)), this, SLOT(log(QString)));
+        connect(recorder, SIGNAL(toShowmessage(QString)), this, SLOT(showmessage(QString)));
+
+        recorderThread->start();
+
+        recordingThreads.append(recorderThread);
     }
 
     if(replaying && islolRunning()){
@@ -1361,24 +1364,24 @@ void MainWindow::slot_refreshPlayingStatus()
     refreshRecordingGamesWidget();
 }
 
-QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString server, QString summonerid)
+QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString serverRegion, QString summonerId)
 {
-    QString servertag;
+    QString platformId;
 
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getRegion() == server){
-            servertag = servers.at(i).getPlatformId();
+        if(servers.at(i).getRegion() == serverRegion){
+            platformId = servers.at(i).getPlatformId();
             break;
         }
     }
 
-    if(servertag.isEmpty() || lrservers.isEmpty()){
+    if(platformId.isEmpty() || lrservers.isEmpty()){
         QJsonDocument docempty;
         log(tr("[ERROR] Unknown server"));
         return docempty;
     }
 
-    QJsonDocument gameinfos = getJsonFromUrl(m_currentLegendsReplayServer + "?platformid=" + servertag + "&summonerid=" + summonerid);
+    QJsonDocument gameinfos = getJsonFromUrl(m_currentLegendsReplayServer + "?platformid=" + platformId + "&summonerid=" + summonerId);
 
     return gameinfos;
 }

@@ -46,7 +46,7 @@ public:
     bool game_ended(QString serverid, QString gameid);
     void replay_launch(QString pathfile);
 
-    QJsonDocument getCurrentPlayingGameInfos(QString server, QString summonerid);
+    QJsonDocument getCurrentPlayingGameInfos(QString serverRegion, QString summonerId);
     QJsonDocument getJsonFromUrl(QString url);
     QByteArray getFileFromUrl(QString url);
 
@@ -90,7 +90,7 @@ private:
 
     QString m_summonername;
     QString m_summonerid;
-    QString m_summonerserver;
+    QString m_summonerServerRegion;
     QString m_PBEname;
     QString m_PBEid;
 

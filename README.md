@@ -27,9 +27,11 @@ Available for **Windows** and **Linux**
 Qt >= 5.6 is required.
 C++14 is required.
 
-- ``` git submodule init && git submodule update ```
-- Go to qhttp folder and run ``` ./update-dependencies.sh ```
-- ```qmake LegendsReplay.pro```
+- ``` git submodule init ```
+- ``` git submodule update ```
+- ``` cd qhttp ```
+- ``` ./update-dependencies.sh ```
+- ``` qmake LegendsReplay.pro ```
 
 ### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
 
