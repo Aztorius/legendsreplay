@@ -33,9 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     else{
         log(tr("[ERROR] Unable to open internal servers file"));
-        lrservers.append("http://informaticien77.serveminecraft.net/legendsreplay.php");
+        lrservers.append("http://legendsreplay.16mb.com/legendsreplay.php");
         ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
-        ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem("informaticien77.serveminecraft.net/legendsreplay.php"));
+        ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(lrservers.last()));
     }
 
     if(lrservers.isEmpty()){
@@ -1288,7 +1288,7 @@ void MainWindow::slot_refreshPlayingStatus()
 
         log(tr("Game detected : start recording"));
 
-        QJsonDocument gameInfo, gameMetaData;
+        QJsonDocument gameInfo;
 
         QTimer timer;
         QEventLoop loop;
@@ -1309,7 +1309,7 @@ void MainWindow::slot_refreshPlayingStatus()
 
             gameInfo = getCurrentPlayingGameInfos(m_summonerServerRegion, m_summonerid);
 
-            timer.start(45000);
+            timer.start(60000);
         }
 
         QString gameId = QString::number(gameInfo.object().value("gameId").toVariant().toLongLong());
@@ -2205,7 +2205,7 @@ void MainWindow::refreshRecordingGamesWidget()
 
             QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
 
-            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::SystemLocaleLongDate)));
+            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::SystemLocaleShortDate)));
 
             qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
             timeProgress /= 1000;

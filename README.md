@@ -31,6 +31,7 @@ C++14 is required.
 - ``` git submodule update ```
 - ``` cd qhttp ```
 - ``` ./update-dependencies.sh ```
+- ``` cd .. ```
 - ``` qmake LegendsReplay.pro ```
 
 ### [Technical infos about the spectator API](https://gist.github.com/Aztorius/e428be6515b19fd24823754b72038e1b)
