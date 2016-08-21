@@ -1294,7 +1294,7 @@ void MainWindow::slot_refreshPlayingStatus()
         QEventLoop loop;
         connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
         unsigned int counter = 0;
-        timer.start(150000);
+        timer.start(180000);
 
         while(gameInfo.isEmpty() || gameInfo.object().value("gameId").toVariant().toLongLong() == 0 || gameInfo.object().value("gameStartTime").toVariant().toLongLong() == 0){
             loop.exec();
@@ -1375,7 +1375,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString serverRegion, QStri
         }
     }
 
-    if(platformId.isEmpty() || lrservers.isEmpty()){
+    if(platformId.isEmpty() || m_currentLegendsReplayServer.isEmpty()){
         QJsonDocument docempty;
         log(tr("[ERROR] Unknown server"));
         return docempty;
@@ -2205,7 +2205,7 @@ void MainWindow::refreshRecordingGamesWidget()
 
             QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
 
-            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::SystemLocaleShortDate)));
+            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::DefaultLocaleShortDate)));
 
             qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
             timeProgress /= 1000;
