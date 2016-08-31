@@ -539,6 +539,22 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
                     ui->tableWidget_status->setItem(i, j, new QTableWidgetItem(tr("offline")));
                     ui->tableWidget_status->item(i, j)->setBackgroundColor(Qt::red);
                     ui->tableWidget_status->item(i, j)->setTextColor(Qt::white);
+
+                    if(!incidentsArray.isEmpty()){
+                        QString incidents = incidentsArray.first().toObject().value("updates").toArray().first().toObject().value("content").toString();
+
+                        for(int k = 1; k < incidentsArray.size(); k++){
+                            if(!incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString().isEmpty()){
+                                if(!incidents.isEmpty()){
+                                    incidents.append("\n");
+                                }
+
+                                incidents.append(incidentsArray.at(k).toObject().value("updates").toArray().first().toObject().value("content").toString());
+                            }
+                        }
+
+                        ui->tableWidget_status->item(i, j)->setToolTip(incidents);
+                    }
                 }
                 else if(!incidentsArray.isEmpty()){ //Service online with incidents
                     QString incidents = incidentsArray.first().toObject().value("updates").toArray().first().toObject().value("content").toString();
