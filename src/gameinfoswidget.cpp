@@ -58,7 +58,7 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
         }
     }
 
-    QLabel *label_serverregion = new QLabel(m_serverid, this);
+    QLabel *label_serverregion = new QLabel(m_platformid, this);
     QLabel *label_gamemode = new QLabel(gameinfos.object().value("gameMode").toString(), this);
 
     QDateTime starttime = QDateTime::fromMSecsSinceEpoch(qint64(gameinfos.object().value("gameStartTime").toVariant().toLongLong()));
@@ -78,16 +78,16 @@ void GameInfosWidget::setGameInfos(QJsonDocument gameinfos)
     show();
 }
 
-void GameInfosWidget::setGameHeader(QString serverid, QString gameid, QString encryptionkey)
+void GameInfosWidget::setGameHeader(QString platformid, QString gameid, QString encryptionkey)
 {
-    m_serverid = serverid;
+    m_platformid = platformid;
     m_gameid = gameid;
     m_encryptionkey = encryptionkey;
 }
 
-QString GameInfosWidget::getServerId()
+QString GameInfosWidget::getPlatformId()
 {
-    return m_serverid;
+    return m_platformid;
 }
 
 QString GameInfosWidget::getGameId()

@@ -316,12 +316,12 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
 {
     GameInfosWidget *widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(item));
 
-    QString serverid = widget->getServerId();
+    QString platformid = widget->getPlatformId();
     QString key = widget->getEncryptionkey();
     QString gameid = widget->getGameId();
 
-    if(game_ended(serverid, gameid)){
-        log(tr("Game ") + serverid + "/" + gameid + tr(" has already ended"));
+    if(game_ended(platformid, gameid)){
+        log(tr("Game ") + platformid + "/" + gameid + tr(" has already ended"));
         return;
     }
 
@@ -334,7 +334,7 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
 
     replaying = true;
 
-    lol_launch(serverid, key, gameid);
+    lol_launch(platformid, key, gameid);
 }
 
 void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool local)
@@ -738,16 +738,16 @@ void MainWindow::slot_featuredLaunch()
 
     GameInfosWidget *widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
 
-    QString serverid = widget->getServerId();
+    QString platformid = widget->getPlatformId();
     QString key = widget->getEncryptionkey();
     QString gameid = widget->getGameId();
 
-    if(game_ended(serverid, gameid)){
-        log(tr("Game ") + serverid + "/" + gameid + tr(" has already ended"));
+    if(game_ended(platformid, gameid)){
+        log(tr("Game ") + platformid + "/" + gameid + tr(" has already ended"));
         return;
     }
 
-    lol_launch(serverid, key, gameid);
+    lol_launch(platformid, key, gameid);
 
     replaying = true;
 }
@@ -841,13 +841,13 @@ void MainWindow::slot_featuredRecord()
 
     GameInfosWidget* widget(dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->currentItem())));
 
-    QString serverid = widget->getServerId();
+    QString platformid = widget->getPlatformId();
     QString gameid = widget->getGameId();
 
     //Get server address
     QString serveraddress;
     for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getPlatformId() == serverid){
+        if(servers.at(i).getPlatformId() == platformid){
             serveraddress = servers.at(i).getUrl();
             break;
         }
@@ -858,7 +858,7 @@ void MainWindow::slot_featuredRecord()
     }
 
     for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid){
+        if(recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid){
             log(tr("Game is already recording"));
             return;
         }
@@ -869,7 +869,7 @@ void MainWindow::slot_featuredRecord()
     for(int i = 0; i < json_featured.size(); i++){
         QJsonArray gamelist = json_featured.at(i).value("gameList").toArray();
         for(int k = 0; k < gamelist.size(); k++){
-            if(gamelist.at(k).toObject().value("platformId").toString() == serverid){
+            if(gamelist.at(k).toObject().value("platformId").toString() == platformid){
                  if(QString::number(gamelist.at(k).toObject().value("gameId").toVariant().toULongLong()) == gameid){
                      gameinfo = QJsonDocument(gamelist.at(k).toObject());
                      break;
@@ -887,12 +887,12 @@ void MainWindow::slot_featuredRecord()
         dateTime = QDateTime::fromMSecsSinceEpoch(gameinfo.object().value("gameStartTime").toVariant().toLongLong()).toString();
     }
 
-    recording.append(QStringList() << serverid << gameid << dateTime);
+    recording.append(QStringList() << platformid << gameid << dateTime);
 
     refreshRecordingGamesWidget();
 
     QThread *recorderThread = new QThread;
-    Recorder *recorder = new Recorder(widget->getServerId(), serveraddress, gameid, widget->getEncryptionkey(), gameinfo, replaydirectory);
+    Recorder *recorder = new Recorder(widget->getPlatformId(), serveraddress, gameid, widget->getEncryptionkey(), gameinfo, replaydirectory);
     recorder->moveToThread(recorderThread);
     connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
     connect(recorder, SIGNAL(finished()), recorderThread, SLOT(quit()));
@@ -2081,7 +2081,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
             if(action->text() == tr("Spectate")){
                 GameInfosWidget* widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
 
-                lol_launch(widget->getServerId(), widget->getEncryptionkey(), widget->getGameId());
+                lol_launch(widget->getPlatformId(), widget->getEncryptionkey(), widget->getGameId());
             }
             else if(action->text() == tr("Record")){
                 slot_featuredRecord();

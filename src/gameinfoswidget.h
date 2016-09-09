@@ -22,8 +22,8 @@ public:
     explicit GameInfosWidget(QWidget *parent = 0);
     ~GameInfosWidget();
     void setGameInfos(QJsonDocument gameinfos);
-    void setGameHeader(QString serverid, QString gameid, QString encryptionkey);
-    QString getServerId();
+    void setGameHeader(QString platformid, QString gameid, QString encryptionkey);
+    QString getPlatformId();
     QString getGameId();
     QString getEncryptionkey();
     QPixmap getImg(int id);
@@ -31,7 +31,7 @@ public:
 private:
     Ui::GameInfosWidget *ui;
     QJsonDocument m_gameinfos;
-    QString m_serverid;
+    QString m_platformid;
     QString m_gameid;
     QString m_encryptionkey;
 };
