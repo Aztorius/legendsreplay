@@ -41,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     if(lrservers.isEmpty()){
         // Critical
         QMessageBox::critical(this, tr("LegendsReplay"), tr("Unable to find a Legends Replay server"));
-        this->close();
+        close();
         return;
     }
 
@@ -247,7 +247,7 @@ MainWindow::~MainWindow()
     networkManager_featured->deleteLater();
     networkManager_status->deleteLater();
     m_timer->deleteLater();
-    orsettings->deleteLater();    
+    orsettings->deleteLater();
 
     delete replay;
     delete ui;
@@ -2237,6 +2237,6 @@ void MainWindow::slot_directoryChanged(QString path){
 
 void MainWindow::slot_customMenuTriggeredSystemTrayIcon(QAction *action){
     if(action->text() == tr("Exit")){
-        qApp->exit(0);
+        close();
     }
 }
