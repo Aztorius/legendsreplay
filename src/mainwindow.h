@@ -14,6 +14,7 @@
 #include <QListWidgetItem>
 #include <QProgressBar>
 #include <QFileSystemWatcher>
+#include <QtGlobal>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"

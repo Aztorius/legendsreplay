@@ -464,7 +464,7 @@
         <source>Invalid League of Legends (or PBE) directory.
 Please set a valid one.</source>
         <translation>Dossier de League of Legends (ou du PBE) invalide.
-Merci d&apos;en choisir un valdie.</translation>
+Merci d&apos;en choisir un valide.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="364"/>

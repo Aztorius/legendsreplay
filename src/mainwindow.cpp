@@ -387,7 +387,7 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
     if(local){
         address = "127.0.0.1:8088";
 
-#ifdef WIN32
+#ifdef Q_OS_WIN32
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
@@ -395,7 +395,7 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
 
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
 
-#else
+#elif defined(Q_OS_UNIX)
         //QProcess *process = new QProcess;
         //process->setWorkingDirectory(path);
         //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
@@ -415,7 +415,7 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
             return;
         }
 
-#ifdef WIN32
+#ifdef Q_OS_WIN32
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
@@ -423,7 +423,7 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
 
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
 
-#else
+#elif defined(Q_OS_UNIX)
 
         //QProcess *process = new QProcess;
         //process->setWorkingDirectory(path);
@@ -1251,23 +1251,55 @@ void MainWindow::slot_pbeinfos_save()
 bool MainWindow::islolRunning()
 {
   QProcess tasklist;
+  bool running = false;
+
+#ifdef Q_OS_WIN32
 
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq League of Legends.exe"));
   tasklist.waitForFinished();
 
   QString output = tasklist.readAllStandardOutput();
-  return output.startsWith(QString("\"League of Legends.exe\""));
+  running = output.startsWith(QString("\"League of Legends.exe\""));
+
+#elif defined(Q_OS_UNIX)
+
+  tasklist.start("ps -A | grep \"League of Legends.exe\"");
+  tasklist.waitForFinished();
+
+  QString output = tasklist.readAllStandardOutput();
+  running = !output.isEmpty();
+  log("LOL: " + output);
+
+#endif
+
+  return running;
 }
 
 bool MainWindow::islolclientRunning()
 {
   QProcess tasklist;
+  bool running = false;
+
+#ifdef Q_OS_WIN32
 
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq LolClient.exe"));
   tasklist.waitForFinished();
 
   QString output = tasklist.readAllStandardOutput();
-  return output.startsWith(QString("\"LolClient.exe\""));
+  running = output.startsWith(QString("\"LolClient.exe\""));
+
+#elif defined(Q_OS_UNIX)
+
+  tasklist.start("ps -A | grep \"LolClient.exe\"");
+  tasklist.waitForFinished();
+
+  QString output = tasklist.readAllStandardOutput();
+  running = !output.isEmpty();
+  log("Client: " + output);
+
+#endif
+
+  return running;
 }
 
 void MainWindow::slot_refreshPlayingStatus()
@@ -1930,7 +1962,7 @@ void MainWindow::slot_customcontextmenu(QPoint point)
 
     menu->move(QCursor::pos());
     menu->show();
-    connect(menu, SIGNAL(triggered(QAction*)), this,  SLOT(slot_custommenutriggered(QAction*)));
+    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_custommenutriggered(QAction*)));
 }
 
 void MainWindow::slot_custommenutriggered(QAction *action)
@@ -1939,7 +1971,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
         if(ui->tabWidget_2->currentIndex() == 1){
             if(!ui->tableWidget_recordedgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
-                if(action->text() == tr("Delete")){
+                if(action->iconText() == tr("Delete")){
                     if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
                         return;
                     }
@@ -1954,10 +1986,10 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         log(tr("Unable to remove the file : ") + path);
                     }
                 }
-                else if(action->text() == tr("Replay")){
+                else if(action->iconText() == tr("Replay")){
                     replay_launch(path);
                 }
-                else if(action->text() == tr("Stats")){
+                else if(action->iconText() == tr("Stats")){
                     Replay local_replay(path, true);
 
                     if(local_replay.getGameId().isEmpty()){
@@ -1977,7 +2009,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
                     }
                 }
-                else if(action->text() == tr("Repair tool")){
+                else if(action->iconText() == tr("Repair tool")){
                     RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
                     newRepairToolDialog->show();
                     newRepairToolDialog->load(Replay(path));
@@ -1987,7 +2019,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
         else if(ui->tabWidget_2->currentIndex() == 0){
             if(!ui->tableWidget_yourgames->selectedItems().isEmpty()){
                 QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
-                if(action->text() == tr("Delete")){
+                if(action->iconText() == tr("Delete")){
                     if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
                         return;
                     }
@@ -2002,10 +2034,10 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         log(tr("Unable to remove the file : ") + path);
                     }
                 }
-                else if(action->text() == tr("Replay")){
+                else if(action->iconText() == tr("Replay")){
                     replay_launch(path);
                 }
-                else if(action->text() == tr("Stats")){
+                else if(action->iconText() == tr("Stats")){
                     Replay local_replay(path, true);
 
                     if(local_replay.getGameId().isEmpty()){
@@ -2025,7 +2057,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         QDesktopServices::openUrl(QUrl("http://matchhistory." + serverregion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
                     }
                 }
-                else if(action->text() == tr("Repair tool")){
+                else if(action->iconText() == tr("Repair tool")){
                     RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
                     newRepairToolDialog->show();
                     newRepairToolDialog->load(Replay(path));
@@ -2035,19 +2067,19 @@ void MainWindow::slot_custommenutriggered(QAction *action)
     }
     else if(ui->tabWidget->currentIndex() == 2){
         if(!ui->listWidget_featured->selectedItems().isEmpty()){
-            if(action->text() == tr("Spectate")){
+            if(action->iconText() == tr("Spectate")){
                 GameInfosWidget* widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
 
                 lol_launch(widget->getPlatformId(), widget->getEncryptionkey(), widget->getGameId());
             }
-            else if(action->text() == tr("Record")){
+            else if(action->iconText() == tr("Record")){
                 slot_featuredRecord();
             }
         }
     }
     else if(ui->tabWidget->currentIndex() == 3){
         if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
-            if(action->text() == tr("Cancel")){
+            if(action->iconText() == tr("Cancel")){
                 if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel this record ?")) != QMessageBox::Yes){
                     return;
                 }
@@ -2069,7 +2101,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                     recordingThreads.at(j)->exit(0);
                 }
             }
-            else if(action->text() == tr("Cancel and delete")){
+            else if(action->iconText() == tr("Cancel and delete")){
                 if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel and delete this record ?")) != QMessageBox::Yes){
                     return;
                 }
@@ -2236,7 +2268,7 @@ void MainWindow::slot_directoryChanged(QString path){
 }
 
 void MainWindow::slot_customMenuTriggeredSystemTrayIcon(QAction *action){
-    if(action->text() == tr("Exit")){
+    if(action->iconText() == tr("Exit")){
         close();
     }
 }
