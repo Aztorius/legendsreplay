@@ -524,7 +524,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QComboBox" name="comboBox_searchsummoner_platformid">
+         <widget class="QComboBox" name="comboBox_searchsummoner_region">
           <property name="currentText">
            <string notr="true">EUW</string>
           </property>
@@ -1266,12 +1266,12 @@
      <x>0</x>
      <y>0</y>
      <width>724</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFiles">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
@@ -1302,7 +1302,7 @@
      <normaloff>:/icons/open_replay.png</normaloff>:/icons/open_replay.png</iconset>
    </property>
    <property name="text">
-    <string>Open replay</string>
+    <string>&amp;Open replay</string>
    </property>
    <property name="font">
     <font>
@@ -1316,7 +1316,7 @@
      <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
    </property>
    <property name="text">
-    <string>Exit</string>
+    <string>&amp;Exit</string>
    </property>
   </action>
   <action name="actionAdvanced_Recorder">
@@ -1325,7 +1325,7 @@
      <normaloff>:/icons/advanced_recorder.png</normaloff>:/icons/advanced_recorder.png</iconset>
    </property>
    <property name="text">
-    <string>Advanced Recorder</string>
+    <string>&amp;Advanced Recorder</string>
    </property>
   </action>
   <action name="actionReport_an_issue">
@@ -1334,7 +1334,7 @@
      <normaloff>:/icons/tool.png</normaloff>:/icons/tool.png</iconset>
    </property>
    <property name="text">
-    <string>Report an issue</string>
+    <string>&amp;Report an issue</string>
    </property>
    <property name="toolTip">
     <string>Report an issue on GitHub</string>
@@ -1346,7 +1346,7 @@
      <normaloff>:/icons/info.png</normaloff>:/icons/info.png</iconset>
    </property>
    <property name="text">
-    <string>About LegendsReplay</string>
+    <string>&amp;About LegendsReplay</string>
    </property>
   </action>
   <action name="actionRepair_tool">
@@ -1355,7 +1355,7 @@
      <normaloff>:/icons/repair.png</normaloff>:/icons/repair.png</iconset>
    </property>
    <property name="text">
-    <string>Repair tool</string>
+    <string>&amp;Repair tool</string>
    </property>
   </action>
  </widget>

@@ -275,16 +275,20 @@ void MainWindow::setArgs(int argc, char *argv[])
     if(argc > 1){
         if(std::string(argv[1]) == "--silent"){
             this->showMinimized();
+
             return;
         }
 
-        if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverid serveraddress gameid encryptionkey forceCompleteDownload
+        if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverregion serveraddress gameid encryptionkey forceCompleteDownload
             slot_customGameRecord(QString(argv[3]), QString(argv[2]), QString(argv[4]), QString(argv[5]), QString(argv[6]) == "true", false, false);
+
+            return;
         }
 
         Replay replay(argv[1]);
         if(!replay.getGameId().isEmpty()){
             replay_launch(argv[1]);
+
             return;
         }
     }
@@ -337,9 +341,9 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
     lol_launch(platformid, key, gameid);
 }
 
-void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool local)
+void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bool local)
 {
-    if(serverid.isEmpty() || key.isEmpty() || matchid.isEmpty()){
+    if(platformid.isEmpty() || key.isEmpty() || matchid.isEmpty()){
         log(tr("[ERROR] Invalid game parameters."));
         return;
     }
@@ -348,7 +352,7 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
     QDir qd;
 
-    if(serverid == "PBE1"){
+    if(platformid == "PBE1"){
         qd.setPath(lolpbedirectory + "/solutions/lol_game_client_sln/releases/");
     }
     else{
@@ -365,11 +369,11 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
         return;
     }
 
-    if(serverid == "PBE1"){
-        path = lolpbedirectory + "/solutions/lol_game_client_sln/releases/" + list.at(0).fileName() + "/deploy/";
+    if(platformid == "PBE1"){
+        path = lolpbedirectory + "/solutions/lol_game_client_sln/releases/" + list.first().fileName() + "/deploy/";
     }
     else{
-        path = loldirectory + "/solutions/lol_game_client_sln/releases/" + list.at(0).fileName() + "/deploy/";
+        path = loldirectory + "/solutions/lol_game_client_sln/releases/" + list.first().fileName() + "/deploy/";
     }
 
     if(!check_path(path)){
@@ -387,28 +391,23 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
+        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
 
-        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
 
 #else
         //QProcess *process = new QProcess;
         //process->setWorkingDirectory(path);
-        //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+        //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
 
-        //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
         log(tr("LoL Launch isn't available for Linux yet"));
 
 #endif
 
     }
     else{
-        for(int i = 0; i < servers.size(); i++){
-            if(servers.at(i).getPlatformId() == serverid){
-                address = servers.at(i).getUrl();
-                break;
-            }
-        }
+        address = getServerByPlatformId(platformid).getUrl();
 
         if(address.isEmpty()){
             //Server address not found
@@ -420,17 +419,17 @@ void MainWindow::lol_launch(QString serverid, QString key, QString matchid, bool
 
         QProcess *process = new QProcess;
         process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
+        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
 
-        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
 
 #else
 
         //QProcess *process = new QProcess;
         //process->setWorkingDirectory(path);
-        //process->startDetached("wine \"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + serverid), path);
+        //process->startDetached("wine \"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
 
-        //log("wine \"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + serverid + "\"");
+        //log("wine \"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
         log("LoL Launch isn't available for Linux yet");
 
 #endif
@@ -445,23 +444,16 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     if(reply->error() != QNetworkReply::NoError)
     {
         QString host = reply->request().url().host();
-        QString platformid;
-        int row = -1;
+        Server server = getServerByDomain(host);
 
-        for(int i = 0; i < servers.size(); i++){
-            if(servers.at(i).getDomain() == host){
-                platformid = servers.at(i).getPlatformId();
-                row = i;
-                break;
-            }
-        }
-
-        if(platformid.isEmpty() || row == -1){
+        if(server.getPlatformId().isEmpty()){
             log(tr("[ERROR] Unknown platform id"));
             return;
         }
 
-        log(tr("[ERROR] Status of ") + platformid + ": " + reply->errorString());
+        int row = servers.indexOf(server);
+
+        log(tr("[ERROR] Status of ") + server.getPlatformId() + ": " + reply->errorString());
 
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             ui->tableWidget_status->setItem(row, ui->tableWidget_status->columnCount()-1, new QTableWidgetItem(tr("offline")));
@@ -486,21 +478,14 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     {
         if(reply->url().path() == "/observer-mode/rest/consumer/version"){
             QString host = reply->request().url().host();
-            QString platformid;
-            int row = -1;
+            Server server = getServerByDomain(host);
 
-            for(int i = 0; i < servers.size(); i++){
-                if(servers.at(i).getDomain() == host){
-                    platformid = servers.at(i).getPlatformId();
-                    row = i;
-                    break;
-                }
-            }
-
-            if(platformid.isEmpty() || row == -1){
+            if(server.isEmpty()){
                 log(tr("[ERROR] Unknown platform id"));
                 return;
             }
+
+            int row = servers.indexOf(server);
 
             if(data.isEmpty()){
                 ui->tableWidget_status->setItem(row, ui->tableWidget_status->columnCount()-1, new QTableWidgetItem(tr("offline")));
@@ -765,20 +750,16 @@ void MainWindow::slot_changedTab(int index)
     }
 }
 
-bool MainWindow::game_ended(QString serverid, QString gameid)
+bool MainWindow::game_ended(QString region, QString gameid)
 {
-    //Get serverID
-    QString serveraddress;
-    for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getRegion() == serverid){
-            serveraddress = servers.at(i).getUrl();
-        }
-    }
+    //Get server URL
+    QString serveraddress = getServerByRegion(region).getUrl();
+
     if(serveraddress.isEmpty()){
         return false;
     }
 
-    QJsonDocument jsonResponse = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + serverid + "/" + gameid + "/token"));
+    QJsonDocument jsonResponse = getJsonFromUrl(QString("http://" + serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + region + "/" + gameid + "/token"));
 
     if(jsonResponse.isEmpty()){
         return false;
@@ -787,11 +768,11 @@ bool MainWindow::game_ended(QString serverid, QString gameid)
     QJsonObject jsonObject = jsonResponse.object();
 
     if(jsonObject.value("gameEnded").toBool()){
-        log(tr("GAME : ") + serverid + "/" + gameid + tr(" has already finished. Aborting spectator mode."));
+        log(tr("GAME : ") + region + "/" + gameid + tr(" has already finished. Aborting spectator mode."));
         return true;
     }
     else{
-        log(tr("GAME : ") + serverid + "/" + gameid + tr(" is in progress. Launching spectator mode."));
+        log(tr("GAME : ") + region + "/" + gameid + tr(" is in progress. Launching spectator mode."));
         return false;
     }
 }
@@ -832,6 +813,26 @@ Server MainWindow::getServerByPlatformId(QString platformid)
     return Server();
 }
 
+Server MainWindow::getServerByRegion(QString region){
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).getRegion() == region){
+            return servers.at(i);
+        }
+    }
+
+    return Server();
+}
+
+Server MainWindow::getServerByDomain(QString domain){
+    for(int i = 0; i < servers.size(); i++){
+        if(servers.at(i).getDomain() == domain){
+            return servers.at(i);
+        }
+    }
+
+    return Server();
+}
+
 void MainWindow::slot_featuredRecord()
 {
     if(ui->listWidget_featured->currentItem() == NULL){
@@ -845,13 +846,8 @@ void MainWindow::slot_featuredRecord()
     QString gameid = widget->getGameId();
 
     //Get server address
-    QString serveraddress;
-    for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getPlatformId() == platformid){
-            serveraddress = servers.at(i).getUrl();
-            break;
-        }
-    }
+    QString serveraddress = getServerByPlatformId(platformid).getUrl();
+
     if(serveraddress.isEmpty()){
         log(tr("Server address not found"));
         return;
@@ -907,11 +903,11 @@ void MainWindow::slot_featuredRecord()
     recordingThreads.append(recorderThread);
 }
 
-void MainWindow::slot_endRecording(QString serverid, QString gameid)
+void MainWindow::slot_endRecording(QString platformid, QString gameid)
 {
     for(int i = 0; i < recording.size(); i++)
     {
-        if(recording.at(i).size() >= 2 && recording.at(i).at(0) == serverid && recording.at(i).at(1) == gameid)
+        if(recording.at(i).size() >= 2 && recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
             recordingThreads.removeAt(i);
@@ -1117,14 +1113,7 @@ void MainWindow::slot_refresh_recordedGames()
             recordedgames_filename.append(fileinfo.fileName());
 
             //Get platformId of the user
-            QString local_platformid;
-
-            for(int k = 0; k < servers.size(); k++){
-                if(servers.at(k).getRegion() == m_summonerServerRegion){
-                    local_platformid = servers.at(k).getPlatformId();
-                    break;
-                }
-            }
+            QString local_platformid = getServerByRegion(m_summonerServerRegion).getPlatformId();
 
             if(!local_platformid.isEmpty() && game.getPlatformId() == local_platformid)
             {
@@ -1330,15 +1319,8 @@ void MainWindow::slot_refreshPlayingStatus()
 
         QString gameId = QString::number(gameInfo.object().value("gameId").toVariant().toLongLong());
 
-        QString platformId, serverAddress;
-
-        for(int i = 0; i < servers.size(); i++){
-            if(servers.at(i).getRegion() == m_summonerServerRegion){
-                platformId = servers.at(i).getPlatformId();
-                serverAddress = servers.at(i).getUrl();
-                break;
-            }
-        }
+        Server server = getServerByRegion(m_summonerServerRegion);
+        QString platformId = server.getPlatformId(), serverAddress = server.getUrl();
 
         if(platformId.isEmpty()){
             log(tr("[ERROR] Server not found"));
@@ -1382,14 +1364,7 @@ void MainWindow::slot_refreshPlayingStatus()
 
 QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString serverRegion, QString summonerId)
 {
-    QString platformId;
-
-    for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getRegion() == serverRegion){
-            platformId = servers.at(i).getPlatformId();
-            break;
-        }
-    }
+    QString platformId = getServerByRegion(serverRegion).getPlatformId();
 
     if(platformId.isEmpty() || m_currentLegendsReplayServer.isEmpty()){
         QJsonDocument docempty;
@@ -1693,10 +1668,10 @@ void MainWindow::slot_searchsummoner()
 {
     ui->label_searchsummoner_status->setText("...");
 
-    QString serverid = ui->comboBox_searchsummoner_platformid->currentText();
+    QString region = ui->comboBox_searchsummoner_region->currentText();
     QString summonername = ui->lineEdit_searchsummoner->text();
 
-    QJsonDocument suminfos = getJsonFromUrl(m_currentLegendsReplayServer + "?region=" + serverid + "&summonername=" + summonername);
+    QJsonDocument suminfos = getJsonFromUrl(m_currentLegendsReplayServer + "?region=" + region + "&summonername=" + summonername);
 
     if(suminfos.isEmpty())
     {
@@ -1712,7 +1687,7 @@ void MainWindow::slot_searchsummoner()
         return;
     }
 
-    QJsonDocument game = getCurrentPlayingGameInfos(serverid,summonerid);
+    QJsonDocument game = getCurrentPlayingGameInfos(region, summonerid);
 
     ui->label_sums1->clear();
     ui->label_sums2->clear();
@@ -1867,16 +1842,10 @@ void MainWindow::slot_click_searchsummoner_record()
         return;
     }
 
-    QString serveraddress;
     QString platformid = m_searchsummoner_game.object().value("platformId").toString();
     QString gameid = QString::number(m_searchsummoner_game.object().value("gameId").toVariant().toULongLong());
+    QString serveraddress = getServerByPlatformId(platformid).getUrl();
 
-    for(int i = 0; i < servers.size(); i++){
-        if(servers.at(i).getPlatformId() == platformid){
-            serveraddress = servers.at(i).getUrl();
-            break;
-        }
-    }
     if(serveraddress.isEmpty()){
         return;
     }
@@ -1995,13 +1964,7 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         return;
                     }
 
-                    QString serverRegion;
-                    for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).getPlatformId() == local_replay.getPlatformId()){
-                            serverRegion = servers.at(i).getRegion();
-                            break;
-                        }
-                    }
+                    QString serverRegion = getServerByPlatformId(local_replay.getPlatformId()).getRegion();
 
                     if(serverRegion.isEmpty()){
                         return;
@@ -2049,23 +2012,17 @@ void MainWindow::slot_custommenutriggered(QAction *action)
                         return;
                     }
 
-                    QString servername;
-                    for(int i = 0; i < servers.size(); i++){
-                        if(servers.at(i).getPlatformId() == local_replay.getPlatformId()){
-                            servername = servers.at(i).getRegion();
-                            break;
-                        }
-                    }
+                    QString serverregion = getServerByPlatformId(local_replay.getPlatformId()).getRegion();
 
-                    if(servername.isEmpty()){
+                    if(serverregion.isEmpty()){
                         return;
                     }
 
-                    if(servername.toLower() == "kr"){
+                    if(serverregion.toLower() == "kr"){
                         QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
                     }
                     else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + servername.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
+                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverregion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
                     }
                 }
                 else if(action->text() == tr("Repair tool")){

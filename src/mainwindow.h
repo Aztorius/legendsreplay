@@ -41,9 +41,9 @@ public:
 
     void setArgs(int argc, char *argv[]);
 
-    void lol_launch(QString serverid, QString key, QString matchid, bool local = false);
+    void lol_launch(QString platformid, QString key, QString matchid, bool local = false);
     bool check_path(QString path);
-    bool game_ended(QString serverid, QString gameid);
+    bool game_ended(QString region, QString gameid);
     void replay_launch(QString pathfile);
 
     QJsonDocument getCurrentPlayingGameInfos(QString serverRegion, QString summonerId);
@@ -55,6 +55,8 @@ public:
     bool islolclientRunning();
 
     Server getServerByPlatformId(QString platformid);
+    Server getServerByRegion(QString region);
+    Server getServerByDomain(QString domain);
 
     void refreshRecordingGamesWidget();
 
@@ -150,7 +152,7 @@ private slots:
     void slot_featuredRecord();
 
     void slot_changedTab(int index);
-    void slot_endRecording(QString serverid, QString gameid);
+    void slot_endRecording(QString platformid, QString gameid);
     void log(QString);
     void showmessage(QString message);
     void systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason);

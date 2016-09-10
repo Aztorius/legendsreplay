@@ -8,12 +8,17 @@ class Server
 public:
     Server();
     Server(QString name, QString region, QString platformid, QString domain, unsigned int port = 0);
+
     QString getName() const;
     QString getRegion() const;
     QString getPlatformId() const;
     QString getDomain() const;
     unsigned int getPort() const;
     QString getUrl() const;
+
+    bool isEmpty() const;
+
+    bool operator==(Server const& a);
 
 private:
     QString m_name;

@@ -49,3 +49,12 @@ QString Server::getUrl() const
 {
     return m_url;
 }
+
+bool Server::isEmpty() const
+{
+    return m_domain.isEmpty() || m_port == 0 || m_name.isEmpty() || m_region.isEmpty() || m_platformid.isEmpty() || m_url.isEmpty();
+}
+
+bool Server::operator ==(Server const& a){
+    return (a.getDomain() == m_domain && a.getName() == m_name && a.getPlatformId() == m_platformid && a.getPort() == m_port && a.getRegion() == m_region && a.getUrl() == m_url);
+}
