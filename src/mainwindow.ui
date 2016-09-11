@@ -1302,7 +1302,7 @@
      <normaloff>:/icons/open_replay.png</normaloff>:/icons/open_replay.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open replay</string>
+    <string>Open replay</string>
    </property>
    <property name="font">
     <font>
@@ -1316,7 +1316,7 @@
      <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Exit</string>
+    <string>Exit</string>
    </property>
   </action>
   <action name="actionAdvanced_Recorder">
@@ -1325,7 +1325,7 @@
      <normaloff>:/icons/advanced_recorder.png</normaloff>:/icons/advanced_recorder.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Advanced Recorder</string>
+    <string>Advanced Recorder</string>
    </property>
   </action>
   <action name="actionReport_an_issue">
@@ -1334,7 +1334,7 @@
      <normaloff>:/icons/tool.png</normaloff>:/icons/tool.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Report an issue</string>
+    <string>Report an issue</string>
    </property>
    <property name="toolTip">
     <string>Report an issue on GitHub</string>
@@ -1346,7 +1346,7 @@
      <normaloff>:/icons/info.png</normaloff>:/icons/info.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;About LegendsReplay</string>
+    <string>About LegendsReplay</string>
    </property>
   </action>
   <action name="actionRepair_tool">
@@ -1355,7 +1355,7 @@
      <normaloff>:/icons/repair.png</normaloff>:/icons/repair.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Repair tool</string>
+    <string>Repair tool</string>
    </property>
   </action>
  </widget>
