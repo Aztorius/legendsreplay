@@ -72,6 +72,7 @@ private:
     QNetworkAccessManager *networkManager_replayServers;
 
     QSystemTrayIcon *systemtrayicon;
+    QMenu *systemtraymenu;
 
     QList <QStringList> recording;
     QList <QThread*> recordingThreads;
@@ -164,8 +165,6 @@ private slots:
     void slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload = false, bool downloadInfos = false, bool downloadStats = true);
 
     void slot_customcontextmenu(QPoint point);
-    void slot_custommenutriggered(QAction* action);
-    void slot_customMenuTriggeredSystemTrayIcon(QAction* action);
 
     void slot_reportAnIssue();
     void slot_aboutLegendsReplay();
@@ -173,6 +172,15 @@ private slots:
 
     void slot_setLanguage();
     void slot_directoryChanged(QString path);
+
+    void slot_menu_replay();
+    void slot_menu_stats();
+    void slot_menu_repairtool();
+    void slot_menu_delete();
+    void slot_menu_spectate();
+    void slot_menu_record();
+    void slot_menu_cancel();
+    void slot_menu_cancelanddelete();
 
 protected:
     void changeEvent(QEvent*);

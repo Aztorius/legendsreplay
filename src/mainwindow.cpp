@@ -215,14 +215,14 @@ MainWindow::MainWindow(QWidget *parent) :
         systemtrayicon = new QSystemTrayIcon;
         systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
 
-        QMenu* menu = new QMenu;
-        menu->addAction(QIcon(":/icons/exit.png"), tr("Exit"));
-        systemtrayicon->setContextMenu(menu);
+        systemtraymenu = new QMenu;
+        systemtraymenu->addAction(QIcon(":/icons/exit.png"), tr("Exit"), this, SLOT(close()));
+
+        systemtrayicon->setContextMenu(systemtraymenu);
         systemtrayicon->show();
 
         connect(systemtrayicon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(systemtrayiconActivated(QSystemTrayIcon::ActivationReason)));
         connect(systemtrayicon, SIGNAL(messageClicked()), this, SLOT(slot_messageclicked()));
-        connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_customMenuTriggeredSystemTrayIcon(QAction*)));
     }
 
     connect(this, SIGNAL(signal_checkSoftwareVersion()), this, SLOT(slot_checkSoftwareVersion()), Qt::QueuedConnection);
@@ -240,6 +240,7 @@ MainWindow::~MainWindow()
     {
         systemtrayicon->hide();
         systemtrayicon->deleteLater();
+        systemtraymenu->deleteLater();
     }
 
     m_directory_watcher->deleteLater();
@@ -1944,201 +1945,200 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     QMenu *menu = new QMenu(tr("Options"), this);
 
     if(ui->tabWidget->currentIndex() == 0){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"));
-        menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"));
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"), this, SLOT(slot_menu_replay()));
+        menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"), this, SLOT(slot_menu_stats()));
         menu->addSeparator();
-        menu->addAction(QIcon(":/icons/repair.png"), tr("Repair tool"));
+        menu->addAction(QIcon(":/icons/repair.png"), tr("Repair tool"), this, SLOT(slot_menu_repairtool()));
         menu->addSeparator();
-        menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"));
+        menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"), this, SLOT(slot_menu_delete()));
     }
     else if(ui->tabWidget->currentIndex() == 2){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Spectate"));
-        menu->addAction(QIcon(":/icons/record.png"), tr("Record"));
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Spectate"), this, SLOT(slot_menu_spectate()));
+        menu->addAction(QIcon(":/icons/record.png"), tr("Record"), this, SLOT(slot_menu_record()));
     }
     else if(ui->tabWidget->currentIndex() == 3){
-        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("Cancel"));
-        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and delete"));
+        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("Cancel"), this, SLOT(slot_menu_cancel()));
+        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and delete"), this, SLOT(slot_menu_cancelanddelete()));
     }
 
-    menu->move(QCursor::pos());
-    menu->show();
-    connect(menu, SIGNAL(triggered(QAction*)), this, SLOT(slot_custommenutriggered(QAction*)));
+    menu->popup(QCursor::pos());
+
+    connect(menu, SIGNAL(aboutToHide()), menu, SLOT(deleteLater()));
 }
 
-void MainWindow::slot_custommenutriggered(QAction *action)
-{
-    if(ui->tabWidget->currentIndex() == 0){
-        if(ui->tabWidget_2->currentIndex() == 1){
-            if(!ui->tableWidget_recordedgames->selectedItems().isEmpty()){
-                QString path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
-                if(action->iconText() == tr("Delete")){
-                    if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
-                        return;
-                    }
+void MainWindow::slot_menu_replay(){
+    QString path;
 
-                    if(!QFile::exists(path)){
-                        log(tr("Unable to find the file : ") + path);
-                    }
-                    else if(!QFile::remove(path)){
-                        log(tr("Unable to remove the file : ") + path);
-                    }
-                    else if(QFile::exists(path)){
-                        log(tr("Unable to remove the file : ") + path);
-                    }
-                }
-                else if(action->iconText() == tr("Replay")){
-                    replay_launch(path);
-                }
-                else if(action->iconText() == tr("Stats")){
-                    Replay local_replay(path, true);
+    if(ui->tabWidget_2->currentIndex() == 0 && !ui->tableWidget_yourgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
+    }
+    else if(ui->tabWidget_2->currentIndex() == 1 && !ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
+    }
+    else{
+        return;
+    }
 
-                    if(local_replay.getGameId().isEmpty()){
-                        return;
-                    }
+    replay_launch(path);
+}
 
-                    QString serverRegion = getServerByPlatformId(local_replay.getPlatformId()).getRegion();
+void MainWindow::slot_menu_stats(){
+    QString path;
 
-                    if(serverRegion.isEmpty()){
-                        return;
-                    }
+    if(ui->tabWidget_2->currentIndex() == 0 && !ui->tableWidget_yourgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
+    }
+    else if(ui->tabWidget_2->currentIndex() == 1 && !ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
+    }
+    else{
+        return;
+    }
 
-                    if(serverRegion.toLower() == "kr"){
-                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
-                    }
-                    else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
-                    }
-                }
-                else if(action->iconText() == tr("Repair tool")){
-                    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
-                    newRepairToolDialog->show();
-                    newRepairToolDialog->load(Replay(path));
-                }
+    Replay local_replay(path, true);
+
+    if(local_replay.getGameId().isEmpty()){
+        return;
+    }
+
+    QString serverRegion = getServerByPlatformId(local_replay.getPlatformId()).getRegion();
+
+    if(serverRegion.isEmpty()){
+        return;
+    }
+
+    if(serverRegion.toLower() == "kr"){
+        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
+    }
+    else{
+        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverRegion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
+    }
+}
+
+void MainWindow::slot_menu_repairtool(){
+    QString path;
+
+    if(ui->tabWidget_2->currentIndex() == 0 && !ui->tableWidget_yourgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
+    }
+    else if(ui->tabWidget_2->currentIndex() == 1 && !ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
+    }
+    else{
+        return;
+    }
+
+    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
+    newRepairToolDialog->show();
+    newRepairToolDialog->load(Replay(path));
+}
+
+void MainWindow::slot_menu_delete(){
+    QString path;
+
+    if(ui->tabWidget_2->currentIndex() == 0 && !ui->tableWidget_yourgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
+    }
+    else if(ui->tabWidget_2->currentIndex() == 1 && !ui->tableWidget_recordedgames->selectedItems().isEmpty()){
+        path = replaydirectory + "/" + recordedgames_filename.at(ui->tableWidget_recordedgames->selectedItems().first()->row());
+    }
+    else{
+        return;
+    }
+
+    if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
+        return;
+    }
+
+    if(!QFile::exists(path)){
+        log(tr("Unable to find the file : ") + path);
+    }
+    else if(!QFile::remove(path)){
+        log(tr("Unable to remove the file : ") + path);
+    }
+    else if(QFile::exists(path)){
+        log(tr("Unable to remove the file : ") + path);
+    }
+}
+
+void MainWindow::slot_menu_spectate(){
+    if(!ui->listWidget_featured->selectedItems().isEmpty()){
+        GameInfosWidget* widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
+
+        lol_launch(widget->getPlatformId(), widget->getEncryptionkey(), widget->getGameId());
+    }
+}
+
+void MainWindow::slot_menu_record(){
+    if(!ui->listWidget_featured->selectedItems().isEmpty()){
+        slot_featuredRecord();
+    }
+}
+
+void MainWindow::slot_menu_cancel(){
+    if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
+        if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel this record ?")) != QMessageBox::Yes){
+            return;
+        }
+
+        int j = -1;
+        int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+
+        for(int i = 0; i < recording.size(); i++){
+            if(recording.at(i).first() == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
+                j = i;
+                break;
             }
         }
-        else if(ui->tabWidget_2->currentIndex() == 0){
-            if(!ui->tableWidget_yourgames->selectedItems().isEmpty()){
-                QString path = replaydirectory + "/" + ui->tableWidget_yourgames->item(ui->tableWidget_yourgames->selectedItems().first()->row(), 4)->text();
-                if(action->iconText() == tr("Delete")){
-                    if(QMessageBox::question(this, tr("Delete"), tr("Do you really want to delete this replay ?")) != QMessageBox::Yes){
-                        return;
-                    }
 
-                    if(!QFile::exists(path)){
-                        log(tr("Unable to find the file : ") + path);
-                    }
-                    else if(!QFile::remove(path)){
-                        log(tr("Unable to remove the file : ") + path);
-                    }
-                    else if(QFile::exists(path)){
-                        log(tr("Unable to remove the file : ") + path);
-                    }
-                }
-                else if(action->iconText() == tr("Replay")){
-                    replay_launch(path);
-                }
-                else if(action->iconText() == tr("Stats")){
-                    Replay local_replay(path, true);
+        if(j < 0){
+            return;
+        }
 
-                    if(local_replay.getGameId().isEmpty()){
-                        return;
-                    }
-
-                    QString serverregion = getServerByPlatformId(local_replay.getPlatformId()).getRegion();
-
-                    if(serverregion.isEmpty()){
-                        return;
-                    }
-
-                    if(serverregion.toLower() == "kr"){
-                        QDesktopServices::openUrl(QUrl("http://matchhistory.leagueoflegends.co.kr/en/#match-details/KR/" + local_replay.getGameId() + "?tab=overview"));
-                    }
-                    else{
-                        QDesktopServices::openUrl(QUrl("http://matchhistory." + serverregion.toLower() + ".leagueoflegends.com/en/#match-details/" + local_replay.getPlatformId() + "/" + local_replay.getGameId() + "?tab=overview"));
-                    }
-                }
-                else if(action->iconText() == tr("Repair tool")){
-                    RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
-                    newRepairToolDialog->show();
-                    newRepairToolDialog->load(Replay(path));
-                }
-            }
+        if(recordingThreads.size() > j){
+            recordingThreads.at(j)->exit(0);
         }
     }
-    else if(ui->tabWidget->currentIndex() == 2){
-        if(!ui->listWidget_featured->selectedItems().isEmpty()){
-            if(action->iconText() == tr("Spectate")){
-                GameInfosWidget* widget = dynamic_cast<GameInfosWidget*>(ui->listWidget_featured->itemWidget(ui->listWidget_featured->selectedItems().first()));
+}
 
-                lol_launch(widget->getPlatformId(), widget->getEncryptionkey(), widget->getGameId());
-            }
-            else if(action->iconText() == tr("Record")){
-                slot_featuredRecord();
+void MainWindow::slot_menu_cancelanddelete(){
+    if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
+        if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel and delete this record ?")) != QMessageBox::Yes){
+            return;
+        }
+
+        int j = -1;
+        int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+
+        for(int i = 0; i < recording.size(); i++){
+            if(recording.at(i).first() == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
+                j = i;
+                break;
             }
         }
-    }
-    else if(ui->tabWidget->currentIndex() == 3){
-        if(!ui->tableWidget_recordingGames->selectedItems().isEmpty()){
-            if(action->iconText() == tr("Cancel")){
-                if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel this record ?")) != QMessageBox::Yes){
-                    return;
-                }
 
-                int j = -1;
-                int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+        if(j < 0){
+            return;
+        }
 
-                for(int i = 0; i < recording.size(); i++){
-                    if(recording.at(i).at(0) == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
-                        j = i;
-                    }
-                }
+        QString filepath = replaydirectory + "/" + recording.at(j).first() + "-" + recording.at(j).at(1) + ".lor";
 
-                if(j < 0){
-                    return;
-                }
+        if(recordingThreads.size() > j){
+            recordingThreads.at(j)->exit(0);
+            recordingThreads.at(j)->wait(1000);
+        }
 
-                if(recordingThreads.size() > j){
-                    recordingThreads.at(j)->exit(0);
-                }
-            }
-            else if(action->iconText() == tr("Cancel and delete")){
-                if(QMessageBox::question(this, tr("Cancel"), tr("Do you really want to cancel and delete this record ?")) != QMessageBox::Yes){
-                    return;
-                }
+        QFile file(filepath);
 
-                int j = -1;
-                int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+        if(!file.exists()){
+            return;
+        }
 
-                for(int i = 0; i < recording.size(); i++){
-                    if(recording.at(i).at(0) == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
-                        j = i;
-                    }
-                }
-
-                if(j < 0){
-                    return;
-                }
-
-                QString filepath = replaydirectory + "/" + recording.at(j).at(0) + "-" + recording.at(j).at(1) + ".lor";
-
-                if(recordingThreads.size() > j){
-                    recordingThreads.at(j)->exit(0);
-                    recordingThreads.at(j)->wait(1000);
-                }
-
-                QFile file(filepath);
-
-                if(!file.exists()){
-                    return;
-                }
-
-                if(file.open(QIODevice::WriteOnly) && file.remove()){
-                    log(tr("Removed file : ") + filepath);
-                }
-                else{
-                    log(tr("[ERROR] Unable to remove the file : ") + file.errorString());
-                }
-            }
+        if(file.open(QIODevice::WriteOnly) && file.remove()){
+            log(tr("Removed file : ") + filepath);
+        }
+        else{
+            log(tr("[ERROR] Unable to remove the file : ") + file.errorString());
         }
     }
 }
@@ -2265,10 +2265,4 @@ void MainWindow::slot_directoryChanged(QString path){
     Q_UNUSED(path);
 
     slot_refresh_recordedGames();
-}
-
-void MainWindow::slot_customMenuTriggeredSystemTrayIcon(QAction *action){
-    if(action->iconText() == tr("Exit")){
-        close();
-    }
 }
