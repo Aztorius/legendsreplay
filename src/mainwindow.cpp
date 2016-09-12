@@ -216,7 +216,7 @@ MainWindow::MainWindow(QWidget *parent) :
         systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
 
         systemtraymenu = new QMenu;
-        systemtraymenu->addAction(QIcon(":/icons/exit.png"), tr("Exit"), this, SLOT(close()));
+        systemtraymenu->addAction(QIcon(":/icons/exit.png"), tr("&Exit"), this, SLOT(close()));
 
         systemtrayicon->setContextMenu(systemtraymenu);
         systemtrayicon->show();
@@ -1945,20 +1945,20 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     QMenu *menu = new QMenu(tr("Options"), this);
 
     if(ui->tabWidget->currentIndex() == 0){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Replay"), this, SLOT(slot_menu_replay()));
-        menu->addAction(QIcon(":/icons/stats.png"), tr("Stats"), this, SLOT(slot_menu_stats()));
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Re&play"), this, SLOT(slot_menu_replay()));
+        menu->addAction(QIcon(":/icons/stats.png"), tr("&Stats"), this, SLOT(slot_menu_stats()));
         menu->addSeparator();
-        menu->addAction(QIcon(":/icons/repair.png"), tr("Repair tool"), this, SLOT(slot_menu_repairtool()));
+        menu->addAction(QIcon(":/icons/repair.png"), tr("&Repair tool"), this, SLOT(slot_menu_repairtool()));
         menu->addSeparator();
-        menu->addAction(QIcon(":/icons/delete.png"), tr("Delete"), this, SLOT(slot_menu_delete()));
+        menu->addAction(QIcon(":/icons/delete.png"), tr("&Delete"), this, SLOT(slot_menu_delete()));
     }
     else if(ui->tabWidget->currentIndex() == 2){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Spectate"), this, SLOT(slot_menu_spectate()));
-        menu->addAction(QIcon(":/icons/record.png"), tr("Record"), this, SLOT(slot_menu_record()));
+        menu->addAction(QIcon(":/icons/open_replay.png"), tr("&Spectate"), this, SLOT(slot_menu_spectate()));
+        menu->addAction(QIcon(":/icons/record.png"), tr("&Record"), this, SLOT(slot_menu_record()));
     }
     else if(ui->tabWidget->currentIndex() == 3){
-        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("Cancel"), this, SLOT(slot_menu_cancel()));
-        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and delete"), this, SLOT(slot_menu_cancelanddelete()));
+        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("&Cancel"), this, SLOT(slot_menu_cancel()));
+        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and &delete"), this, SLOT(slot_menu_cancelanddelete()));
     }
 
     menu->popup(QCursor::pos());
