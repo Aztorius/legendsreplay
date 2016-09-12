@@ -171,7 +171,6 @@ private slots:
     void slot_checkandrepair();
 
     void slot_setLanguage();
-    void slot_directoryChanged(QString path);
 
     void slot_menu_replay();
     void slot_menu_stats();

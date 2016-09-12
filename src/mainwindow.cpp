@@ -205,7 +205,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_directory_watcher = new QFileSystemWatcher;
     m_directory_watcher->addPath(replaydirectory);
-    connect(m_directory_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(slot_directoryChanged(QString)));
+    connect(m_directory_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(slot_refresh_recordedGames()));
 
     emit signal_refresh_recordedGames();
 
@@ -624,7 +624,7 @@ void MainWindow::slot_networkResult_featured(QNetworkReply *reply)
         return;
     }
 
-    log(gamelist[0].toObject().value("platformId").toString() + tr(" : Featured games infos"));
+    log(gamelist.first().toObject().value("platformId").toString() + tr(" : Featured games infos"));
 
     for(int i = 0; i < gamelist.size(); i++){
         GameInfosWidget *widget = new GameInfosWidget(this);
@@ -855,7 +855,7 @@ void MainWindow::slot_featuredRecord()
     }
 
     for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid){
+        if(recording.at(i).first() == platformid && recording.at(i).at(1) == gameid){
             log(tr("Game is already recording"));
             return;
         }
@@ -908,7 +908,7 @@ void MainWindow::slot_endRecording(QString platformid, QString gameid)
 {
     for(int i = 0; i < recording.size(); i++)
     {
-        if(recording.at(i).size() >= 2 && recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid)
+        if(recording.at(i).size() >= 2 && recording.at(i).first() == platformid && recording.at(i).at(1) == gameid)
         {
             recording.removeAt(i);
             recordingThreads.removeAt(i);
@@ -993,9 +993,9 @@ void MainWindow::slot_click_allgames()
     if(leftids.size() >= 1 && leftnames.size() >= 1)
     {
         ui->label_sum1->setAlignment(Qt::AlignCenter);
-        ui->label_sum1->setPixmap(getImg(leftids.at(0)));
+        ui->label_sum1->setPixmap(getImg(leftids.first()));
 
-        ui->label_sum16->setText(leftnames.at(0));
+        ui->label_sum16->setText(leftnames.first());
 
         if(leftids.size() >= 2 && leftnames.size() >= 2)
         {
@@ -1032,9 +1032,9 @@ void MainWindow::slot_click_allgames()
     if(rightids.size() >= 1 && rightnames.size() >= 1)
     {
         ui->label_sum6->setAlignment(Qt::AlignCenter);
-        ui->label_sum6->setPixmap(getImg(rightids.at(0)));
+        ui->label_sum6->setPixmap(getImg(rightids.first()));
 
-        ui->label_sum16->setText(ui->label_sum16->text() + " / " + rightnames.at(0));
+        ui->label_sum16->setText(ui->label_sum16->text() + " / " + rightnames.first());
 
         if(rightids.size() >= 2 && rightnames.size() >= 2)
         {
@@ -1783,9 +1783,9 @@ void MainWindow::slot_searchsummoner()
         if(leftids.size() >= 1 && leftnames.size() >= 1)
         {
             ui->label_sums1->setAlignment(Qt::AlignCenter);
-            ui->label_sums1->setPixmap(getImg(leftids.at(0)));
+            ui->label_sums1->setPixmap(getImg(leftids.first()));
 
-            ui->label_sums16->setText(leftnames.at(0));
+            ui->label_sums16->setText(leftnames.first());
 
             if(leftids.size() >= 2 && leftnames.size() >= 2)
             {
@@ -1822,9 +1822,9 @@ void MainWindow::slot_searchsummoner()
         if(rightids.size() >= 1 && rightnames.size() >= 1)
         {
             ui->label_sums6->setAlignment(Qt::AlignCenter);
-            ui->label_sums6->setPixmap(getImg(rightids.at(0)));
+            ui->label_sums6->setPixmap(getImg(rightids.first()));
 
-            ui->label_sums16->setText(ui->label_sums16->text() + " / " + rightnames.at(0));
+            ui->label_sums16->setText(ui->label_sums16->text() + " / " + rightnames.first());
 
             if(rightids.size() >= 2 && rightnames.size() >= 2)
             {
@@ -1884,7 +1884,7 @@ void MainWindow::slot_click_searchsummoner_record()
     }
 
     for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == platformid && recording.at(i).at(1) == gameid){
+        if(recording.at(i).first() == platformid && recording.at(i).at(1) == gameid){
             log(tr("Game is already recording"));
             return;
         }
@@ -2155,7 +2155,7 @@ void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegi
     Q_UNUSED(downloadInfos);
 
     for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).at(0) == serverRegion && recording.at(i).at(1) == gameId){
+        if(recording.at(i).first() == serverRegion && recording.at(i).at(1) == gameId){
             log(tr("Game is already recording"));
             return;
         }
@@ -2205,7 +2205,7 @@ void MainWindow::refreshRecordingGamesWidget()
         ui->tableWidget_recordingGames->insertRow(i);
 
         if(recording.at(i).size() >= 3){
-            ui->tableWidget_recordingGames->setItem(i, 0, new QTableWidgetItem(recording.at(i).at(0)));
+            ui->tableWidget_recordingGames->setItem(i, 0, new QTableWidgetItem(recording.at(i).first()));
             ui->tableWidget_recordingGames->setItem(i, 1, new QTableWidgetItem(recording.at(i).at(1)));
 
             QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
@@ -2259,10 +2259,4 @@ void MainWindow::changeEvent(QEvent* event)
 void MainWindow::slot_checkandrepair(){
     RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
     newRepairToolDialog->show();
-}
-
-void MainWindow::slot_directoryChanged(QString path){
-    Q_UNUSED(path);
-
-    slot_refresh_recordedGames();
 }
