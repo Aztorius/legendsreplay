@@ -65,7 +65,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QSettings *orsettings;
+    QSettings *lrsettings;
 
     QNetworkAccessManager *networkManager_status;
     QNetworkAccessManager *networkManager_featured;
