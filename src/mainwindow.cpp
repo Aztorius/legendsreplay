@@ -209,6 +209,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     emit signal_refresh_recordedGames();
 
+    custommenu = new QMenu(tr("Options"), this);
+
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
     if(systemtrayavailable){
@@ -249,6 +251,7 @@ MainWindow::~MainWindow()
     networkManager_status->deleteLater();
     m_timer->deleteLater();
     orsettings->deleteLater();
+    custommenu->deleteLater();
 
     delete replay;
     delete ui;
@@ -1942,28 +1945,26 @@ void MainWindow::slot_customcontextmenu(QPoint point)
 {
     Q_UNUSED(point);
 
-    QMenu *menu = new QMenu(tr("Options"), this);
+    custommenu->clear();
 
     if(ui->tabWidget->currentIndex() == 0){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("Re&play"), this, SLOT(slot_menu_replay()));
-        menu->addAction(QIcon(":/icons/stats.png"), tr("&Stats"), this, SLOT(slot_menu_stats()));
-        menu->addSeparator();
-        menu->addAction(QIcon(":/icons/repair.png"), tr("&Repair tool"), this, SLOT(slot_menu_repairtool()));
-        menu->addSeparator();
-        menu->addAction(QIcon(":/icons/delete.png"), tr("&Delete"), this, SLOT(slot_menu_delete()));
+        custommenu->addAction(QIcon(":/icons/open_replay.png"), tr("Re&play"), this, SLOT(slot_menu_replay()));
+        custommenu->addAction(QIcon(":/icons/stats.png"), tr("&Stats"), this, SLOT(slot_menu_stats()));
+        custommenu->addSeparator();
+        custommenu->addAction(QIcon(":/icons/repair.png"), tr("&Repair tool"), this, SLOT(slot_menu_repairtool()));
+        custommenu->addSeparator();
+        custommenu->addAction(QIcon(":/icons/delete.png"), tr("&Delete"), this, SLOT(slot_menu_delete()));
     }
     else if(ui->tabWidget->currentIndex() == 2){
-        menu->addAction(QIcon(":/icons/open_replay.png"), tr("&Spectate"), this, SLOT(slot_menu_spectate()));
-        menu->addAction(QIcon(":/icons/record.png"), tr("&Record"), this, SLOT(slot_menu_record()));
+        custommenu->addAction(QIcon(":/icons/open_replay.png"), tr("&Spectate"), this, SLOT(slot_menu_spectate()));
+        custommenu->addAction(QIcon(":/icons/record.png"), tr("&Record"), this, SLOT(slot_menu_record()));
     }
     else if(ui->tabWidget->currentIndex() == 3){
-        menu->addAction(QIcon(":/icons/cancel_download.png"), tr("&Cancel"), this, SLOT(slot_menu_cancel()));
-        menu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and &delete"), this, SLOT(slot_menu_cancelanddelete()));
+        custommenu->addAction(QIcon(":/icons/cancel_download.png"), tr("&Cancel"), this, SLOT(slot_menu_cancel()));
+        custommenu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and &delete"), this, SLOT(slot_menu_cancelanddelete()));
     }
 
-    menu->popup(QCursor::pos());
-
-    connect(menu, SIGNAL(aboutToHide()), menu, SLOT(deleteLater()));
+    custommenu->popup(QCursor::pos());
 }
 
 void MainWindow::slot_menu_replay(){

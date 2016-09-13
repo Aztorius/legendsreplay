@@ -74,6 +74,8 @@ private:
     QSystemTrayIcon *systemtrayicon;
     QMenu *systemtraymenu;
 
+    QMenu *custommenu;
+
     QList <QStringList> recording;
     QList <QThread*> recordingThreads;
     QList <QString> recordedgames_filename;
