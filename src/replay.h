@@ -55,6 +55,8 @@ public:
 
     bool saveAs(QString filepath);
 
+    bool isEmpty();
+
 private:
     QString m_gameid;
     QString m_platformid;

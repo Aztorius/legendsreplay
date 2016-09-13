@@ -353,3 +353,7 @@ bool Replay::saveAs(QString filepath){
 
     return true;
 }
+
+bool Replay::isEmpty(){
+    return m_keyframes.isEmpty() && m_chunks.isEmpty() && m_primarychunks.isEmpty() && m_gameid.isEmpty() && m_platformid.isEmpty() && m_encryptionkey.isEmpty() && m_endstartupchunkid.isEmpty() && m_startgamechunkid.isEmpty();
+}

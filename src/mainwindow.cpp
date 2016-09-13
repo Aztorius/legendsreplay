@@ -287,7 +287,7 @@ void MainWindow::setArgs(int argc, char *argv[])
         }
 
         Replay replay(argv[1]);
-        if(!replay.getGameId().isEmpty()){
+        if(!replay.isEmpty()){
             replay_launch(argv[1]);
 
             return;
@@ -1997,7 +1997,7 @@ void MainWindow::slot_menu_stats(){
 
     Replay local_replay(path, true);
 
-    if(local_replay.getGameId().isEmpty()){
+    if(local_replay.isEmpty()){
         return;
     }
 
