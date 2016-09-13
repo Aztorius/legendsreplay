@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     replaying = false;
     playing = false;
 
-    replay = NULL;
+    replay = nullptr;
 
     serverChunkCount = 0;
     serverKeyframeCount = 1;
@@ -196,10 +196,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->tableWidget_recordingGames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
 
     httpserver = new QHttpServer(this);
-    connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int,int)));
-    connect(ui->tableWidget_yourgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_mygames(int,int)));
+    connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int)));
+    connect(ui->tableWidget_yourgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_mygames(int)));
 
-    connect(ui->actionOpen, SIGNAL(triggered(bool)), this, SLOT(slot_open_replay(bool)));
+    connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(slot_open_replay()));
     connect(ui->actionAdvanced_Recorder, SIGNAL(triggered()), this, SLOT(slot_openAdvancedRecorder()));
     connect(ui->pushButton_saveLanguage, SIGNAL(released()), this, SLOT(slot_setLanguage()));
 
@@ -1413,27 +1413,22 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString serverRegion, QStri
     return gameinfos;
 }
 
-void MainWindow::slot_open_replay(bool param)
+void MainWindow::slot_open_replay()
 {
-    Q_UNUSED(param);
-
     QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"), replaydirectory);
+
     if(!path.isEmpty()){
         replay_launch(path);
     }
 }
 
-void MainWindow::slot_doubleclick_savedgames(int row, int column)
+void MainWindow::slot_doubleclick_savedgames(int row)
 {
-    Q_UNUSED(column);
-
     replay_launch(replaydirectory + "/" + recordedgames_filename.at(row));
 }
 
-void MainWindow::slot_doubleclick_mygames(int row, int column)
+void MainWindow::slot_doubleclick_mygames(int row)
 {
-    Q_UNUSED(column);
-
     replay_launch(replaydirectory + "/" + yourgames_filename.at(row));
 }
 
@@ -1446,9 +1441,9 @@ void MainWindow::replay_launch(QString pathfile)
 
     //Launch spectator server
 
-    if(replay != NULL){
+    if(replay != nullptr){
         delete replay;
-        replay = NULL;
+        replay = nullptr;
     }
 
     replay = new Replay(pathfile);

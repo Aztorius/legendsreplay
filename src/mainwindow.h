@@ -129,8 +129,8 @@ private slots:
     void slot_refreshPlayingStatus();
     void slot_refresh_recordedGames();
 
-    void slot_doubleclick_savedgames(int row,int column);
-    void slot_doubleclick_mygames(int row, int column);
+    void slot_doubleclick_savedgames(int row);
+    void slot_doubleclick_mygames(int row);
     void slot_doubleclick_featured(QListWidgetItem*item);
     void slot_click_allgames();
     void slot_click_searchsummoner_spectate();
@@ -139,7 +139,7 @@ private slots:
 
     void slot_searchsummoner();
 
-    void slot_open_replay(bool param);
+    void slot_open_replay();
 
     void slot_replayserversAdd();
 
