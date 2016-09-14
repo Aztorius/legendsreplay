@@ -71,12 +71,12 @@ QJsonDocument Recorder::getJsonFromUrl(QString url){
 
 void Recorder::launch(){
 
-    emit toLog(tr("Start recording : ") + m_serverid + "/" + m_gameid);
+    emit toLog("Start recording : " + m_serverid + "/" + m_gameid);
 
     QString version;
     version = getFileFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/version"));
 
-    emit toLog(tr("Server version : ") + version + " " + m_serveraddress);
+    emit toLog("Server version : " + version + " " + m_serveraddress);
 
     QJsonDocument json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
     QJsonDocument json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/30000/token"));
@@ -91,7 +91,7 @@ void Recorder::launch(){
         counter++;
         if(counter > 30)
         {
-            emit toLog(tr("[ERROR] No valid response from spectator server, aborting recorder : ") + m_serverid + "/" + m_gameid);
+            emit toLog("[ERROR] No valid response from spectator server, aborting recorder : " + m_serverid + "/" + m_gameid);
 
             emit end(m_serverid, m_gameid);
             emit finished();
@@ -101,7 +101,7 @@ void Recorder::launch(){
         json_gameMetaData = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getGameMetaData/" + m_serverid + "/" + m_gameid + "/token"));
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/30000/token"));
 
-        emit toLog(tr("[WARN] Getting infos of : ") + m_serverid + "/" + m_gameid);
+        emit toLog("[WARN] Getting infos of : " + m_serverid + "/" + m_gameid);
 
         //Retry every 20 seconds
         timer.start(20000);
@@ -151,11 +151,11 @@ void Recorder::launch(){
         {
             list_primarychunks.append(Chunk(i, bytearray_chunk, 0));
 
-            emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : PrimaryChunk ") + QString::number(i) + tr(" Size: ") + QString::number(bytearray_chunk.size()/1024) + tr(" ko"));
+            emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : PrimaryChunk " + QString::number(i) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " kB");
         }
         else
         {
-            emit toLog(tr("Recorder: PrimaryChunk not found ") + m_serverid + "/" + m_gameid + " : " + QString::number(i));
+            emit toLog("Recorder: PrimaryChunk not found " + m_serverid + "/" + m_gameid + " : " + QString::number(i));
         }
     }
 
@@ -167,7 +167,7 @@ void Recorder::launch(){
         json_lastChunkInfo = getJsonFromUrl(QString("http://" + m_serveraddress + "/observer-mode/rest/consumer/getLastChunkInfo/" + m_serverid + "/" + m_gameid + "/0/token"));
         if(json_lastChunkInfo.isEmpty())
         {
-            emit toLog(tr("[WARN] Spectator server response empty, stop recording : ") + m_serverid + "/" + m_gameid);
+            emit toLog("[WARN] Spectator server response empty, stop recording : " + m_serverid + "/" + m_gameid);
             break;
         }
 
@@ -201,7 +201,7 @@ void Recorder::launch(){
                 list_retrievedKeyframes.append(list_remainingKeyframes.at(i));
                 lastsavedkeyframeid = list_retrievedKeyframes.last();
 
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Keyframe ") + QString::number(list_remainingKeyframes.at(i)) + " " + QString::number(nextchunkid) + tr(" Size: ") + QString::number(bytearray_keyframe.size()/1024) + tr(" ko"));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " " + QString::number(nextchunkid) + " Size: " + QString::number(bytearray_keyframe.size()/1024) + " kB");
 
                 timer.start(500);
                 loop.exec();
@@ -209,10 +209,10 @@ void Recorder::launch(){
             else if(list_remainingKeyframes.at(i) + 5 >= currentkeyframeid){
                 list_remainingKeyframes_temp.append(list_remainingKeyframes.at(i));
 
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Keyframe ") + QString::number(list_remainingKeyframes.at(i)) + tr(" not found"));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " not found");
             }
             else{
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Keyframe ") + QString::number(list_remainingKeyframes.at(i)) + tr(" skiped"));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Keyframe " + QString::number(list_remainingKeyframes.at(i)) + " skiped");
             }
         }
 
@@ -250,7 +250,7 @@ void Recorder::launch(){
                 list_retrievedChunks.append(list_remainingChunks.at(i));
                 lastsavedchunkid = list_retrievedChunks.last();
 
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Chunk ") + QString::number(list_remainingChunks.at(i)) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + tr(" Size: ") + QString::number(bytearray_chunk.size()/1024) + tr(" ko"));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(list_remainingChunks.at(i)) + " " + QString::number(local_keyframeid) + " " + QString::number(duration) + " Size: " + QString::number(bytearray_chunk.size()/1024) + " kB");
 
                 timer.start(500);
                 loop.exec();
@@ -259,10 +259,10 @@ void Recorder::launch(){
             {
                 list_remainingChunks_temp.append(list_remainingChunks.at(i));
 
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Chunk not found ") + QString::number(list_remainingChunks.at(i)));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk not found " + QString::number(list_remainingChunks.at(i)));
             }
             else{
-                emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" : Chunk ") + QString::number(list_remainingChunks.at(i)) + tr(" skiped"));
+                emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " : Chunk " + QString::number(list_remainingChunks.at(i)) + " skiped");
             }
         }
 
@@ -275,7 +275,7 @@ void Recorder::launch(){
     m_startgamechunkid = QString::number(json_gameMetaData.object().value("startGameChunkId").toInt());
     m_endstartupchunkid = QString::number(json_gameMetaData.object().value("endStartupChunkId").toInt());
 
-    emit toLog(tr("End of recording ") + m_serverid + "/" + m_gameid);
+    emit toLog("End of recording " + m_serverid + "/" + m_gameid);
 
     emit toShowmessage(tr("End of recording ") + m_serverid + "/" + m_gameid);
 
@@ -297,21 +297,21 @@ void Recorder::launch(){
         if(!m_gameinfo.isEmpty())
         {
             stream << "::ORGameInfos:" << m_gameinfo.toJson(QJsonDocument::Compact).toBase64() << "::" << endl;
-            emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" Game Infos retrieved"));
+            emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Info retrieved");
         }
         else
         {
-            emit toLog(tr("[WARN] Recorder: ") + m_serverid + "/" + m_gameid + tr(" Game Infos lost"));
+            emit toLog("[WARN] Recorder: " + m_serverid + "/" + m_gameid + " Game Info lost");
         }
 
         if(!gamestats.isEmpty())
         {
             stream << "::ORGameStats:" << gamestats << "::" << endl;
-            emit toLog(tr("Recorder: ") + m_serverid + "/" + m_gameid + tr(" Game Stats retrieved"));
+            emit toLog("Recorder: " + m_serverid + "/" + m_gameid + " Game Stats retrieved");
         }
         else
         {
-            emit toLog(tr("[WARN] Recorder: ") + m_serverid + "/" + m_gameid + tr(" Game Stats lost"));
+            emit toLog("[WARN] Recorder: " + m_serverid + "/" + m_gameid + " Game Stats lost");
         }
 
         for(int i = 0; i < list_keyframes.size(); i++)
@@ -337,17 +337,17 @@ void Recorder::launch(){
 
         file.close();
 
-        emit toLog(tr("Replay file created : ") + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
+        emit toLog("Replay file created : " + m_replaydirectory + "/" + m_serverid + "-" + m_gameid + ".lor");
 
         if(list_primarychunks.isEmpty() || list_chunks.isEmpty() || list_keyframes.isEmpty())
         {
-            emit toLog(tr("[WARN] Replay : ") + m_serverid + "-" + m_gameid + tr(".lor is incomplete and may not work correctly"));
+            emit toLog("[WARN] Replay : " + m_serverid + "-" + m_gameid + ".lor is incomplete and may not work correctly");
         }
 
     }
     else
     {
-        emit toLog(tr("[ERROR] Error saving replay : cannot open output file : ") + m_serverid + "-" + m_gameid + ".lor");
+        emit toLog("[ERROR] Error saving replay : cannot open output file : " + m_serverid + "-" + m_gameid + ".lor");
     }
 
     emit end(m_serverid, m_gameid);

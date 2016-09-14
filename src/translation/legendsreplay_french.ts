@@ -11,7 +11,7 @@
     <message>
         <location filename="../advancedrecorderdialog.ui" line="20"/>
         <source>Game Id :</source>
-        <translation>Game Id :</translation>
+        <translation>Id Partie :</translation>
     </message>
     <message>
         <location filename="../advancedrecorderdialog.ui" line="27"/>
@@ -147,13 +147,13 @@
     <message>
         <location filename="../mainwindow.ui" line="343"/>
         <source>Gameid</source>
-        <translation>Game Id</translation>
+        <translation>Id Partie</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="348"/>
         <location filename="../mainwindow.ui" line="749"/>
         <source>Datetime</source>
-        <translation>Datetime</translation>
+        <translation>Date/Heure</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="361"/>
@@ -249,10 +249,6 @@
         <translation>&amp;Enregistreur Avancé</translation>
     </message>
     <message>
-        <source>Advanced &amp;Recorder</source>
-        <translation type="vanished">&amp;Enregistreur Avancé</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="1337"/>
         <source>Report an &amp;issue</source>
         <translation>&amp;Signaler un problème</translation>
@@ -261,14 +257,6 @@
         <location filename="../mainwindow.ui" line="1349"/>
         <source>&amp;About LegendsReplay</source>
         <translation>À &amp;propos de LegendsReplay</translation>
-    </message>
-    <message>
-        <source>Repair &amp;tool</source>
-        <translation type="vanished">&amp;Outil de réparation</translation>
-    </message>
-    <message>
-        <source>Repair tool</source>
-        <translation type="vanished">Outil de réparation</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="842"/>
@@ -381,49 +369,9 @@
         <translation>Langage :</translation>
     </message>
     <message>
-        <source>File</source>
-        <translation type="vanished">Fichier</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation type="vanished">Outils</translation>
-    </message>
-    <message>
-        <source>Help</source>
-        <translation type="vanished">Aide</translation>
-    </message>
-    <message>
-        <source>Open replay</source>
-        <translation type="vanished">Ouvrir un replay</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation type="vanished">Fermer</translation>
-    </message>
-    <message>
-        <source>Advanced Recorder</source>
-        <translation type="vanished">Enregistreur avancé</translation>
-    </message>
-    <message>
-        <source>Report an issue</source>
-        <translation type="vanished">Signaler un problème</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="1340"/>
         <source>Report an issue on GitHub</source>
         <translation>Signaler un problème sur GitHub</translation>
-    </message>
-    <message>
-        <source>About LegendsReplay</source>
-        <translation type="vanished">À propos de LegendsReplay</translation>
-    </message>
-    <message>
-        <source>LegendsReplay </source>
-        <translation type="vanished">LegendsReplay </translation>
-    </message>
-    <message>
-        <source>[ERROR] Unable to open internal servers file</source>
-        <translation type="vanished">[ERREUR] Impossible d&apos;ouvrir le fichier interne des serveurs</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="43"/>
@@ -434,14 +382,6 @@
         <location filename="../mainwindow.cpp" line="57"/>
         <source>Please set your summoner name and then keep the software open to record your games.</source>
         <translation>Merci de choisir votre nom d&apos;invocateur et de laisser le logiciel ouvert afin d&apos;enregistrer vos parties.</translation>
-    </message>
-    <message>
-        <source>[WARN] Please set your summoner name and then keep the software open to record your games.</source>
-        <translation type="vanished">[WARN] Merci de choisir votre nom d&apos;invocateur et de laisser le logiciel ouvert afin d&apos;enregistrer vos parties.</translation>
-    </message>
-    <message>
-        <source>[CRITIC] no documents location found on the system</source>
-        <translation type="vanished">[CRITIC] Aucun endroit de sauvegarde des documents trouvé</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="264"/>
@@ -455,53 +395,12 @@
         <translation> disponible !</translation>
     </message>
     <message>
-        <source>Game </source>
-        <translation type="vanished">La partie </translation>
-    </message>
-    <message>
-        <source> has already ended</source>
-        <translation type="vanished"> est déjà terminée</translation>
-    </message>
-    <message>
-        <source>[WARN] Replay aborted. LoL is currently running.</source>
-        <translation type="vanished">[WARN] Replay interrompu. LoL est en cours d&apos;exécution.</translation>
-    </message>
-    <message>
-        <source>[ERROR] Invalid game parameters.</source>
-        <translation type="vanished">[ERREUR] Paramètres de la partie invalides.</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="370"/>
         <location filename="../mainwindow.cpp" line="383"/>
         <source>Invalid League of Legends (or PBE) directory.
 Please set a valid one.</source>
         <translation>Dossier de League of Legends (ou du PBE) invalide.
 Merci d&apos;en choisir un valide.</translation>
-    </message>
-    <message>
-        <source>[WARN] Invalid League of Legends (or PBE) directory. No releases folder found.</source>
-        <translation type="vanished">[WARN] Dossier de League of Legends (ou du PBE) invalide.
-Aucun dossier releases trouvé.</translation>
-    </message>
-    <message>
-        <source>[WARN] Invalid League of Legends (or PBE) directory. Invalid path.</source>
-        <translation type="vanished">[WARN] Dossier de League of Legends (ou du PBE) invalide. Chemin invalide.</translation>
-    </message>
-    <message>
-        <source>LoL Launch isn&apos;t available for Linux yet</source>
-        <translation type="vanished">Le lancement de LoL n&apos;est pas encore disponible sous Linux</translation>
-    </message>
-    <message>
-        <source>[ERROR] Server address not found</source>
-        <translation type="vanished">[ERREUR] Adresse du serveur introuvable</translation>
-    </message>
-    <message>
-        <source>[ERROR] Unknown platform id</source>
-        <translation type="vanished">[ERREUR] Platform Id inconnu</translation>
-    </message>
-    <message>
-        <source>[ERROR] Status of </source>
-        <translation type="vanished">[ERREUR] Status de </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="462"/>
@@ -518,37 +417,9 @@ Aucun dossier releases trouvé.</translation>
         <translation>en ligne</translation>
     </message>
     <message>
-        <source>[ERROR] Retrieving server status</source>
-        <translation type="vanished">[ERREUR] Récupération du status du serveur</translation>
-    </message>
-    <message>
-        <source> : Status server infos</source>
-        <translation type="vanished">: Infos du serveur de status</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="560"/>
         <source> incident(s)</source>
         <translation></translation>
-    </message>
-    <message>
-        <source>[WARN] Replay Server error : </source>
-        <translation type="vanished">[WARN] Erreur du Serveur Replay : </translation>
-    </message>
-    <message>
-        <source>[ERROR] Network featured games : </source>
-        <translation type="vanished">[ERREUR] Réseau parties populaires : </translation>
-    </message>
-    <message>
-        <source>[ERROR] Featured games empty reponse</source>
-        <translation type="vanished">[ERREUR] Parties populaires sans réponses</translation>
-    </message>
-    <message>
-        <source>[WARN] Featured games empty response</source>
-        <translation type="vanished">[WARN] Parties populaires réponse vide</translation>
-    </message>
-    <message>
-        <source> : Featured games infos</source>
-        <translation type="vanished"> : Infos des paties populaires</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="683"/>
@@ -560,42 +431,6 @@ Aucun dossier releases trouvé.</translation>
         <location filename="../mainwindow.cpp" line="709"/>
         <source>Open Directory</source>
         <translation>Ouverture du dossier</translation>
-    </message>
-    <message>
-        <source>GAME : </source>
-        <translation type="vanished">Partie : </translation>
-    </message>
-    <message>
-        <source> has already finished. Aborting spectator mode.</source>
-        <translation type="vanished"> est déjà terminée. Arrêt du mode spectateur.</translation>
-    </message>
-    <message>
-        <source> is in progress. Launching spectator mode.</source>
-        <translation type="vanished"> est en cours. Lancement du mode spectateur.</translation>
-    </message>
-    <message>
-        <source>[ERROR] Get JSON : </source>
-        <translation type="vanished">[ERREUR] Récupération JSON : </translation>
-    </message>
-    <message>
-        <source>Empty selected featured games</source>
-        <translation type="vanished">Aucune parties populaires sélectionnées</translation>
-    </message>
-    <message>
-        <source>Server address not found</source>
-        <translation type="vanished">Adresse du serveur introuvable</translation>
-    </message>
-    <message>
-        <source>Game is already recording</source>
-        <translation type="vanished">La partie est déjà en cours d&apos;enregistrement</translation>
-    </message>
-    <message>
-        <source>[ERROR] Get Data : </source>
-        <translation type="vanished">[ERREUR] Récupération des données : </translation>
-    </message>
-    <message>
-        <source>[ERROR] No game infos found. Aborting.</source>
-        <translation type="vanished">[ERREUR] Aucune partie trouvée. Arrêt.</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1140"/>
@@ -614,14 +449,6 @@ Aucun dossier releases trouvé.</translation>
         <translation>Nom d&apos;invocateur inconnu sur ce serveur.</translation>
     </message>
     <message>
-        <source>Your summoner ID is </source>
-        <translation type="vanished">Votre ID d&apos;invocateur est </translation>
-    </message>
-    <message>
-        <source>Retrieving PBE ID</source>
-        <translation type="vanished">Récupération de l&apos;ID PBE</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="1244"/>
         <source>Unknown summoner on this server.
 PBE is not supported.</source>
@@ -629,122 +456,14 @@ PBE is not supported.</source>
 Le PBE n&apos;est pas supporté.</translation>
     </message>
     <message>
-        <source>Unknown summoner on this server. PBE is not supported.</source>
-        <translation type="vanished">Nom d&apos;invocateur inconnu sur ce serveur. Le PBE n&apos;est pas supporté.</translation>
-    </message>
-    <message>
-        <source>Your PBE ID is </source>
-        <translation type="vanished">Votre ID PBE est </translation>
-    </message>
-    <message>
-        <source>Server: stoped due to inactivity</source>
-        <translation type="vanished">Serveur: arrêté pour cause d&apos;inactivité</translation>
-    </message>
-    <message>
-        <source>Game detected : start recording</source>
-        <translation type="vanished">Partie détectée : démarrage de l&apos;enregistrement</translation>
-    </message>
-    <message>
-        <source>[WARN] Game not found : API/LegendsReplay servers may be offline or not working correctly</source>
-        <translation type="vanished">[WARN] Partie introuvable : L&apos;API ou les serveurs LegendsReplay peuvent être hors ligne ou ne pas fonctionner correctement</translation>
-    </message>
-    <message>
-        <source>End of recording</source>
-        <translation type="vanished">Fin de l&apos;enregistrement</translation>
-    </message>
-    <message>
-        <source>[ERROR] Server not found</source>
-        <translation type="vanished">[ERREUR] Serveur introuvable</translation>
-    </message>
-    <message>
-        <source>[ERROR] Unknown server</source>
-        <translation type="vanished">[ERREUR] Serveur inconnu</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="1421"/>
         <source>Select a Replay</source>
         <translation>Choisissez un Replay</translation>
     </message>
     <message>
-        <source>Opening : </source>
-        <translation type="vanished">Ouverture : </translation>
-    </message>
-    <message>
-        <source>Server: started</source>
-        <translation type="vanished">Serveur: démarré</translation>
-    </message>
-    <message>
-        <source>Invalid replay file, aborting.</source>
-        <translation type="vanished">Fichier replay invalide, arrêt.</translation>
-    </message>
-    <message>
-        <source>Server: send server version</source>
-        <translation type="vanished">Serveur: envoi de la version du serveur</translation>
-    </message>
-    <message>
-        <source>Server: send game metadata</source>
-        <translation type="vanished">Serveur: envoi des métadonnées de la partie</translation>
-    </message>
-    <message>
-        <source>Server: send lastChunkInfo</source>
-        <translation type="vanished">Serveur: envoi du lastChunkInfo</translation>
-    </message>
-    <message>
-        <source>Server: send chunk </source>
-        <translation type="vanished">Serveur: envoi du chunk </translation>
-    </message>
-    <message>
-        <source>Server: send primary chunk </source>
-        <translation type="vanished">Serveur: envoi du chunk primaire </translation>
-    </message>
-    <message>
-        <source>Server: unknown requested chunk </source>
-        <translation type="vanished">Serveur: chunk demandé inconnu </translation>
-    </message>
-    <message>
-        <source>Server: send keyframe </source>
-        <translation type="vanished">Serveur: envoi de la keyframe </translation>
-    </message>
-    <message>
-        <source>Server: unknown requested keyframe </source>
-        <translation type="vanished">Serveur: keyframe demandé inconnu </translation>
-    </message>
-    <message>
-        <source>Server: End of game stats sent</source>
-        <translation type="vanished">Serveur: Stats de fin de partie envoyées</translation>
-    </message>
-    <message>
-        <source>Server: End of replay requested</source>
-        <translation type="vanished">Serveur: Requête de fin du replay</translation>
-    </message>
-    <message>
-        <source>Server: Unknown requested link </source>
-        <translation type="vanished">Serveur: Requête inconnue du lien </translation>
-    </message>
-    <message>
-        <source>Summoner name not found on this server</source>
-        <translation type="vanished">Nom d&apos;invocateur introuvable sur ce serveur</translation>
-    </message>
-    <message>
-        <source>[ERROR] Summoner id not valid</source>
-        <translation type="vanished">[ERREUR] Id d&apos;invocateur invalide</translation>
-    </message>
-    <message>
-        <source>Summoner </source>
-        <translation type="vanished">Invocateur </translation>
-    </message>
-    <message>
-        <source> is not in a game</source>
-        <translation type="vanished"> n&apos;est pas dans une partie</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="1749"/>
         <source>not playing</source>
         <translation>ne joue pas</translation>
-    </message>
-    <message>
-        <source> is in a game</source>
-        <translation type="vanished"> est en jeu</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1757"/>
@@ -793,14 +512,6 @@ Le PBE n&apos;est pas supporté.</translation>
         <translation>Annuler et &amp;supprimer</translation>
     </message>
     <message>
-        <source>Legends Replay switch to server </source>
-        <translation type="vanished">Legends Replay a basculé sur le serveur </translation>
-    </message>
-    <message>
-        <source>Replay</source>
-        <translation type="vanished">Replay</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="2053"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
@@ -812,21 +523,9 @@ Le PBE n&apos;est pas supporté.</translation>
         <translation>Annuler</translation>
     </message>
     <message>
-        <source>Cancel and delete</source>
-        <translation type="vanished">Annuler et supprimer</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="2053"/>
         <source>Do you really want to delete this replay ?</source>
         <translation>Voulez-vous vraiment supprimer ce replay ?</translation>
-    </message>
-    <message>
-        <source>Unable to find the file : </source>
-        <translation type="vanished">Impossible de trouver le fichier : </translation>
-    </message>
-    <message>
-        <source>Unable to remove the file : </source>
-        <translation type="vanished">Impossible de supprimer le fichier : </translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="2084"/>
@@ -839,14 +538,6 @@ Le PBE n&apos;est pas supporté.</translation>
         <translation>Voulez-vous vraiment annuler et supprimer cet enregistrement ?</translation>
     </message>
     <message>
-        <source>Removed file : </source>
-        <translation type="vanished">Fichier supprimé : </translation>
-    </message>
-    <message>
-        <source>[ERROR] Unable to remove the file : </source>
-        <translation type="vanished">[ERREUR] Impossible de supprimer le fichier : </translation>
-    </message>
-    <message>
         <location filename="../mainwindow.cpp" line="2195"/>
         <source>About</source>
         <translation>À propos</translation>
@@ -855,147 +546,9 @@ Le PBE n&apos;est pas supporté.</translation>
 <context>
     <name>Recorder</name>
     <message>
-        <location filename="../recorder.cpp" line="74"/>
-        <source>Start recording : </source>
-        <translation>Lancement de l&apos;enregistrement : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="79"/>
-        <source>Server version : </source>
-        <translation>Version du serveur : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="94"/>
-        <source>[ERROR] No valid response from spectator server, aborting recorder : </source>
-        <translation>[ERREUR] Pas de réponse valide du serveur spectateur, enregistrement interrompu : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="104"/>
-        <source>[WARN] Getting infos of : </source>
-        <translation>[WARN] Récupération des infos de : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="212"/>
-        <location filename="../recorder.cpp" line="215"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <location filename="../recorder.cpp" line="262"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <location filename="../recorder.cpp" line="300"/>
-        <location filename="../recorder.cpp" line="310"/>
-        <source>Recorder: </source>
-        <translation>Enregistreur: </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <source> : PrimaryChunk </source>
-        <translation> : ChunkPrimaire </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <source> Size: </source>
-        <translation> Taille: </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <source> ko</source>
-        <translation> ko</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="158"/>
-        <source>Recorder: PrimaryChunk not found </source>
-        <translation>Enregistreur: ChunkPrimaire introuvable </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="170"/>
-        <source>[WARN] Spectator server response empty, stop recording : </source>
-        <translation>[WARN] Aucune réponse du serveur spectateur, arrêt de l&apos;enregistrement : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="212"/>
-        <location filename="../recorder.cpp" line="215"/>
-        <source> : Keyframe </source>
-        <translation> : Keyframe </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="212"/>
-        <source> not found</source>
-        <translation> introuvable</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="215"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <source> skiped</source>
-        <translation> ignorée</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="253"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <source> : Chunk </source>
-        <translation> : Chunk </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="262"/>
-        <source> : Chunk not found </source>
-        <translation> : Chunk introuvable </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="278"/>
         <location filename="../recorder.cpp" line="280"/>
         <source>End of recording </source>
         <translation>Fin de l&apos;enregistrement </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="300"/>
-        <source> Game Infos retrieved</source>
-        <translation> Informations de la partie récupérées</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="304"/>
-        <location filename="../recorder.cpp" line="314"/>
-        <source>[WARN] Recorder: </source>
-        <translation>[WARN] Enregistreur: </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="304"/>
-        <source> Game Infos lost</source>
-        <translation>Informations de la partie perdues</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="310"/>
-        <source> Game Stats retrieved</source>
-        <translation> Statistiques de la partie récupérées</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="314"/>
-        <source> Game Stats lost</source>
-        <translation> Statistiques de la partie perdues</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="340"/>
-        <source>Replay file created : </source>
-        <translation>Fichier replay crée : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="344"/>
-        <source>[WARN] Replay : </source>
-        <translation>[WARN] Replay : </translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="344"/>
-        <source>.lor is incomplete and may not work correctly</source>
-        <translation>.lor est incomplet et peut ne pas fonctionner correctement</translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="350"/>
-        <source>[ERROR] Error saving replay : cannot open output file : </source>
-        <translation>[ERREUR] Erreur de sauvegarde du replay : impossible de créer le fichier : </translation>
     </message>
 </context>
 <context>
@@ -1090,12 +643,6 @@ Le PBE n&apos;est pas supporté.</translation>
         <location filename="../repairtooldialog.cpp" line="109"/>
         <source>Chunk </source>
         <translation>Chunk</translation>
-    </message>
-    <message>
-        <location filename="../repairtooldialog.cpp" line="116"/>
-        <location filename="../repairtooldialog.cpp" line="117"/>
-        <source>Keyframe </source>
-        <translation>Keyframe</translation>
     </message>
     <message>
         <location filename="../repairtooldialog.cpp" line="129"/>

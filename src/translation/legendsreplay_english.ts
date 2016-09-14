@@ -544,146 +544,8 @@ PBE is not supported.</source>
 <context>
     <name>Recorder</name>
     <message>
-        <location filename="../recorder.cpp" line="74"/>
-        <source>Start recording : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="79"/>
-        <source>Server version : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="94"/>
-        <source>[ERROR] No valid response from spectator server, aborting recorder : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="104"/>
-        <source>[WARN] Getting infos of : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="212"/>
-        <location filename="../recorder.cpp" line="215"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <location filename="../recorder.cpp" line="262"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <location filename="../recorder.cpp" line="300"/>
-        <location filename="../recorder.cpp" line="310"/>
-        <source>Recorder: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <source> : PrimaryChunk </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <source> Size: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="154"/>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="253"/>
-        <source> ko</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="158"/>
-        <source>Recorder: PrimaryChunk not found </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="170"/>
-        <source>[WARN] Spectator server response empty, stop recording : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="204"/>
-        <location filename="../recorder.cpp" line="212"/>
-        <location filename="../recorder.cpp" line="215"/>
-        <source> : Keyframe </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="212"/>
-        <source> not found</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="215"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <source> skiped</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="253"/>
-        <location filename="../recorder.cpp" line="265"/>
-        <source> : Chunk </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="262"/>
-        <source> : Chunk not found </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="278"/>
         <location filename="../recorder.cpp" line="280"/>
         <source>End of recording </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="300"/>
-        <source> Game Infos retrieved</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="304"/>
-        <location filename="../recorder.cpp" line="314"/>
-        <source>[WARN] Recorder: </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="304"/>
-        <source> Game Infos lost</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="310"/>
-        <source> Game Stats retrieved</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="314"/>
-        <source> Game Stats lost</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="340"/>
-        <source>Replay file created : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="344"/>
-        <source>[WARN] Replay : </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="344"/>
-        <source>.lor is incomplete and may not work correctly</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../recorder.cpp" line="350"/>
-        <source>[ERROR] Error saving replay : cannot open output file : </source>
         <translation></translation>
     </message>
 </context>
@@ -778,12 +640,6 @@ PBE is not supported.</source>
         <location filename="../repairtooldialog.cpp" line="105"/>
         <location filename="../repairtooldialog.cpp" line="109"/>
         <source>Chunk </source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../repairtooldialog.cpp" line="116"/>
-        <location filename="../repairtooldialog.cpp" line="117"/>
-        <source>Keyframe </source>
         <translation></translation>
     </message>
     <message>

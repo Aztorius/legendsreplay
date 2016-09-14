@@ -113,8 +113,8 @@ void RepairToolDialog::check(){
     //Keyframes missing
     foreach(Chunk currentChunk, m_replay.getChunks()){
         if(m_replay.getKeyFrame(currentChunk.getKeyframeId()).isEmpty() && currentChunk.getKeyframeId() > 0){
-            if(ui->listWidget_keyframes->findItems(tr("Keyframe ") + QString::number(currentChunk.getKeyframeId()), Qt::MatchExactly).isEmpty()){
-                ui->listWidget_keyframes->addItem(tr("Keyframe ") + QString::number(currentChunk.getKeyframeId()));
+            if(ui->listWidget_keyframes->findItems("Keyframe " + QString::number(currentChunk.getKeyframeId()), Qt::MatchExactly).isEmpty()){
+                ui->listWidget_keyframes->addItem("Keyframe " + QString::number(currentChunk.getKeyframeId()));
             }
         }
     }
@@ -250,9 +250,8 @@ void RepairToolDialog::repair(){
 
 void RepairToolDialog::openFile(){
     QString filepath = QFileDialog::getOpenFileName(this, tr("Open a replay file"), m_replay.getFilepath());
-    if(filepath.isEmpty()){
-        return;
-    }
 
-    load(Replay(filepath));
+    if(!filepath.isEmpty()){
+        load(Replay(filepath));
+    }
 }

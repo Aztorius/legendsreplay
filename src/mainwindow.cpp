@@ -515,7 +515,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
 
     QJsonArray services = jsonObject.value("services").toArray();
 
-    log(jsonObject.value("name").toString() + " : Status server infos");
+    log("Server status : " + jsonObject.value("name").toString());
 
     for(int i = 0; i < servers.size(); i++)
     {
