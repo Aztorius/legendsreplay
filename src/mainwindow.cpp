@@ -1287,7 +1287,7 @@ bool MainWindow::islolRunning()
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq League of Legends.exe"));
   tasklist.waitForFinished();
 
-  running = tasklist.readAllStandardOutput().startsWith(QString("\"League of Legends.exe\""));
+  running = QString(tasklist.readAllStandardOutput()).startsWith(QString("\"League of Legends.exe\""));
 
 #elif defined(Q_OS_OSX)
 
@@ -1319,7 +1319,7 @@ bool MainWindow::islolclientRunning()
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq LolClient.exe"));
   tasklist.waitForFinished();
 
-  running = tasklist.readAllStandardOutput().startsWith(QString("\"LolClient.exe\""));
+  running = QString(tasklist.readAllStandardOutput()).startsWith(QString("\"LolClient.exe\""));
 
 #elif defined(Q_OS_OSX)
 
