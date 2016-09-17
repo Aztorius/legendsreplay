@@ -1287,8 +1287,7 @@ bool MainWindow::islolRunning()
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq League of Legends.exe"));
   tasklist.waitForFinished();
 
-  QString output = tasklist.readAllStandardOutput();
-  running = output.startsWith(QString("\"League of Legends.exe\""));
+  running = tasklist.readAllStandardOutput().startsWith(QString("\"League of Legends.exe\""));
 
 #elif defined(Q_OS_OSX)
 
@@ -1299,9 +1298,11 @@ bool MainWindow::islolRunning()
   tasklist.start("ps -A | grep \"League of Legends.exe\"");
   tasklist.waitForFinished();
 
-  QString output = tasklist.readAllStandardOutput();
-  running = !output.isEmpty();
-  log("LOL: " + output);
+  running = !tasklist.readAllStandardOutput().isEmpty();
+
+#else
+
+  log("OS not supported");
 
 #endif
 
@@ -1318,8 +1319,7 @@ bool MainWindow::islolclientRunning()
   tasklist.start("tasklist", QStringList() << "/NH" << "/FO" << "CSV" << "/FI" << QString("IMAGENAME eq LolClient.exe"));
   tasklist.waitForFinished();
 
-  QString output = tasklist.readAllStandardOutput();
-  running = output.startsWith(QString("\"LolClient.exe\""));
+  running = tasklist.readAllStandardOutput().startsWith(QString("\"LolClient.exe\""));
 
 #elif defined(Q_OS_OSX)
 
@@ -1330,9 +1330,11 @@ bool MainWindow::islolclientRunning()
   tasklist.start("ps -A | grep \"LolClient.exe\"");
   tasklist.waitForFinished();
 
-  QString output = tasklist.readAllStandardOutput();
-  running = !output.isEmpty();
-  log("Client: " + output);
+  running = !tasklist.readAllStandardOutput().isEmpty();
+
+#else
+
+  log("OS not supported");
 
 #endif
 
