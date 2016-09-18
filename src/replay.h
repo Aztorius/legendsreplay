@@ -27,6 +27,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QDebug>
+#include <QStringList>
+#include <QString>
 
 #include "chunk.h"
 #include "keyframe.h"
