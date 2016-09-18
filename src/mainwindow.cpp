@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_currentLegendsReplayServer = lrservers.first();
 
-    lrsettings = new QSettings("LegendsReplay", "Local");
+    lrsettings = new QSettings("LegendsReplay", "Local", this);
 
     if(!lrsettings->value("SummonerName").toString().isEmpty()){
         m_summonername = lrsettings->value("SummonerName").toString();
@@ -211,10 +211,10 @@ MainWindow::MainWindow(QWidget *parent) :
     networkManager_featured = new QNetworkAccessManager(this);
     connect(networkManager_featured, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_featured(QNetworkReply*)));
     connect(ui->tableWidget_recordedgames, SIGNAL(itemSelectionChanged()), this, SLOT(slot_click_allgames()));
-    connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
-    connect(ui->tableWidget_yourgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
-    connect(ui->listWidget_featured, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
-    connect(ui->tableWidget_recordingGames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu(QPoint)));
+    connect(ui->tableWidget_recordedgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu()));
+    connect(ui->tableWidget_yourgames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu()));
+    connect(ui->listWidget_featured, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu()));
+    connect(ui->tableWidget_recordingGames, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slot_customcontextmenu()));
 
     httpserver = new QHttpServer(this);
     connect(ui->tableWidget_recordedgames, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(slot_doubleclick_savedgames(int)));
@@ -224,7 +224,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionAdvanced_Recorder, SIGNAL(triggered()), this, SLOT(slot_openAdvancedRecorder()));
     connect(ui->pushButton_saveLanguage, SIGNAL(released()), this, SLOT(slot_setLanguage()));
 
-    m_directory_watcher = new QFileSystemWatcher;
+    m_directory_watcher = new QFileSystemWatcher(this);
     m_directory_watcher->addPath(replaydirectory);
     connect(m_directory_watcher, SIGNAL(directoryChanged(QString)), this, SLOT(slot_refresh_recordedGames()));
 
@@ -232,13 +232,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     custommenu = new QMenu(tr("Options"), this);
 
+    //Create and show system tray icon if available
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
     if(systemtrayavailable){
-        systemtrayicon = new QSystemTrayIcon;
+        systemtrayicon = new QSystemTrayIcon(this);
         systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
 
-        systemtraymenu = new QMenu;
+        systemtraymenu = new QMenu(this);
         systemtraymenu->addAction(QIcon(":/icons/exit.png"), tr("&Exit"), this, SLOT(close()));
 
         systemtrayicon->setContextMenu(systemtraymenu);
@@ -255,24 +256,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    //Force stopping all recording threads
     for(int i = 0; i < recordingThreads.size(); i++){
         recordingThreads.at(i)->exit(0);
     }
 
+    //Hide system tray icon if available
     if(systemtrayavailable)
     {
         systemtrayicon->hide();
-        systemtrayicon->deleteLater();
-        systemtraymenu->deleteLater();
     }
-
-    m_directory_watcher->deleteLater();
-    httpserver->deleteLater();
-    networkManager_featured->deleteLater();
-    networkManager_status->deleteLater();
-    m_timer->deleteLater();
-    lrsettings->deleteLater();
-    custommenu->deleteLater();
 
     delete replay;
     delete ui;
@@ -1976,10 +1969,8 @@ void MainWindow::slot_click_replayservers()
     log("Legends Replay switch to server " + m_currentLegendsReplayServer);
 }
 
-void MainWindow::slot_customcontextmenu(QPoint point)
+void MainWindow::slot_customcontextmenu()
 {
-    Q_UNUSED(point);
-
     custommenu->clear();
 
     if(ui->tabWidget->currentIndex() == 0){
@@ -1997,6 +1988,9 @@ void MainWindow::slot_customcontextmenu(QPoint point)
     else if(ui->tabWidget->currentIndex() == 3){
         custommenu->addAction(QIcon(":/icons/cancel_download.png"), tr("&Cancel"), this, SLOT(slot_menu_cancel()));
         custommenu->addAction(QIcon(":/icons/cancel_delete_download.png"), tr("Cancel and &delete"), this, SLOT(slot_menu_cancelanddelete()));
+    }
+    else{
+        return;
     }
 
     custommenu->popup(QCursor::pos());

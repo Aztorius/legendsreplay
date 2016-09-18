@@ -188,7 +188,7 @@ private slots:
     void slot_openAdvancedRecorder();
     void slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload = false, bool downloadInfos = false, bool downloadStats = true);
 
-    void slot_customcontextmenu(QPoint point);
+    void slot_customcontextmenu();
 
     void slot_reportAnIssue();
     void slot_aboutLegendsReplay();
