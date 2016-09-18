@@ -35,103 +35,98 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
     {
         QTextStream in(&file);
         in.setCodec("UTF-8");
+
         while(!in.atEnd())
         {
             QString line = in.readLine();
 
-            if(line == "::OREnd::")
+            if(!loadInfosOnly && line.startsWith("::ORChunk:"))
             {
-                break;
-            }
-            else if(line.left(11) == "::ORHeader:")
-            {
-                line.remove(0,11);
+                // A Chunk line ::ORChunk:id:keyframeid:duration:data::
 
-                QString serverid = line.left(line.indexOf(":"));
-                m_platformid = serverid;
-
-                line.remove(0,line.indexOf(":")+1);
-
-                QString gameid = line.left(line.indexOf(":"));
-                m_gameid = gameid;
-
-                line.remove(0,line.indexOf(":")+1);
-
-                QString encryptionkey = line.left(line.indexOf(":"));
-                m_encryptionkey = encryptionkey;
-
-                line.remove(0,line.indexOf(":")+1);
-
-                QString serverversion = line.left(line.indexOf(":"));
-                m_serverversion = serverversion;
-
-                line.remove(0,line.indexOf(":")+1);
-
-                QString endstartupchunkid = line.left(line.indexOf(":"));
-                m_endstartupchunkid = endstartupchunkid;
-
-                line.remove(0,line.indexOf(":")+1);
-
-                QString startgamechunkid = line.left(line.indexOf(":"));
-                m_startgamechunkid = startgamechunkid;
-            }
-            else if(line.left(14) == "::ORGameInfos:")
-            {
-                line.remove(0,14);
-
-                QString gameinfos64 = line.left(line.indexOf(":"));
-                QByteArray gameinfosba = QByteArray::fromBase64(gameinfos64.toLocal8Bit());
-
-                QJsonDocument jd_gameinfos = QJsonDocument::fromJson(gameinfosba);
-                m_gameinfos = jd_gameinfos;
-            }
-            else if(line.left(14) == "::ORGameStats:")
-            {
-                line.remove(0,14);
-
-                QString gamestats64 = line.left(line.indexOf(":"));
-                QByteArray gamestats = QByteArray::fromBase64(gamestats64.toLocal8Bit());
-
-                m_endofgamestats = gamestats;
-            }
-            else if(!loadInfosOnly && line.left(13) == "::ORKeyFrame:")
-            {
-                line.remove(0,13);
-
-                int keyframeid = line.left(line.indexOf(":")).toInt();
-                line.remove(0,line.indexOf(":")+1);
-
-                int nextchunkid = line.left(line.indexOf(":")).toInt();
-                line.remove(0,line.indexOf(":")+1);
-
-                QString keyframe = line.left(line.indexOf(":"));
-                QByteArray ba_keyframe = QByteArray::fromBase64(keyframe.toLocal8Bit());
-                m_keyframes.append(Keyframe(keyframeid, ba_keyframe, nextchunkid));
-            }
-            else if(!loadInfosOnly && line.left(10) == "::ORChunk:")
-            {
-                line.remove(0,10);
+                line.remove(0, 10);
 
                 int chunkid = line.left(line.indexOf(":")).toInt();
-                line.remove(0,line.indexOf(":")+1);
+                line.remove(0, line.indexOf(":")+1);
 
                 int keyframeid = line.left(line.indexOf(":")).toInt();
-                line.remove(0,line.indexOf(":")+1);
+                line.remove(0, line.indexOf(":")+1);
 
                 int chunkduration = line.left(line.indexOf(":")).toInt();
-                line.remove(0,line.indexOf(":")+1);
+                line.remove(0, line.indexOf(":")+1);
 
-                QString chunk = line.left(line.indexOf(":"));
-                QByteArray ba_chunk = QByteArray::fromBase64(chunk.toLocal8Bit());
+                line.chop(2);
 
                 if(chunkid <= m_endstartupchunkid.toInt())
                 {
-                    m_primarychunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration));
+                    m_primarychunks.append(Chunk(chunkid, QByteArray::fromBase64(line.toLocal8Bit()), keyframeid, chunkduration));
                 }
                 else
                 {
-                    m_chunks.append(Chunk(chunkid, ba_chunk, keyframeid, chunkduration));
+                    m_chunks.append(Chunk(chunkid, QByteArray::fromBase64(line.toLocal8Bit()), keyframeid, chunkduration));
                 }
+            }
+            else if(!loadInfosOnly && line.startsWith("::ORKeyFrame:"))
+            {
+                // A KeyFrame line ::ORKeyFrame:id:nextchunkid:data::
+
+                line.remove(0, 13);
+
+                int keyframeid = line.left(line.indexOf(":")).toInt();
+                line.remove(0, line.indexOf(":")+1);
+
+                int nextchunkid = line.left(line.indexOf(":")).toInt();
+                line.remove(0, line.indexOf(":")+1);
+
+                line.chop(2);
+
+                m_keyframes.append(Keyframe(keyframeid, QByteArray::fromBase64(line.toLocal8Bit()), nextchunkid));
+            }
+            else if(line.startsWith("::ORHeader:"))
+            {
+                line.remove(0, 11);
+
+                m_platformid = line.left(line.indexOf(":"));
+
+                line.remove(0, line.indexOf(":")+1);
+
+                m_gameid = line.left(line.indexOf(":"));
+
+                line.remove(0, line.indexOf(":")+1);
+
+                m_encryptionkey = line.left(line.indexOf(":"));
+
+                line.remove(0, line.indexOf(":")+1);
+
+                m_serverversion = line.left(line.indexOf(":"));
+
+                line.remove(0, line.indexOf(":")+1);
+
+                m_endstartupchunkid = line.left(line.indexOf(":"));
+
+                line.remove(0, line.indexOf(":")+1);
+
+                m_startgamechunkid = line.left(line.indexOf(":"));
+            }
+            else if(line.startsWith("::ORGameInfos:"))
+            {
+                line.remove(0, 14);
+
+                QString gameinfos = line.left(line.indexOf(":"));
+
+                m_gameinfos = QJsonDocument::fromJson(QByteArray::fromBase64(gameinfos.toLocal8Bit()));
+            }
+            else if(line.startsWith("::ORGameStats:"))
+            {
+                line.remove(0, 14);
+
+                QString gamestats = line.left(line.indexOf(":"));
+
+                m_endofgamestats = QByteArray::fromBase64(gamestats.toLocal8Bit());
+            }
+            else if(line == "::OREnd::")
+            {
+                break;
             }
 
             if(loadInfosOnly && !m_gameinfos.isEmpty() && !m_endofgamestats.isEmpty() && !m_encryptionkey.isEmpty()){
