@@ -257,8 +257,9 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     //Force stopping all recording threads
-    for(int i = 0; i < recordingThreads.size(); i++){
-        recordingThreads.at(i)->exit(0);
+    QPair<QString, QThread*> current_record;
+    foreach(current_record, recording){
+        current_record.second->exit(0);
     }
 
     //Hide system tray icon if available
@@ -875,11 +876,9 @@ void MainWindow::slot_featuredRecord()
         return;
     }
 
-    for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).first() == platformid && recording.at(i).at(1) == gameid){
-            log("Game is already recording");
-            return;
-        }
+    if(recording.contains(QPair<QString, QString>(platformid, gameid))){
+        log("Game is already recording");
+        return;
     }
 
     QJsonDocument gameinfo;
@@ -905,8 +904,6 @@ void MainWindow::slot_featuredRecord()
         dateTime = QDateTime::fromMSecsSinceEpoch(gameinfo.object().value("gameStartTime").toVariant().toLongLong()).toString();
     }
 
-    recording.append(QStringList() << platformid << gameid << dateTime);
-
     refreshRecordingGamesWidget();
 
     QThread *recorderThread = new QThread;
@@ -922,19 +919,13 @@ void MainWindow::slot_featuredRecord()
 
     recorderThread->start();
 
-    recordingThreads.append(recorderThread);
+    recording.insert(QPair<QString, QString>(platformid, gameid), QPair<QString, QThread*>(dateTime, recorderThread));
 }
 
 void MainWindow::slot_endRecording(QString platformid, QString gameid)
 {
-    for(int i = 0; i < recording.size(); i++)
-    {
-        if(recording.at(i).size() >= 2 && recording.at(i).first() == platformid && recording.at(i).at(1) == gameid)
-        {
-            recording.removeAt(i);
-            recordingThreads.removeAt(i);
-            break;
-        }
+    if(recording.contains(QPair<QString, QString>(platformid, gameid))){
+        recording.remove(QPair<QString, QString>(platformid, gameid));
     }
 
     refreshRecordingGamesWidget();
@@ -1393,8 +1384,6 @@ void MainWindow::slot_refreshPlayingStatus()
 
         QString dateTime = QDateTime::fromMSecsSinceEpoch(gameInfo.object().value("gameStartTime").toVariant().toLongLong()).toString();
 
-        recording.append(QStringList() << platformId << gameId << dateTime);
-
         refreshRecordingGamesWidget();
 
         Recorder *recorder = new Recorder(platformId, serverAddress, gameId, gameInfo.object().value("observers").toObject().value("encryptionKey").toString(), gameInfo, replaydirectory);
@@ -1410,7 +1399,7 @@ void MainWindow::slot_refreshPlayingStatus()
 
         recorderThread->start();
 
-        recordingThreads.append(recorderThread);
+        recording.insert(QPair<QString, QString>(platformId, gameId), QPair<QString, QThread*>(dateTime, recorderThread));
     }
 
     if(replaying && islolRunning()){
@@ -1909,11 +1898,9 @@ void MainWindow::slot_click_searchsummoner_record()
         return;
     }
 
-    for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).first() == platformid && recording.at(i).at(1) == gameid){
-            log("Game is already recording");
-            return;
-        }
+    if(recording.contains(QPair<QString, QString>(platformid, gameid))){
+        log("Game is already recording");
+        return;
     }
 
     QString dateTime;
@@ -1924,8 +1911,6 @@ void MainWindow::slot_click_searchsummoner_record()
     else{
         dateTime = QDateTime::fromMSecsSinceEpoch(m_searchsummoner_game.object().value("gameStartTime").toVariant().toLongLong()).toString();
     }
-
-    recording.append(QStringList() << platformid << gameid << dateTime);
 
     refreshRecordingGamesWidget();
 
@@ -1942,7 +1927,7 @@ void MainWindow::slot_click_searchsummoner_record()
 
     recorderThread->start();
 
-    recordingThreads.append(recorderThread);
+    recording.insert(QPair<QString, QString>(platformid, gameid), QPair<QString, QThread*>(dateTime, recorderThread));
 }
 
 void MainWindow::systemtrayiconActivated(QSystemTrayIcon::ActivationReason reason)
@@ -2111,22 +2096,11 @@ void MainWindow::slot_menu_cancel(){
             return;
         }
 
-        int j = -1;
         int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+        QString platformid = ui->tableWidget_recordingGames->item(row, 0)->text(), gameid = ui->tableWidget_recordingGames->item(row, 1)->text();
 
-        for(int i = 0; i < recording.size(); i++){
-            if(recording.at(i).first() == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
-                j = i;
-                break;
-            }
-        }
-
-        if(j < 0){
-            return;
-        }
-
-        if(recordingThreads.size() > j){
-            recordingThreads.at(j)->exit(0);
+        if(recording.contains(QPair<QString, QString>(platformid, gameid))){
+            recording.value(QPair<QString, QString>(platformid, gameid)).second->exit(0);
         }
     }
 }
@@ -2137,26 +2111,15 @@ void MainWindow::slot_menu_cancelanddelete(){
             return;
         }
 
-        int j = -1;
         int row = ui->tableWidget_recordingGames->selectedItems().first()->row();
+        QString platformid = ui->tableWidget_recordingGames->item(row, 0)->text(), gameid = ui->tableWidget_recordingGames->item(row, 0)->text();
 
-        for(int i = 0; i < recording.size(); i++){
-            if(recording.at(i).first() == ui->tableWidget_recordingGames->item(row, 0)->text() && recording.at(i).at(1) == ui->tableWidget_recordingGames->item(row, 1)->text()){
-                j = i;
-                break;
-            }
+        if(recording.contains(QPair<QString, QString>(platformid, gameid))){
+            recording.value(QPair<QString, QString>(platformid, gameid)).second->exit(0);
+            recording.value(QPair<QString, QString>(platformid, gameid)).second->wait(1000);
         }
 
-        if(j < 0){
-            return;
-        }
-
-        QString filepath = replaydirectory + "/" + recording.at(j).first() + "-" + recording.at(j).at(1) + ".lor";
-
-        if(recordingThreads.size() > j){
-            recordingThreads.at(j)->exit(0);
-            recordingThreads.at(j)->wait(1000);
-        }
+        QString filepath = replaydirectory + "/" + platformid + "-" + gameid + ".lor";
 
         QFile file(filepath);
 
@@ -2180,22 +2143,18 @@ void MainWindow::slot_openAdvancedRecorder()
     connect(newAdvancedRecorderDialog, SIGNAL(recordGame(QString, QString, QString, QString, bool, bool, bool)), this, SLOT(slot_customGameRecord(QString, QString, QString, QString, bool, bool, bool)));
 }
 
-void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegion, QString gameId, QString encryptionKey, bool forceCompleteDownload, bool downloadInfos, bool downloadStats)
+void MainWindow::slot_customGameRecord(QString serverAddress, QString platformId, QString gameId, QString encryptionKey, bool forceCompleteDownload, bool downloadInfos, bool downloadStats)
 {
     Q_UNUSED(downloadInfos);
 
-    for(int i = 0; i < recording.size(); i++){
-        if(recording.at(i).first() == serverRegion && recording.at(i).at(1) == gameId){
-            log("Game is already recording");
-            return;
-        }
+    if(recording.contains(QPair<QString, QString>(platformId, gameId))){
+        log("Game is already recording");
+        return;
     }
-
-    recording.append(QStringList() << serverRegion << gameId << QDateTime::currentDateTime().toString());
 
     refreshRecordingGamesWidget();
 
-    Recorder *recorder = new Recorder(serverRegion, serverAddress, gameId, encryptionKey, QJsonDocument(), replaydirectory, forceCompleteDownload, downloadStats);
+    Recorder *recorder = new Recorder(platformId, serverAddress, gameId, encryptionKey, QJsonDocument(), replaydirectory, forceCompleteDownload, downloadStats);
     QThread *recorderThread = new QThread;
     recorder->moveToThread(recorderThread);
     connect(recorderThread, SIGNAL(started()), recorder, SLOT(launch()));
@@ -2208,7 +2167,7 @@ void MainWindow::slot_customGameRecord(QString serverAddress, QString serverRegi
 
     recorderThread->start();
 
-    recordingThreads.append(recorderThread);
+    recording.insert(QPair<QString, QString>(platformId, gameId), QPair <QString, QThread*> (QDateTime::currentDateTime().toString(), recorderThread));
 }
 
 void MainWindow::slot_reportAnIssue()
@@ -2231,34 +2190,34 @@ void MainWindow::refreshRecordingGamesWidget()
 
     qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
 
-    for(int i = 0; i < recording.size(); i++){
-        ui->tableWidget_recordingGames->insertRow(i);
+    QPair<QString, QThread*> current_record;
 
-        if(recording.at(i).size() >= 3){
-            ui->tableWidget_recordingGames->setItem(i, 0, new QTableWidgetItem(recording.at(i).first()));
-            ui->tableWidget_recordingGames->setItem(i, 1, new QTableWidgetItem(recording.at(i).at(1)));
+    foreach(current_record, recording){
+        ui->tableWidget_recordingGames->insertRow(ui->tableWidget_recordingGames->rowCount());
 
-            QDateTime dateTime = QDateTime::fromString(recording.at(i).at(2));
+        ui->tableWidget_recordingGames->setItem(ui->tableWidget_recordingGames->rowCount()-1, 0, new QTableWidgetItem(recording.key(current_record).second));
+        ui->tableWidget_recordingGames->setItem(ui->tableWidget_recordingGames->rowCount()-1, 1, new QTableWidgetItem(recording.key(current_record).first));
 
-            ui->tableWidget_recordingGames->setItem(i, 2, new QTableWidgetItem(dateTime.toString(Qt::DefaultLocaleShortDate)));
+        QDateTime dateTime = QDateTime::fromString(current_record.first);
 
-            qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
-            timeProgress /= 1000;
-            timeProgress /= 60;
-            int value = 0;
+        ui->tableWidget_recordingGames->setItem(ui->tableWidget_recordingGames->rowCount()-1, 2, new QTableWidgetItem(dateTime.toString(Qt::DefaultLocaleShortDate)));
 
-            if(timeProgress >= 30){
-                value = 90;
-            }
-            else{
-                value = int(timeProgress * 3);
-            }
+        qint64 timeProgress = currentTime - dateTime.toMSecsSinceEpoch();
+        timeProgress /= 1000;
+        timeProgress /= 60;
+        int value = 0;
 
-            QProgressBar* bar = new QProgressBar();
-            bar->setValue(value);
-
-            ui->tableWidget_recordingGames->setCellWidget(i, 3, bar);
+        if(timeProgress >= 30){
+            value = 90;
         }
+        else{
+            value = int(timeProgress * 3);
+        }
+
+        QProgressBar* bar = new QProgressBar();
+        bar->setValue(value);
+
+        ui->tableWidget_recordingGames->setCellWidget(ui->tableWidget_recordingGames->rowCount()-1, 3, bar);
     }
 }
 

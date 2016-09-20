@@ -37,6 +37,8 @@
 #include <QProgressBar>
 #include <QFileSystemWatcher>
 #include <QtGlobal>
+#include <QHash>
+#include <QPair>
 
 #include "qhttpserver.hpp"
 #include "qhttpserverresponse.hpp"
@@ -98,8 +100,12 @@ private:
 
     QMenu *custommenu;
 
-    QList <QStringList> recording;
-    QList <QThread*> recordingThreads;
+    /* Contains the game id of all recording games.
+     * Key: (QString platformid, QString gameid)
+     * Value: (QString datetime, QThread pointer)
+     */
+    QHash <QPair<QString, QString>, QPair <QString, QThread*>> recording;
+
     QList <QString> recordedgames_filename;
     QList <QString> yourgames_filename;
 
