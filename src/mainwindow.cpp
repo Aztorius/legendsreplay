@@ -292,13 +292,19 @@ void MainWindow::log(QString s)
 void MainWindow::setArgs(int argc, char *argv[])
 {
     if(argc > 1){
-        if(std::string(argv[1]) == "--silent"){
+        if(std::string(argv[1]) == "help" || std::string(argv[1]) == "-h"){
+            qInfo() << "LegendsReplay -- Help Menu" << endl;
+            qInfo() << "help : show this menu" << endl;
+            qInfo() << "--silent : hide the main window of LegendsReplay at launch" << endl;
+            qInfo() << "record [ServerRegion] [ServerAddress:Port] [GameId] [EncryptionKey] [ForceCompleteDownload]" << endl;
+            qInfo() << "    : record the specified game in the spectator server given" << endl;
+        }
+        else if(std::string(argv[1]) == "--silent"){
             this->showMinimized();
 
             return;
         }
-
-        if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverregion serveraddress gameid encryptionkey forceCompleteDownload
+        else if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverregion serveraddress gameid encryptionkey forceCompleteDownload
             slot_customGameRecord(QString(argv[3]), QString(argv[2]), QString(argv[4]), QString(argv[5]), QString(argv[6]) == "true", false, false);
 
             return;

@@ -101,8 +101,8 @@ private:
     QMenu *custommenu;
 
     /* Contains the game id of all recording games.
-     * Key: (QString platformid, QString gameid)
-     * Value: (QString datetime, QThread pointer)
+     * Key: (QString platformId, QString gameId)
+     * Value: (QString dateTime, QThread* pointerToRecordingThread)
      */
     QHash <QPair<QString, QString>, QPair <QString, QThread*>> recording;
 
