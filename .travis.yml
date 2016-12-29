@@ -1,32 +1,35 @@
 language: cpp
-
 sudo: required
 dist: trusty
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - qt5-default qttools5-dev-tools
-      - g++-6 gcc-6
+    - qt5-default qttools5-dev-tools
+    - g++-6 gcc-6
 env: COMPILER=g++-6 CXX=g++-6 CC=gcc-6
-
 before_script:
- - sudo add-apt-repository ppa:beineri/opt-qt562-trusty --yes
- - sudo apt-get update -qq
- - sudo apt-get install --yes qt56base
- - source /opt/qt56/bin/qt56-env.sh
- - git submodule init && git submodule update
- - qmake -v
- - mkdir ./legendsreplay/usr
- - mkdir ./legendsreplay/usr/bin
-
+- sudo add-apt-repository ppa:beineri/opt-qt562-trusty --yes
+- sudo apt-get update -qq
+- sudo apt-get install --yes qt56base
+- source /opt/qt56/bin/qt56-env.sh
+- git submodule init && git submodule update
+- qmake -v
+- mkdir ./legendsreplay/usr
+- mkdir ./legendsreplay/usr/bin
 script:
- - cd qhttp
- - ./update-dependencies.sh
- - cd ..
- - qmake LegendsReplay.pro
- - make CXX=$COMPILER
- - cp ./src/LegendsReplay ./legendsreplay/usr/bin
- - dpkg-deb --build legendsreplay
- 
+- cd qhttp
+- "./update-dependencies.sh"
+- cd ..
+- qmake LegendsReplay.pro
+- make CXX=$COMPILER
+- cp ./src/LegendsReplay ./legendsreplay/usr/bin
+- dpkg-deb --build legendsreplay
+deploy:
+  provider: releases
+  api_key:
+    secure: wJKI+jx7VmdaoAgqoHbg30JvGUi6wePq7jlD8hqWSQcrPUaIeoSaSdx6/r6Rzpna6LQVJqlUJiwpa68MWZI+zTb+cFJgECEqa5X9RErTPLBRO6SNPVBqSntjlyo3iyLJMBguhButmvG0B8gBYXtJrN4N38/0EQVtCh8uVCYx3SFzFvNLc3s1dmOYwkwH+UTuwwDlaAmc1N98Bot6UToglaou3D/t7/8GuOUm4RVijO6zNcMseu5u7RSqe20WB8Orufhs625UKnMPgPXyFeaQ9TD9rMNEgdAe/bA7tLODRvY3kWcGXwwtXCtJzl5iJMChDScrpeXg1OFMjD6dwd+5V8qFtClYMr+KSDBd8OhUs2n6vlyaL+56ROTndF0C41tPIx8lsoY+iUVU2Uqy/r0OZu+3ymbZVaxBXsZhFJPvoHcfSCzZY6Au+0sAkhsRtpVjgM/LroBzppeIPi3ExYEmWs2a9zMD4/GbZGVQd11+BjIhV1/e4DT2YE/04ewUArz6bStjY6RwDzm7yY2yQSihycEDtDuAmmibkXS4msGhJOYrmrgnlAYwgZI3eJnkyyODZZWHXEUFCafnFxjArONax4zqMVCF2EduZKRiTObjnbJJ8qLmrlzlFQODLBUW+GcXVRPXsCDryq1xLtbC8aRQ+f/GumdXSHJq210bsTachCM=
+  file: legendsreplay.deb
+  on:
+    repo: Aztorius/legendsreplay
