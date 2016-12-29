@@ -18,6 +18,8 @@ before_script:
  - source /opt/qt56/bin/qt56-env.sh
  - git submodule init && git submodule update
  - qmake -v
+ - mkdir ./legendsreplay/usr
+ - mkdir ./legendsreplay/usr/bin
 
 script:
  - cd qhttp
@@ -25,3 +27,6 @@ script:
  - cd ..
  - qmake LegendsReplay.pro
  - make CXX=$COMPILER
+ - cp ./src/legendsreplay ./legendsreplay/usr/bin
+ - dpkg-deb --build legendsreplay
+ 
