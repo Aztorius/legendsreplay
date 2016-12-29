@@ -29,12 +29,17 @@ script:
 - make CXX=$COMPILER
 - cp ./src/LegendsReplay ./legendsreplay/usr/bin
 - dpkg-deb --build legendsreplay
+- echo $TRAVIS_TAG
+
+before_deploy:
+- echo $TRAVIS_TAG
+- mv ./legendsreplay.deb ./legendsreplay-$TRAVIS_TAG.deb
 
 deploy:
   provider: releases
   api_key:
     secure: wJKI+jx7VmdaoAgqoHbg30JvGUi6wePq7jlD8hqWSQcrPUaIeoSaSdx6/r6Rzpna6LQVJqlUJiwpa68MWZI+zTb+cFJgECEqa5X9RErTPLBRO6SNPVBqSntjlyo3iyLJMBguhButmvG0B8gBYXtJrN4N38/0EQVtCh8uVCYx3SFzFvNLc3s1dmOYwkwH+UTuwwDlaAmc1N98Bot6UToglaou3D/t7/8GuOUm4RVijO6zNcMseu5u7RSqe20WB8Orufhs625UKnMPgPXyFeaQ9TD9rMNEgdAe/bA7tLODRvY3kWcGXwwtXCtJzl5iJMChDScrpeXg1OFMjD6dwd+5V8qFtClYMr+KSDBd8OhUs2n6vlyaL+56ROTndF0C41tPIx8lsoY+iUVU2Uqy/r0OZu+3ymbZVaxBXsZhFJPvoHcfSCzZY6Au+0sAkhsRtpVjgM/LroBzppeIPi3ExYEmWs2a9zMD4/GbZGVQd11+BjIhV1/e4DT2YE/04ewUArz6bStjY6RwDzm7yY2yQSihycEDtDuAmmibkXS4msGhJOYrmrgnlAYwgZI3eJnkyyODZZWHXEUFCafnFxjArONax4zqMVCF2EduZKRiTObjnbJJ8qLmrlzlFQODLBUW+GcXVRPXsCDryq1xLtbC8aRQ+f/GumdXSHJq210bsTachCM=
-  file: ./legendsreplay.deb
+  file: ./legendsreplay-$TRAVIS_TAG.deb
   skip_cleanup: true
   on:
     repo: Aztorius/legendsreplay
