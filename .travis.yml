@@ -27,6 +27,7 @@ script:
  - cd ..
  - qmake LegendsReplay.pro
  - make CXX=$COMPILER
+ - ls ./src
  - cp ./src/legendsreplay ./legendsreplay/usr/bin
  - dpkg-deb --build legendsreplay
  
