@@ -29,7 +29,6 @@ script:
 - make CXX=$COMPILER
 - cp ./src/LegendsReplay ./legendsreplay/usr/bin
 - dpkg-deb --build legendsreplay
-- echo $TRAVIS_TAG
 
 before_deploy:
 - echo $TRAVIS_TAG
