@@ -3,7 +3,7 @@
 echo "preparing the latest version of 3rd-party dependencies ...\r\n"
 
 cd qhttp
-mkdir -p 3rdparty
+mkdir 3rdparty
 cd 3rdparty
 
 echo "--> nodejs / http-parser"
