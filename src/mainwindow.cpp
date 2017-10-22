@@ -273,13 +273,14 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::slot_checkSoftwareVersion(){
-    QJsonDocument updatejson = getJsonFromUrl("http://aztorius.github.io/legendsreplay/version.json");
+    QJsonDocument updatejson = getJsonFromUrl("https://aztorius.github.io/legendsreplay/version.json");
 
-    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION)
-    {
+    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION) {
         showmessage(tr("New version ") + updatejson.object().value("version").toString() + " available !");
         ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + "New version " + updatejson.object().value("version").toString() + tr(" available !"));
-        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='http://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
+        ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='https://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
+    } else if (updatejson.isEmpty()) {
+        ui->textBrowser->append(QTime::currentTime().toString() + " | Unable to retrieve the last version info online");
     }
 }
 
