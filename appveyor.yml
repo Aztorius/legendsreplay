@@ -5,6 +5,6 @@ install:
 build_script:
   - git submodule init
   - git submodule update
-  - update-dependencies.sh
+  - update-dependencies.bat
   - qmake LegendsReplay.pro
   - mingw32-make
