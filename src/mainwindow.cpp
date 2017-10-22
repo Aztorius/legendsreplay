@@ -542,7 +542,7 @@ void MainWindow::slot_networkResult_status(QNetworkReply *reply)
     for(int i = 0; i < servers.size(); i++)
     {
         if(jsonObject.value("name").toString() == servers.at(i).getName()){
-            for(int j = 0; j < qMin(services.size(), 5); j++){
+            for(int j = 0; j < qMin(services.size(), 4); j++){
                 QJsonArray incidentsArray = services[j].toObject().value("incidents").toArray();
 
                 if(services[j].toObject().value("status").toString() == "offline"){ //Service offline
