@@ -14,7 +14,7 @@ build_script:
   - cp C:\\Qt\\5.6\\mingw49_32\\bin\\icudt54.dll .
   - cp C:\\Qt\\5.6\\mingw49_32\\bin\\icuin54.dll .
   - cp C:\\Qt\\5.6\\mingw49_32\\bin\\icuuc54.dll .
-  - cp qhttp\\src\\qhttp.dll .
+  - cp qhttp/xbin/qhttp.dll .
   - iscc setup.iss
 
 artifacts:
