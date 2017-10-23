@@ -1,6 +1,6 @@
 /* ****************************************************************************
  *
- * Copyright 2016 William Bonnaventure
+ * Copyright 2016-2017 William Bonnaventure
  *
  * This file is part of LegendsReplay.
  *
