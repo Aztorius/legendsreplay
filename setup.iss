@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "LegendsReplay"
-#define MyAppVersion "1.4.4"
+#define MyAppVersion "1.4.5"
 #define MyAppPublisher "Nobelia"
 #define MyAppURL "https://aztorius.github.io/legendsreplay/"
 #define MyAppExeName "LegendsReplay.exe"
