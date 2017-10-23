@@ -153,5 +153,9 @@
         <file>translation/legendsreplay_french.qm</file>
         <file>translation/legendsreplay_portuguese.qm</file>
         <file>translation/legendsreplay_spanish.qm</file>
+        <file>img/497.png</file>
+        <file>img/498.png</file>
+        <file>img/516.png</file>
+        <file>img/141.png</file>
     </qresource>
 </RCC>
