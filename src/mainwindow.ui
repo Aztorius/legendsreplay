@@ -1275,6 +1275,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionLaunch_rofl_file"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -1357,6 +1358,11 @@
    </property>
    <property name="text">
     <string>&amp;Repair tool</string>
+   </property>
+  </action>
+  <action name="actionLaunch_rofl_file">
+   <property name="text">
+    <string>Launch .rofl file</string>
    </property>
   </action>
  </widget>

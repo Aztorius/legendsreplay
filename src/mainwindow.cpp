@@ -23,7 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString GLOBAL_VERSION = "1.4.5";
+QString GLOBAL_VERSION = "1.5.0";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -194,6 +194,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->actionReport_an_issue, SIGNAL(triggered()), this, SLOT(slot_reportAnIssue()));
     connect(ui->actionAbout_LegendsReplay, SIGNAL(triggered()), this, SLOT(slot_aboutLegendsReplay()));
+    connect(ui->actionLaunch_rofl_file, SIGNAL(triggered()), this, SLOT(slot_launch_rofl_file()));
 
     networkManager_replayServers = new QNetworkAccessManager(this);
     connect(networkManager_replayServers, SIGNAL(finished(QNetworkReply*)), this, SLOT(slot_networkResult_replayServers(QNetworkReply*)));
@@ -1438,7 +1439,7 @@ QJsonDocument MainWindow::getCurrentPlayingGameInfos(QString serverRegion, QStri
 
 void MainWindow::slot_open_replay()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"), replaydirectory);
+    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay"), replaydirectory, "Replay File (*.lor)");
 
     if(!path.isEmpty()){
         replay_launch(path);
@@ -1697,7 +1698,65 @@ void MainWindow::replay_launch(QString pathfile)
     });
 
     //Launch lol client
-    lol_launch(replay->getPlatformId(), replay->getEncryptionkey(), replay->getGameId(),true);
+    lol_launch(replay->getPlatformId(), replay->getEncryptionkey(), replay->getGameId(), true);
+}
+
+void MainWindow::rofl_file_launch(QString filepath)
+{
+    if (filepath.isEmpty()) {
+        log("[ERROR] Invalid game parameters.");
+        return;
+    }
+
+    QDir qd;
+
+    qd.setPath(loldirectory + "/solutions/lol_game_client_sln/releases/");
+    qd.setFilter(QDir::Dirs);
+    qd.setSorting(QDir::Name | QDir::Reversed);
+    QFileInfoList list = qd.entryInfoList();
+
+    if (list.isEmpty()) {
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Invalid League of Legends (or PBE) directory.\nPlease set a valid one."));
+        log("[WARN] Invalid League of Legends (or PBE) directory. No releases folder found.");
+        return;
+    }
+
+    QString path = loldirectory + "/solutions/lol_game_client_sln/releases/" + list.first().fileName() + "/deploy/";
+
+    if (!check_path(path)) {
+        QMessageBox::information(this, tr("LegendsReplay"), tr("Invalid League of Legends (or PBE) directory.\nPlease set a valid one."));
+        log("[WARN] Invalid League of Legends (or PBE) directory. Invalid path.");
+        return;
+    }
+
+#ifdef Q_OS_WIN32
+
+    QProcess *process = new QProcess;
+    process->setWorkingDirectory(path);
+    process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"" + filepath + "\"", path);
+
+    log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
+
+#elif defined(Q_OS_UNIX)
+    //QProcess *process = new QProcess;
+    //process->setWorkingDirectory(path);
+    //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+
+    //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+    log("LoL Launch isn't available for Linux yet");
+
+#endif
+
+    this->showMinimized();
+}
+
+void MainWindow::slot_launch_rofl_file()
+{
+    QString path = QFileDialog::getOpenFileName(this, tr("Select a Replay File"), replaydirectory, "Replay File (*.rofl)");
+
+    if(!path.isEmpty()){
+        rofl_file_launch(path);
+    }
 }
 
 void MainWindow::showmessage(QString message)

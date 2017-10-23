@@ -71,6 +71,7 @@ public:
     bool check_path(QString path);
     bool game_ended(QString region, QString gameid);
     void replay_launch(QString pathfile);
+    void rofl_file_launch(QString filepath);
 
     QJsonDocument getCurrentPlayingGameInfos(QString serverRegion, QString summonerId);
     QJsonDocument getJsonFromUrl(QString url);
@@ -168,6 +169,7 @@ private slots:
     void slot_searchsummoner();
 
     void slot_open_replay();
+    void slot_launch_rofl_file();
 
     void slot_replayserversAdd();
 
