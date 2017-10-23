@@ -41,12 +41,14 @@ public:
     explicit RepairToolDialog(QWidget *parent = 0);
     ~RepairToolDialog();
     void load(Replay replay);
+    void setDirectory(QString replays_directory);
 
 private:
     Ui::RepairToolDialog *ui;
 
     Replay m_replay;
     bool m_checked;
+    QString m_directory;
 
 private slots:
     void repair();

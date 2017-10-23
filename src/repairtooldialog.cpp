@@ -270,10 +270,22 @@ void RepairToolDialog::repair(){
     ui->progressBar->setValue(100);
 }
 
-void RepairToolDialog::openFile(){
-    QString filepath = QFileDialog::getOpenFileName(this, tr("Open a replay file"), m_replay.getFilepath());
+void RepairToolDialog::openFile()
+{
+    QString directory = m_replay.getFilepath();
+
+    if (directory.isEmpty()) {
+        directory = m_directory;
+    }
+
+    QString filepath = QFileDialog::getOpenFileName(this, tr("Open a replay file"), directory);
 
     if(!filepath.isEmpty()){
         load(Replay(filepath));
     }
+}
+
+void RepairToolDialog::setDirectory(QString replays_directory)
+{
+    m_directory = replays_directory;
 }

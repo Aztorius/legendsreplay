@@ -2253,5 +2253,6 @@ void MainWindow::changeEvent(QEvent* event)
 
 void MainWindow::slot_checkandrepair(){
     RepairToolDialog *newRepairToolDialog = new RepairToolDialog(this);
+    newRepairToolDialog->setDirectory(replaydirectory);
     newRepairToolDialog->show();
 }
