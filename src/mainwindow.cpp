@@ -683,9 +683,6 @@ void MainWindow::slot_featuredRefresh()
     networkManager_featured->get(QNetworkRequest(QUrl("http://spectator.br.lol.riotgames.com/observer-mode/rest/featured")));  // GET BR LAN LAS FEATURED GAMES
 
     networkManager_featured->get(QNetworkRequest(QUrl("http://spectator.ru.lol.riotgames.com/observer-mode/rest/featured")));  // GET RU TR FEATURED GAMES
-
-    networkManager_featured->get(QNetworkRequest(QUrl("http://spectator.pbe1.lol.riotgames.com:8088/observer-mode/rest/featured")));  // GET PBE FEATURED GAMES
-
 }
 
 QPixmap MainWindow::getImg(int id)
@@ -693,8 +690,10 @@ QPixmap MainWindow::getImg(int id)
     int finalid = 0;
 
     QFileInfo info(":/img/" + QString::number(id) + ".png");
-    if(info.exists() && info.isFile()){
+    if (info.exists() && info.isFile()) {
         finalid = id;
+    } else {
+        log("Icon not yet available for champion id " + QString::number(id));
     }
 
     QPixmap img(":/img/" + QString::number(finalid) + ".png");
