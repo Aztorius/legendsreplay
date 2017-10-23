@@ -337,7 +337,7 @@ void MainWindow::slot_statusRefresh()
     networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/tr")));  // GET TR SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl("http://status.pbe.leagueoflegends.com/shards/pbe")));  // GET PBE SERVERS STATUS
 
-    for(int i = 0; i < servers.size(); i++){
+    for(int i = 0; i < servers.size() - 1; i++){
         networkManager_status->get(QNetworkRequest(QUrl("http://" + servers.at(i).getUrl() + "/observer-mode/rest/consumer/version")));
     }
 }
