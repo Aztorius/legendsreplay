@@ -25,12 +25,6 @@
 
 #include <QWidget>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QFileInfo>
-#include <QLabel>
-#include <QHBoxLayout>
-#include <QDateTime>
 
 namespace Ui {
 class GameInfosWidget;

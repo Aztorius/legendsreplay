@@ -23,12 +23,9 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
-#include <QFile>
 #include <QJsonDocument>
-#include <QJsonObject>
-#include <QDebug>
-#include <QStringList>
 #include <QString>
+#include <QList>
 
 #include "chunk.h"
 #include "keyframe.h"

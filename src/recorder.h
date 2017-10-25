@@ -23,13 +23,8 @@
 #ifndef RECORDER_H
 #define RECORDER_H
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QEventLoop>
-#include <QTimer>
 #include <QJsonArray>
-#include <math.h>
+#include <QObject>
 
 #include "replay.h"
 

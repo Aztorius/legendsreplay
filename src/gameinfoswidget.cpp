@@ -23,6 +23,13 @@
 #include "gameinfoswidget.h"
 #include "ui_gameinfoswidget.h"
 
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QFileInfo>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QDateTime>
+
 GameInfosWidget::GameInfosWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GameInfosWidget)

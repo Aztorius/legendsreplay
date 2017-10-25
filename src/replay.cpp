@@ -22,6 +22,11 @@
 
 #include "replay.h"
 
+#include <QFile>
+#include <QJsonObject>
+#include <QStringList>
+#include <QTextStream>
+
 Replay::Replay(){
 
 }
@@ -148,7 +153,6 @@ Replay::Replay(QString filepath, bool loadInfosOnly)
     }
     else{
         //ERROR : cannot open the file
-        qDebug() << "[ERROR] Cannot open the file";
     }
 }
 

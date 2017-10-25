@@ -23,6 +23,9 @@
 #include "repairtooldialog.h"
 #include "ui_repairtooldialog.h"
 
+#include <QMessageBox>
+#include <QFileDialog>
+
 RepairToolDialog::RepairToolDialog(QWidget *parent) :
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
     ui(new Ui::RepairToolDialog)

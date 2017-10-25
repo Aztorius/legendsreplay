@@ -24,8 +24,6 @@
 #define CHECKANDREPAIRDIALOG_H
 
 #include <QDialog>
-#include <QMessageBox>
-#include <QFileDialog>
 
 #include "replay.h"
 
