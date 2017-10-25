@@ -416,18 +416,24 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
 
 #ifdef Q_OS_WIN32
 
-        QProcess *process = new QProcess;
-        process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
-
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
 
-#elif defined(Q_OS_UNIX)
-        //QProcess *process = new QProcess;
-        //process->setWorkingDirectory(path);
-        //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+        if (!QProcess::startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path)) {
+            log("Unable to launch League of Legends");
+            return;
+        }
 
-        //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+#elif defined(Q_OS_OSX)
+
+        log("\"" + path + "League of Legends\" \"8394\" \"LoLLauncher\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+
+        if (!QProcess::startDetached("\"" + path + "League of Legends\"", QStringList() << "\"8394\"" << "\"LoLLauncher\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path)) {
+            log("Unable to launch League of Legends");
+            return;
+        }
+
+#elif defined(Q_OS_UNIX)
+
         log("LoL Launch isn't available for Linux yet");
 
 #endif
@@ -444,19 +450,24 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
 
 #ifdef Q_OS_WIN32
 
-        QProcess *process = new QProcess;
-        process->setWorkingDirectory(path);
-        process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
-
         log("\"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+
+        if (!QProcess::startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path)) {
+            log("Unable to launch League of Legends");
+            return;
+        }
+
+#elif defined(Q_OS_OSX)
+
+        log("\"" + path + "League of Legends\" \"8394\" \"LoLLauncher\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+
+        if (!QProcess::startDetached("\"" + path + "League of Legends\"", QStringList() << "\"8394\"" << "\"LoLLauncher\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path)) {
+            log("Unable to launch League of Legends");
+            return;
+        }
 
 #elif defined(Q_OS_UNIX)
 
-        //QProcess *process = new QProcess;
-        //process->setWorkingDirectory(path);
-        //process->startDetached("wine \"" + path + "League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), path);
-
-        //log("wine \"" + path + "League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
         log("LoL Launch isn't available for Linux yet");
 
 #endif
@@ -1734,22 +1745,19 @@ void MainWindow::rofl_file_launch(QString filepath)
     log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
 
     QProcess* process = new QProcess();
-
+    connect(process, SIGNAL(finished()), process, SLOT(deleteLater()));
     process->setWorkingDirectory(path);
     process->start("\"" + path + "League of Legends.exe\"", QStringList() << filepath);
-
-    /*if (!QProcess::startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"" + filepath + "\"", path)) {
-        log("Process creation aborted");
-    }*/
 
 #elif defined(Q_OS_OSX)
 
     log("\"" + path + "League of Legends\" \"" + filepath + "\"");
     log("MacOSX support is experimental");
 
-    if (!QProcess::startDetached("\"" + path + "League of Legends\"", QStringList() << "\"" + filepath + "\"", path)) {
-        log("Process creation aborted");
-    }
+    QProcess* process = new QProcess();
+    connect(process, SIGNAL(finished()), process, SLOT(deleteLater()));
+    process->setWorkingDirectory(path);
+    process->start("\"" + path + "League of Legends\"", QStringList() << filepath);
 
 #elif defined(Q_OS_UNIX)
 
