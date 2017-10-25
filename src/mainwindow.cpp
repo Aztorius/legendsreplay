@@ -39,12 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
     // Adding the official local servers
     QFile localserversfile(":/data/LegendsReplayServers.txt");
 
-    if(localserversfile.open(QIODevice::ReadOnly)){
+    if (localserversfile.open(QIODevice::ReadOnly)) {
         QTextStream in(&localserversfile);
 
-        while(!in.atEnd()){
+        while (!in.atEnd()) {
             QString line = in.readLine();
-            if(!line.isEmpty()){
+            if (!line.isEmpty()) {
                 lrservers.append(line);
                 ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
                 ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(line));
@@ -52,15 +52,14 @@ MainWindow::MainWindow(QWidget *parent) :
         }
 
         localserversfile.close();
-    }
-    else{
+    } else {
         log("[ERROR] Unable to open internal servers file");
         lrservers.append("http://legendsreplay.16mb.com/legendsreplay.php");
         ui->tableWidget_replayservers->insertRow(ui->tableWidget_replayservers->rowCount());
         ui->tableWidget_replayservers->setItem(ui->tableWidget_replayservers->rowCount()-1, 0, new QTableWidgetItem(lrservers.last()));
     }
 
-    if(lrservers.isEmpty()){
+    if (lrservers.isEmpty()) {
         // Critical
         QMessageBox::critical(this, tr("LegendsReplay"), tr("Unable to find a Legends Replay server"));
         close();
@@ -71,42 +70,39 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lrsettings = new QSettings("LegendsReplay", "Local", this);
 
-    if(!lrsettings->value("SummonerName").toString().isEmpty()){
+    if (!lrsettings->value("SummonerName").toString().isEmpty()) {
         m_summonername = lrsettings->value("SummonerName").toString();
         ui->lineEdit_summonername->setText(m_summonername);
-    }
-    else{
+    } else {
         QMessageBox::information(this, tr("LegendsReplay"), tr("Please set your summoner name and then keep the software open to record your games."));
         log("[WARN] Please set your summoner name and then keep the software open to record your games.");
 
         ui->tabWidget->setCurrentIndex(6);
     }
 
-    if(!lrsettings->value("SummonerId").toString().isEmpty()){
+    if (!lrsettings->value("SummonerId").toString().isEmpty()) {
         m_summonerid = lrsettings->value("SummonerId").toString();
         ui->lineEdit_summonerid->setText(m_summonerid);
     }
 
-    if(!lrsettings->value("SummonerServer").toString().isEmpty()){
+    if (!lrsettings->value("SummonerServer").toString().isEmpty()) {
         m_summonerServerRegion = lrsettings->value("SummonerServer").toString();
         ui->comboBox_summonerserver->setCurrentText(m_summonerServerRegion);
     }
 
-    if(!lrsettings->value("Language").toString().isEmpty() && translator.load(QString(":/translation/legendsreplay_") + lrsettings->value("Language").toString().toLower())){
+    if (!lrsettings->value("Language").toString().isEmpty() && translator.load(QString(":/translation/legendsreplay_") + lrsettings->value("Language").toString().toLower())) {
         qApp->installTranslator(&translator);
     }
 
-    if(!lrsettings->value("LoLDirectory").toString().isEmpty()){
+    if (!lrsettings->value("LoLDirectory").toString().isEmpty()) {
         loldirectory = lrsettings->value("LoLDirectory").toString();
-    }
-    else{
+    } else {
         QSettings lolsettings("Riot Games", "RADS");
         QString rootfolder = lolsettings.value("LocalRootFolder").toString();
 
-        if(rootfolder.isEmpty()){
+        if (rootfolder.isEmpty()) {
             loldirectory = "C:/Program Files/Riot Games/League of Legends/RADS";
-        }
-        else{
+        } else {
             loldirectory = rootfolder;
         }
     }
@@ -114,20 +110,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_lolfolder->setText(loldirectory);
 
     QString docfolder;
-    if(lrsettings->value("ReplayDirectory").toString().isEmpty()){
+    if (lrsettings->value("ReplayDirectory").toString().isEmpty()) {
         QStringList folders = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-        if(folders.isEmpty()){
+        if (folders.isEmpty()) {
             log("[CRITIC] no documents location found on the system");
             close();
             return;
         }
         docfolder = folders.first();
-    }
-    else{
+    } else {
         docfolder = lrsettings->value("ReplayDirectory").toString();
     }
 
-    if(!QDir(docfolder + "/LegendsReplay").exists()){
+    if (!QDir(docfolder + "/LegendsReplay").exists()) {
         QDir().mkpath(docfolder + "/LegendsReplay");
     }
 
@@ -147,7 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_timer, SIGNAL(timeout()), this, SLOT(slot_refreshPlayingStatus()));
     m_timer->start(60000);
 
-    //Add servers
+    // Add servers
 
     servers.append(Server("EU West", "EUW", "EUW1", "spectator.euw1.lol.riotgames.com", 80));
     servers.append(Server("EU Nordic & East", "EUNE", "EUN1", "spectator.eu.lol.riotgames.com", 8088));
@@ -160,7 +155,8 @@ MainWindow::MainWindow(QWidget *parent) :
     servers.append(Server("Latin America South", "LAS", "LA2", "spectator.la2.lol.riotgames.com", 80));
     servers.append(Server("Russia", "RU", "RU", "spectator.ru.lol.riotgames.com", 80));
     servers.append(Server("Turkey", "TR", "TR1", "spectator.tr.lol.riotgames.com", 80));
-    servers.append(Server("PBE", "PBE", "PBE1", "spectator.pbe1.lol.riotgames.com", 8088));
+    // PBE Spectator server doesn't exist anymore
+    servers.append(Server("PBE", "PBE", "PBE1", QString(), 0));
 
     connect(ui->tabWidget, SIGNAL(currentChanged(int)), this, SLOT(slot_changedTab(int)));
     connect(ui->pushButton_2, SIGNAL(released()), this, SLOT(slot_featuredRefresh()));
@@ -219,7 +215,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Create and show system tray icon if available
     systemtrayavailable = QSystemTrayIcon::isSystemTrayAvailable();
 
-    if(systemtrayavailable){
+    if (systemtrayavailable) {
         systemtrayicon = new QSystemTrayIcon(this);
         systemtrayicon->setIcon(QIcon(":/icons/logo.png"));
 
@@ -247,8 +243,7 @@ MainWindow::~MainWindow()
     }
 
     //Hide system tray icon if available
-    if(systemtrayavailable)
-    {
+    if (systemtrayavailable) {
         systemtrayicon->hide();
     }
 
@@ -256,10 +251,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::slot_checkSoftwareVersion(){
+void MainWindow::slot_checkSoftwareVersion()
+{
     QJsonDocument updatejson = getJsonFromUrl("https://aztorius.github.io/legendsreplay/version.json");
 
-    if(!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION) {
+    if (!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION) {
         showmessage(tr("New version ") + updatejson.object().value("version").toString() + " available !");
         ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + "New version " + updatejson.object().value("version").toString() + tr(" available !"));
         ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='https://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
@@ -276,27 +272,25 @@ void MainWindow::log(QString s)
 
 void MainWindow::setArgs(int argc, char *argv[])
 {
-    if(argc > 1){
-        if(std::string(argv[1]) == "help" || std::string(argv[1]) == "-h"){
+    if (argc > 1) {
+        if (std::string(argv[1]) == "help" || std::string(argv[1]) == "-h") {
             qInfo() << "LegendsReplay -- Help Menu" << endl;
             qInfo() << "help : show this menu" << endl;
             qInfo() << "--silent : hide the main window of LegendsReplay at launch" << endl;
             qInfo() << "record [ServerRegion] [ServerAddress:Port] [GameId] [EncryptionKey] [ForceCompleteDownload]" << endl;
             qInfo() << "    : record the specified game in the spectator server given" << endl;
-        }
-        else if(std::string(argv[1]) == "--silent"){
+        } else if (std::string(argv[1]) == "--silent") {
             this->showMinimized();
 
             return;
-        }
-        else if(std::string(argv[1]) == "record" && argc > 6){ //command : record serverregion serveraddress gameid encryptionkey forceCompleteDownload
+        } else if(std::string(argv[1]) == "record" && argc > 6) { //command : record serverregion serveraddress gameid encryptionkey forceCompleteDownload
             slot_customGameRecord(QString(argv[3]), QString(argv[2]), QString(argv[4]), QString(argv[5]), QString(argv[6]) == "true", false, false);
 
             return;
         }
 
         Replay replay(argv[1]);
-        if(!replay.isEmpty()){
+        if (!replay.isEmpty()) {
             replay_launch(argv[1]);
 
             return;
@@ -321,7 +315,7 @@ void MainWindow::slot_statusRefresh()
     networkManager_status->get(QNetworkRequest(QUrl("http://status.leagueoflegends.com/shards/tr")));  // GET TR SERVERS STATUS
     networkManager_status->get(QNetworkRequest(QUrl("http://status.pbe.leagueoflegends.com/shards/pbe")));  // GET PBE SERVERS STATUS
 
-    for(int i = 0; i < servers.size() - 1; i++){
+    for(int i = 0; i < servers.size() - 1; i++) {
         networkManager_status->get(QNetworkRequest(QUrl("http://" + servers.at(i).getUrl() + "/observer-mode/rest/consumer/version")));
     }
 }
@@ -334,14 +328,14 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
     QString key = widget->getEncryptionkey();
     QString gameid = widget->getGameId();
 
-    if(game_ended(platformid, gameid)){
+    if (game_ended(platformid, gameid)) {
         log("Game " + platformid + "/" + gameid + " has already ended");
         return;
     }
 
     slot_refreshPlayingStatus();
 
-    if(playing){
+    if (playing) {
         log("[WARN] Replay aborted. LoL is currently running.");
         return;
     }
@@ -353,7 +347,7 @@ void MainWindow::slot_doubleclick_featured(QListWidgetItem *item)
 
 void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bool local)
 {
-    if(platformid.isEmpty() || key.isEmpty() || matchid.isEmpty()){
+    if (platformid.isEmpty() || key.isEmpty() || matchid.isEmpty()) {
         log("[ERROR] Invalid game parameters.");
         return;
     }
@@ -362,10 +356,9 @@ void MainWindow::lol_launch(QString platformid, QString key, QString matchid, bo
 
     QDir qd;
 
-    if(platformid == "PBE1"){
+    if (platformid == "PBE1") {
         qd.setPath(lolpbedirectory + "/solutions/lol_game_client_sln/releases/");
-    }
-    else{
+    } else {
         qd.setPath(loldirectory + "/solutions/lol_game_client_sln/releases/");
     }
 
