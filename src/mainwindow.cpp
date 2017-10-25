@@ -1731,27 +1731,28 @@ void MainWindow::rofl_file_launch(QString filepath)
 
 #ifdef Q_OS_WIN32
 
-    QProcess *process = new QProcess;
-    process->setWorkingDirectory(path);
-    process->startDetached("\"" + path + "League of Legends.exe\"" + " \"" + filepath + "\"");
-
     log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
+
+    QProcess* process = new QProcess();
+
+    process->setWorkingDirectory(path);
+    process->start("\"" + path + "League of Legends.exe\"", QStringList() << filepath);
+
+    /*if (!QProcess::startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"" + filepath + "\"", path)) {
+        log("Process creation aborted");
+    }*/
 
 #elif defined(Q_OS_OSX)
 
-    QProcess *process = new QProcess;
-    process->setWorkingDirectory(path);
-    process->startDetached("\"" + path + "League of Legends\"" "\"" + filepath + "\"");
-
-    log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
+    log("\"" + path + "League of Legends\" \"" + filepath + "\"");
     log("MacOSX support is experimental");
 
-#elif defined(Q_OS_UNIX)
-    //QProcess *process = new QProcess;
-    //process->setWorkingDirectory(path);
-    //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
+    if (!QProcess::startDetached("\"" + path + "League of Legends\"", QStringList() << "\"" + filepath + "\"", path)) {
+        log("Process creation aborted");
+    }
 
-    //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
+#elif defined(Q_OS_UNIX)
+
     log("This feature isn't available on Linux yet");
 
 #endif
