@@ -174,13 +174,11 @@ private slots:
     void slot_replayserversAdd();
 
     void slot_summonerinfos_save();
-    void slot_pbeinfos_save();
 
     void slot_featuredRefresh();
     void slot_statusRefresh();
 
     void slot_setdirectory();
-    void slot_setpbedirectory();
     void slot_setreplaydirectory();
 
     void slot_featuredLaunch();

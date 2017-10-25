@@ -92,16 +92,6 @@ MainWindow::MainWindow(QWidget *parent) :
         ui->comboBox_summonerserver->setCurrentText(m_summonerServerRegion);
     }
 
-    if(!lrsettings->value("PBEName").toString().isEmpty()){
-        m_PBEname = lrsettings->value("PBEName").toString();
-        ui->lineEdit_pbename->setText(m_PBEname);
-    }
-
-    if(!lrsettings->value("PBEId").toString().isEmpty()){
-        m_PBEid = lrsettings->value("PBEId").toString();
-        ui->lineEdit_pbeid->setText(m_PBEid);
-    }
-
     if(!lrsettings->value("Language").toString().isEmpty() && translator.load(QString(":/translation/legendsreplay_") + lrsettings->value("Language").toString().toLower())){
         qApp->installTranslator(&translator);
     }
@@ -122,11 +112,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     ui->lineEdit_lolfolder->setText(loldirectory);
-
-    if(!lrsettings->value("LoLPBEDirectory").toString().isEmpty()){
-        lolpbedirectory = lrsettings->value("LoLPBEDirectory").toString();
-        ui->lineEdit_pbefolder->setText(lolpbedirectory);
-    }
 
     QString docfolder;
     if(lrsettings->value("ReplayDirectory").toString().isEmpty()){
@@ -182,9 +167,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->listWidget_featured, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(slot_doubleclick_featured(QListWidgetItem*)));
     connect(ui->toolButton, SIGNAL(released()), this, SLOT(slot_setdirectory()));
     connect(ui->toolButton_2, SIGNAL(released()), this, SLOT(slot_setreplaydirectory()));
-    connect(ui->toolButton_pbefolder, SIGNAL(released()), this, SLOT(slot_setpbedirectory()));
     connect(ui->pushButton_add_replayserver, SIGNAL(released()), this, SLOT(slot_replayserversAdd()));
-    connect(ui->pushButton_pbesave, SIGNAL(released()), this, SLOT(slot_pbeinfos_save()));
     connect(ui->pushButton_summonersave, SIGNAL(released()), this, SLOT(slot_summonerinfos_save()));
     connect(ui->pushButton_searchsummoner, SIGNAL(released()), this, SLOT(slot_searchsummoner()));
     connect(ui->pushButton_searchsummoner_spectate, SIGNAL(released()), this, SLOT(slot_click_searchsummoner_spectate()));
@@ -725,19 +708,6 @@ void MainWindow::slot_setdirectory()
     ui->lineEdit_lolfolder->setText(dir);
 }
 
-void MainWindow::slot_setpbedirectory()
-{
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open RADS Directory"), loldirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-    if(dir.isEmpty()){
-        return;
-    }
-
-    lolpbedirectory = dir;
-    lrsettings->setValue("LoLPBEDirectory", lolpbedirectory);
-    ui->lineEdit_pbefolder->setText(dir);
-}
-
 void MainWindow::slot_setreplaydirectory()
 {
     QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), replaydirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -1241,41 +1211,6 @@ void MainWindow::slot_summonerinfos_save()
         lrsettings->setValue("SummonerName", m_summonername);
         lrsettings->setValue("SummonerId", m_summonerid);
         lrsettings->setValue("SummonerServer", m_summonerServerRegion);
-    }
-}
-
-void MainWindow::slot_pbeinfos_save()
-{
-    if(ui->lineEdit_pbename->text().isEmpty()){
-        return;
-    }
-
-    if(lrservers.isEmpty()){
-        QMessageBox::information(this, tr("LegendsReplay"), tr("Please add a LegendsReplay server."));
-        log("Please add a LegendsReplay server.");
-        return;
-    }
-
-    m_PBEname = ui->lineEdit_pbename->text();
-
-    //Retrieving PBE ID
-
-    log("Retrieving PBE ID");
-
-    QJsonDocument suminfos = getJsonFromUrl(m_currentLegendsReplayServer + "?region=PBE&summonername=" + m_PBEname);
-
-    if(suminfos.isEmpty()){
-        QMessageBox::information(this, tr("LegendsReplay"), tr("Unknown summoner on this server.\nPBE is not supported."));
-        log("Unknown summoner on this server. PBE is not supported.");
-        return;
-    }
-    else{
-        m_PBEid = QString::number(suminfos.object().value(suminfos.object().keys().first()).toObject().value("id").toVariant().toLongLong());
-        ui->lineEdit_pbeid->setText(m_PBEid);
-        log("Your PBE ID is " + m_PBEid);
-
-        lrsettings->setValue("PBEName", m_PBEname);
-        lrsettings->setValue("PBEId", m_PBEid);
     }
 }
 
