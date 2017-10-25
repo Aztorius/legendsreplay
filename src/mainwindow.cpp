@@ -1663,7 +1663,7 @@ void MainWindow::rofl_file_launch(QString filepath)
 
     if (list.isEmpty()) {
         QMessageBox::information(this, tr("LegendsReplay"), tr("Invalid League of Legends (or PBE) directory.\nPlease set a valid one."));
-        log("[WARN] Invalid League of Legends (or PBE) directory. No releases folder found.");
+        log("[WARN] Invalid League of Legends directory. No releases folder found.");
         return;
     }
 
@@ -1671,7 +1671,7 @@ void MainWindow::rofl_file_launch(QString filepath)
 
     if (!check_path(path)) {
         QMessageBox::information(this, tr("LegendsReplay"), tr("Invalid League of Legends (or PBE) directory.\nPlease set a valid one."));
-        log("[WARN] Invalid League of Legends (or PBE) directory. Invalid path.");
+        log("[WARN] Invalid League of Legends directory. Invalid path.");
         return;
     }
 
