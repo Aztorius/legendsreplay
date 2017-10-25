@@ -1,6 +1,13 @@
 language: cpp
-sudo: required
-dist: trusty
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+    - os: osx
+      osx_image: xcode8.3
+
 addons:
   apt:
     sources:
@@ -12,14 +19,16 @@ addons:
 env: COMPILER=g++-6 CXX=g++-6 CC=gcc-6
 
 before_script:
-- sudo add-apt-repository ppa:beineri/opt-qt562-trusty --yes
-- sudo apt-get update -qq
-- sudo apt-get install --yes qt56base
-- source /opt/qt56/bin/qt56-env.sh
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt5 gcc-6 ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew link --force qt5 gcc-6 ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository ppa:beineri/opt-qt562-trusty --yes ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update -qq ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install --yes qt56base ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then source /opt/qt56/bin/qt56-env.sh ; fi
 - git submodule init && git submodule update
 - qmake -v
-- mkdir ./legendsreplay/usr
-- mkdir ./legendsreplay/usr/bin
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir ./legendsreplay/usr ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mkdir ./legendsreplay/usr/bin ; fi
 
 script:
 - cd qhttp
@@ -27,12 +36,12 @@ script:
 - cd ..
 - qmake LegendsReplay.pro
 - make CXX=$COMPILER
-- cp ./src/LegendsReplay ./legendsreplay/usr/bin
-- dpkg-deb --build legendsreplay
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp ./src/LegendsReplay ./legendsreplay/usr/bin ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then dpkg-deb --build legendsreplay ; fi
 
 before_deploy:
 - echo $TRAVIS_TAG
-- mv ./legendsreplay.deb ./legendsreplay-$TRAVIS_TAG.deb
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then mv ./legendsreplay.deb ./legendsreplay-$TRAVIS_TAG.deb ; fi
 
 deploy:
   provider: releases
@@ -43,3 +52,4 @@ deploy:
   on:
     repo: Aztorius/legendsreplay
     tags: true
+    condition: $TRAVIS_OS_NAME = linux
