@@ -1733,7 +1733,7 @@ void MainWindow::rofl_file_launch(QString filepath)
 
     QProcess *process = new QProcess;
     process->setWorkingDirectory(path);
-    process->startDetached("\"" + path + "League of Legends.exe\"" "\"" + filepath + "\"");
+    process->startDetached("\"" + path + "League of Legends.exe\"" + " \"" + filepath + "\"");
 
     log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
 
