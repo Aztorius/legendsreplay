@@ -1733,9 +1733,18 @@ void MainWindow::rofl_file_launch(QString filepath)
 
     QProcess *process = new QProcess;
     process->setWorkingDirectory(path);
-    process->startDetached("\"" + path + "League of Legends.exe\"", QStringList() << "\"" + filepath + "\"", path);
+    process->startDetached("\"" + path + "League of Legends.exe\"" "\"" + filepath + "\"");
 
     log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
+
+#elif defined(Q_OS_OSX)
+
+    QProcess *process = new QProcess;
+    process->setWorkingDirectory(path);
+    process->startDetached("\"" + path + "League of Legends\"" "\"" + filepath + "\"");
+
+    log("\"" + path + "League of Legends.exe\" \"" + filepath + "\"");
+    log("MacOSX support is experimental");
 
 #elif defined(Q_OS_UNIX)
     //QProcess *process = new QProcess;
@@ -1743,7 +1752,7 @@ void MainWindow::rofl_file_launch(QString filepath)
     //process->startDetached("playonlinux \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\"", QStringList() << "\"8394\"" << "\"LoLLauncher.exe\"" << "\"\"" << ("spectator " + address + " " + key + " " + matchid + " " + platformid), "/home/informaticien77/.PlayOnLinux/wineprefix/LeagueOfLegends/drive_c/Riot Games/League of Legends/RADS");
 
     //log("wine \"./solutions/lol_game_client_sln/releases/0.0.1.131/deploy/League of Legends.exe\" \"8394\" \"LoLLauncher.exe\" \"\" \"spectator " + address + " " + key + " " + matchid + " " + platformid + "\"");
-    log("LoL Launch isn't available for Linux yet");
+    log("This feature isn't available on Linux yet");
 
 #endif
 
