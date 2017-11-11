@@ -34,8 +34,8 @@ script:
 - "./update-dependencies.sh"
 - cd ..
 - qmake LegendsReplay.pro
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make ; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make CXX=g++-6 ; fi
+- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then make -j$(nproc) ; fi
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make CXX=g++-6 -j$(nproc) ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cp ./src/LegendsReplay ./legendsreplay/usr/bin ; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then dpkg-deb --build legendsreplay ; fi
 
