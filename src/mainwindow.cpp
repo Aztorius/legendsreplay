@@ -1711,8 +1711,6 @@ void MainWindow::slot_searchsummoner()
 
     m_searchsummoner_game = game;
 
-    log("[DEBUG] " + game.toJson());
-
     if(game.isEmpty()) {
         log("Summoner " + summonername + " is not in a game");
 
