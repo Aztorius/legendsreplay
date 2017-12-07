@@ -23,7 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString GLOBAL_VERSION = "1.5.0";
+QString GLOBAL_VERSION = "1.5.1";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),

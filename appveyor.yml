@@ -20,3 +20,13 @@ build_script:
 artifacts:
   - path: setup-LegendsReplay-*.exe
     name: LegendsReplaySetup
+
+deploy:
+  - provider: GitHub
+    artifact: LegendsReplaySetup
+    draft: false
+    prerelease: false
+    auth_token:
+      secure: FZ4mi3MDpwe3yKbZxSb/mTxmxz4u13Px4/58qmt6mO72vbt6R6vSoh4/d0TFlswp
+    on:
+      appveyor_repo_tag: true
