@@ -15,7 +15,7 @@ build_script:
   - cp C:\\Qt\\5.6\\mingw49_32\\bin\\icuin54.dll .
   - cp C:\\Qt\\5.6\\mingw49_32\\bin\\icuuc54.dll .
   - cp qhttp/xbin/qhttp.dll .
-  - iscc setup.iss
+  - iscc -DMyAppVersion=%APPVEYOR_REPO_TAG_NAME% setup.iss
 
 artifacts:
   - path: setup-LegendsReplay-*.exe
