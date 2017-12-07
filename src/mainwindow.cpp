@@ -23,7 +23,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-QString GLOBAL_VERSION = "1.5.1";
+#define GLOBAL_VERSION "1.5.1"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,10 +31,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowTitle("LegendsReplay " + GLOBAL_VERSION);
+    setWindowTitle("LegendsReplay " + QString(GLOBAL_VERSION));
     setWindowIcon(QIcon(":/icons/logo.png"));
 
-    log(QString("LegendsReplay " + GLOBAL_VERSION));
+    log(QString("LegendsReplay " + QString(GLOBAL_VERSION)));
 
     // Adding the official local servers
     QFile localserversfile(":/data/LegendsReplayServers.txt");
@@ -255,7 +255,7 @@ void MainWindow::slot_checkSoftwareVersion()
 {
     QJsonDocument updatejson = getJsonFromUrl("https://aztorius.github.io/legendsreplay/version.json");
 
-    if (!updatejson.isEmpty() && updatejson.object().value("version").toString() != GLOBAL_VERSION) {
+    if (!updatejson.isEmpty() && updatejson.object().value("version").toString() != QString(GLOBAL_VERSION)) {
         showmessage(tr("New version ") + updatejson.object().value("version").toString() + " available !");
         ui->statusBar->showMessage(QTime::currentTime().toString() + " | " + "New version " + updatejson.object().value("version").toString() + tr(" available !"));
         ui->textBrowser->append(QTime::currentTime().toString() + " | <a href='https://aztorius.github.io/legendsreplay/'>New version " + updatejson.object().value("version").toString() + " available !</a>");
